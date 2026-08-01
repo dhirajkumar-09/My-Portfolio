@@ -124,7 +124,7 @@ const emptyProject = () => ({ title: "New Project", subtitle: "Short subtitle", 
 const emptyCert = () => ({ seal: "NEW", title: "Certificate name", issuer: "Issuing organization", date: "2026", desc: "Brief description of the certification.", image: null });
 
 // Image Compressor to prevent hitting Firestore size limits
-const compressImage = (file, maxWidth = 800) => {
+const compressImage = (file, maxWidth = 500, quality = 0.55) => {
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.onload = (event) => {
@@ -136,12 +136,23 @@ const compressImage = (file, maxWidth = 800) => {
         canvas.height = img.height * ratio;
         const ctx = canvas.getContext("2d");
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        resolve(canvas.toDataURL("image/jpeg", 0.7)); // Compress to 70% quality JPEG
+        resolve(canvas.toDataURL("image/jpeg", quality));
       };
       img.src = event.target.result;
     };
     reader.readAsDataURL(file);
   });
+};
+
+// Rough size check so the admin gets a clear warning BEFORE a save silently
+// fails because the combined data (profile photo + all project/cert images)
+// exceeds Firestore's 1MB per-document limit.
+const getApproxSizeKB = (obj) => {
+  try {
+    return Math.round(new Blob([JSON.stringify(obj)]).size / 1024);
+  } catch {
+    return 0;
+  }
 };
 
 export default function Portfolio() {
@@ -278,15 +289,20 @@ export default function Portfolio() {
       return;
     }
 
+    const payload = { profile, projects, certificates, skillGroups, photo };
+    const sizeKB = getApproxSizeKB(payload);
+    if (sizeKB > 900) {
+      showToast(
+        `Data too large (${sizeKB}KB / 1024KB limit). Remove or replace some images before saving.`
+      );
+      return;
+    }
+
     try {
       showToast("Saving changes...");
       const docRef = doc(db, 'portfolios', APP_ID);
       await setDoc(docRef, {
-        profile,
-        projects,
-        certificates,
-        skillGroups,
-        photo,
+        ...payload,
         lastUpdated: new Date().toISOString()
       }, { merge: true });
       showToast("Changes saved successfully!");
@@ -334,7 +350,7 @@ export default function Portfolio() {
 
   const showToast = (msg) => {
     setToastMessage(msg);
-    setTimeout(() => setToastMessage(""), 3500);
+    setTimeout(() => setToastMessage(""), 5000);
   };
 
   const goTo = (id) => (e) => {
@@ -360,7 +376,7 @@ export default function Portfolio() {
   const handleProjectImageChange = async (i, e) => {
     const file = e.target.files && e.target.files[0];
     if (!file) return;
-    const compressedImage = await compressImage(file, 1000);
+    const compressedImage = await compressImage(file, 700, 0.6);
     updateProject(i, { image: compressedImage });
   };
 
