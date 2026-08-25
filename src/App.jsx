@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   ArrowUpRight,
   Mail,
@@ -15,29 +15,30 @@ import {
   LogIn,
   LogOut,
   Link as LinkIcon,
-  PlayCircle
+  PlayCircle,
+  ExternalLink,
+  Code2,
+  Activity,
+  Calendar
 } from "lucide-react";
 
-// IMPORT FIREBASE (Ensure you have firebase installed in your project: npm install firebase)
+// IMPORT FIREBASE
 import { initializeApp } from "firebase/app";
 import { getFirestore, doc, onSnapshot, setDoc } from "firebase/firestore";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "firebase/auth";
 
-// Custom LinkedIn icon (lucide-react removed this export in newer versions)
 const LinkedinIcon = ({ size = 14, color = "currentColor" }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill={color} xmlns="http://www.w3.org/2000/svg">
     <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
   </svg>
 );
 
-// Custom GitHub icon (lucide-react removed this export in newer versions)
 const Github = ({ size = 14, color = "currentColor" }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill={color} xmlns="http://www.w3.org/2000/svg">
     <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.333-1.755-1.333-1.755-1.089-.744.083-.729.083-.729 1.205.084 1.84 1.237 1.84 1.237 1.07 1.834 2.809 1.304 3.495.997.108-.775.418-1.305.762-1.605-2.665-.303-5.467-1.332-5.467-5.93 0-1.31.468-2.38 1.235-3.22-.123-.303-.535-1.523.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.29-1.552 3.297-1.23 3.297-1.23.653 1.653.241 2.873.118 3.176.77.84 1.235 1.91 1.235 3.22 0 4.61-2.807 5.625-5.479 5.921.43.372.823 1.102.823 2.222 0 1.606-.015 2.898-.015 3.293 0 .322.216.694.825.576C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
   </svg>
 );
 
-// REPLACE THESE WITH YOUR ACTUAL FIREBASE CONFIG FROM STEP 2
 const firebaseConfig = {
   apiKey: "AIzaSyCBMHoaPc0aGZ4MV18zkDZd5c4-tWSRXl0",
   authDomain: "dhiraj-portfolio-09.firebaseapp.com",
@@ -50,7 +51,6 @@ const firebaseConfig = {
 
 const isFirebaseConfigured = firebaseConfig.apiKey !== "YOUR_API_KEY";
 
-// Initialize Firebase safely
 let app, db, auth;
 try {
   if (isFirebaseConfigured) {
@@ -62,7 +62,6 @@ try {
   console.error("Firebase initialization error:", error);
 }
 
-// THE EMAIL THAT HAS PERMISSION TO EDIT THE PORTFOLIO (Your exact Google email)
 const ADMIN_EMAIL = "dhidna9090@gmail.com"; 
 const APP_ID = "my_portfolio_v1";
 
@@ -72,10 +71,10 @@ const DEFAULT_PROFILE = {
   focus: "Systems · Interfaces · Infrastructure",
   headline: "I build software that",
   headlineAccent: "earns trust.",
-  intro: "Six years designing and shipping products end to end — from database schema to the pixel a user taps. Selected work, credentials, and how to reach me, below.",
+  intro: "Six years of architecting scalable systems and designing intuitive interfaces. From database schemas to the final pixel, I build products that solve real problems.",
   email: "dhidna9090@gmail.com",
   linkedin: "https://www.linkedin.com/in/dhiraj-kumar-01b185350?utm_source=share_via&utm_content=profile&utm_medium=member_android",
-  github: "https://github.com/dhirajkumar-09",
+  github: "https://github.com/dhirajkumar-09/My-Portfolio",
   stats: [
     { k: "Years experience", v: "06" },
     { k: "Projects shipped", v: "24" },
@@ -113,17 +112,24 @@ const DEFAULT_SKILLS = [
   { label: "Frameworks & Platforms", items: ["React", "Next.js", "Node.js", "Docker", "Kubernetes"] },
 ];
 
+const DEFAULT_ACTIVITY_LOGS = [
+  { date: "August 2026", title: "Portfolio V2 Launched", desc: "Designed and engineered a new portfolio with React, Firebase real-time CMS, and custom animations." },
+  { date: "July 2026", title: "Ledgerline Beta Release", desc: "Successfully onboarded the first pilot users to the expense automation platform." },
+  { date: "March 2026", title: "AWS Certification", desc: "Earned the AWS Certified Solutions Architect credential." }
+];
+
 const NAV = [
   { id: "work", label: "Work" },
   { id: "certificates", label: "Certificates" },
   { id: "skills", label: "Toolkit" },
+  { id: "activity", label: "Activity" },
   { id: "contact", label: "Contact" },
 ];
 
 const emptyProject = () => ({ title: "New Project", subtitle: "Short subtitle", desc: "Describe what it does and the impact it had.", stack: ["Tech"], live: "#", source: "#", linkedin: "#", image: null, video: "" });
 const emptyCert = () => ({ seal: "NEW", title: "Certificate name", issuer: "Issuing organization", date: "2026", desc: "Brief description of the certification.", image: null });
+const emptyLog = () => ({ date: "New Date", title: "New Milestone", desc: "Describe what happened." });
 
-// Image Compressor to prevent hitting Firestore size limits
 const compressImage = (file, maxWidth = 500, quality = 0.55) => {
   return new Promise((resolve) => {
     const reader = new FileReader();
@@ -144,9 +150,6 @@ const compressImage = (file, maxWidth = 500, quality = 0.55) => {
   });
 };
 
-// Rough size check so the admin gets a clear warning BEFORE a save silently
-// fails because the combined data (profile photo + all project/cert images)
-// exceeds Firestore's 1MB per-document limit.
 const getApproxSizeKB = (obj) => {
   try {
     return Math.round(new Blob([JSON.stringify(obj)]).size / 1024);
@@ -155,36 +158,155 @@ const getApproxSizeKB = (obj) => {
   }
 };
 
+const GREETINGS = [
+  "Hello", 
+  "नमस्ते", 
+  "Hola", 
+  "Bonjour", 
+  "Ciao", 
+  "Konnichiwa", 
+  "Merhaba", 
+  "Welcome",
+  "DHIRAJ KUMAR"
+];
+
+const IntroScreen = ({ onComplete }) => {
+  const [index, setIndex] = useState(0);
+  const [isExiting, setIsExiting] = useState(false);
+
+  useEffect(() => {
+    let timeout;
+    
+    // Safety check so we don't start new timers after exit begins
+    if (isExiting) return;
+
+    if (index < GREETINGS.length - 1) {
+      timeout = setTimeout(() => {
+        setIndex((prev) => prev + 1);
+      }, 400);
+    } else {
+      timeout = setTimeout(() => {
+        setIsExiting(true);
+        setTimeout(onComplete, 1200); 
+      }, 1500); 
+    }
+    
+    return () => clearTimeout(timeout);
+  }, [index, isExiting]); // Removed onComplete to prevent potential loops if the parent re-renders
+
+  const isFinalName = index === GREETINGS.length - 1;
+
+  return (
+    <div
+      className={`fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-[#05070A] transition-all duration-[1200ms] ease-[cubic-bezier(0.76,0,0.24,1)] ${
+        isExiting ? "-translate-y-full rounded-b-[150px] opacity-90 shadow-2xl" : "translate-y-0 rounded-b-none opacity-100"
+      }`}
+    >
+      <div className="flex items-center gap-4 md:gap-6 text-[var(--text)] font-display text-4xl md:text-5xl lg:text-7xl relative z-10 transition-transform duration-500">
+        {!isFinalName && <span className="w-2.5 h-2.5 md:w-4 md:h-4 rounded-full bg-[var(--gold-bright)] animate-pulse" />}
+        <h2 className={isFinalName ? "final-intro-text tracking-tight font-medium" : "animate-intro-text"}>
+          {GREETINGS[index]}
+        </h2>
+      </div>
+      {/* Golden glow specifically for the name reveal */}
+      {isFinalName && (
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--gold-bright)_0%,_transparent_40%)] opacity-20 mix-blend-screen animate-pulse-slow"></div>
+      )}
+    </div>
+  );
+};
+
+const CustomCursor = () => {
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [delayedMousePos, setDelayedMousePos] = useState({ x: 0, y: 0 });
+  const [isHovering, setIsHovering] = useState(false);
+  const mousePosRef = useRef({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      mousePosRef.current = { x: e.clientX, y: e.clientY };
+      setMousePos({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener("mousemove", handleMouseMove);
+    
+    let animationFrameId;
+    const render = () => {
+      setDelayedMousePos((prev) => {
+        const dx = mousePosRef.current.x - prev.x;
+        const dy = mousePosRef.current.y - prev.y;
+        return { x: prev.x + dx * 0.15, y: prev.y + dy * 0.15 };
+      });
+      animationFrameId = requestAnimationFrame(render);
+    };
+    render();
+
+    const handleMouseOver = (e) => {
+      const target = e.target;
+      if (target.tagName?.toLowerCase() === 'button' || target.tagName?.toLowerCase() === 'a' || target.closest?.('button') || target.closest?.('a')) {
+        setIsHovering(true);
+      } else {
+        setIsHovering(false);
+      }
+    };
+    window.addEventListener("mouseover", handleMouseOver);
+    
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseover", handleMouseOver);
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, []); // Empty dependency array prevents restarting the RAF loop continuously
+
+  return (
+    <>
+      <div 
+        className="fixed top-0 left-0 w-2 h-2 bg-[var(--gold-bright)] rounded-full pointer-events-none mix-blend-difference z-[9999]"
+        style={{ transform: `translate3d(${mousePos.x - 4}px, ${mousePos.y - 4}px, 0) scale(${isHovering ? 0 : 1})`, transition: 'transform 0.1s ease-out' }}
+      />
+      <div 
+        className="fixed top-0 left-0 w-12 h-12 border border-[var(--gold-bright)]/40 rounded-full pointer-events-none z-[9998] flex items-center justify-center backdrop-blur-[2px]"
+        style={{ 
+          transform: `translate3d(${delayedMousePos.x - 24}px, ${delayedMousePos.y - 24}px, 0) scale(${isHovering ? 1.5 : 1})`, 
+          backgroundColor: isHovering ? 'rgba(212,175,106,0.1)' : 'transparent',
+          transition: 'transform 0.05s linear, background-color 0.3s ease, border-color 0.3s ease',
+          borderColor: isHovering ? 'var(--gold-bright)' : 'rgba(212,175,106,0.4)'
+        }}
+      >
+        <div className={`w-1.5 h-1.5 bg-[var(--gold-bright)] rounded-full transition-opacity duration-300 ${isHovering ? 'opacity-100' : 'opacity-0'}`} />
+      </div>
+    </>
+  );
+};
+
 export default function Portfolio() {
   const [profile, setProfile] = useState(DEFAULT_PROFILE);
   const [projects, setProjects] = useState(DEFAULT_PROJECTS);
   const [certificates, setCertificates] = useState(DEFAULT_CERTIFICATES);
   const [skillGroups, setSkillGroups] = useState(DEFAULT_SKILLS);
-  const [photo, setPhoto] = useState(null);
+  const [activityLogs, setActivityLogs] = useState(DEFAULT_ACTIVITY_LOGS);
 
-  const [visible, setVisible] = useState({});
   const [scrolled, setScrolled] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
   const [editMode, setEditMode] = useState(false);
   
-  // Auth & Firebase State
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showIntro, setShowIntro] = useState(true);
   const [toastMessage, setToastMessage] = useState("");
 
   const isAdminUser = user && user.email === ADMIN_EMAIL;
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 24);
+      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      setScrollProgress((winScroll / height) * 100);
+    };
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // FIX: When editing a contentEditable field and then clicking a button
-  // (like "Save & Exit"), the field's blur-triggered re-render can shift
-  // the layout between mousedown and click, causing the click to "miss"
-  // the button entirely. Forcing an immediate blur on mousedown (capture
-  // phase, before React processes anything) settles the layout early so
-  // the actual click lands correctly.
   useEffect(() => {
     const forceBlurBeforeClick = (e) => {
       const active = document.activeElement;
@@ -206,19 +328,28 @@ export default function Portfolio() {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) setVisible((prev) => ({ ...prev, [entry.target.dataset.reveal]: true }));
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+          }
         });
       },
-      { threshold: 0.12 }
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
     );
-    document.querySelectorAll("[data-reveal]").forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, [projects.length, certificates.length]);
+    
+    // Slight delay to ensure DOM is ready, especially after intro finishes
+    const observerTimer = setTimeout(() => {
+      document.querySelectorAll(".reveal-up, .reveal-scale, .reveal-left, .reveal-right, .reveal-rotate").forEach((el) => observer.observe(el));
+    }, 500);
+    
+    return () => {
+      clearTimeout(observerTimer);
+      observer.disconnect();
+    }
+  }, [projects.length, certificates.length, loading, showIntro]);
 
   useEffect(() => {
     if (!isFirebaseConfigured) {
-      // If Firebase is not configured, just stop loading and show default data
-      setLoading(false);
+      setTimeout(() => setLoading(false), 800); 
       return;
     }
 
@@ -235,22 +366,13 @@ export default function Portfolio() {
       }
     });
 
-    // SAFETY TIMEOUT: if Firebase/Firestore doesn't respond within 6 seconds
-    // (e.g. Firestore DB not created yet, wrong rules, or network issue),
-    // stop showing "Loading..." forever and just show the default content.
+    // Reduced safety timer to 2.5 seconds to prevent long hangs on initial load
     const safetyTimer = setTimeout(() => {
       setLoading((prev) => {
-        if (prev) {
-          console.warn(
-            "Firestore took too long to respond. Showing default content. " +
-            "Check: 1) Firestore Database is created in Firebase Console, " +
-            "2) Firestore security rules allow read access, " +
-            "3) firebaseConfig values are correct."
-          );
-        }
+        if (prev) console.warn("Firestore timeout. Showing default content.");
         return false;
       });
-    }, 6000);
+    }, 2500);
 
     const docRef = doc(db, 'portfolios', APP_ID);
     const unsubscribeData = onSnapshot(docRef, (docSnap) => {
@@ -261,12 +383,12 @@ export default function Portfolio() {
         if (data.projects) setProjects(data.projects);
         if (data.certificates) setCertificates(data.certificates);
         if (data.skillGroups) setSkillGroups(data.skillGroups);
-        if (data.photo) setPhoto(data.photo);
+        if (data.activityLogs) setActivityLogs(data.activityLogs);
       }
-      setLoading(false);
+      setTimeout(() => setLoading(false), 800);
     }, (error) => {
       clearTimeout(safetyTimer);
-      console.error("Error fetching data from Firestore:", error.code, error.message);
+      console.error("Error fetching data:", error);
       setLoading(false);
     });
 
@@ -289,26 +411,20 @@ export default function Portfolio() {
       return;
     }
 
-    const payload = { profile, projects, certificates, skillGroups, photo };
+    const payload = { profile, projects, certificates, skillGroups, activityLogs };
     const sizeKB = getApproxSizeKB(payload);
     if (sizeKB > 900) {
-      showToast(
-        `Data too large (${sizeKB}KB / 1024KB limit). Remove or replace some images before saving.`
-      );
+      showToast(`Data too large (${sizeKB}KB / 1024KB limit). Remove images.`);
       return;
     }
 
     try {
       showToast("Saving changes...");
       const docRef = doc(db, 'portfolios', APP_ID);
-      await setDoc(docRef, {
-        ...payload,
-        lastUpdated: new Date().toISOString()
-      }, { merge: true });
+      await setDoc(docRef, { ...payload, lastUpdated: new Date().toISOString() }, { merge: true });
       showToast("Changes saved successfully!");
       if (turnOffEditMode) setEditMode(false);
     } catch (error) {
-      console.error("Error saving data:", error);
       showToast("Error saving data. " + error.message);
     }
   };
@@ -319,33 +435,25 @@ export default function Portfolio() {
       setUser({ email: ADMIN_EMAIL, uid: "mock-demo-id" });
       return;
     }
-
     if (!auth) return showToast("Firebase not initialized.");
-    const provider = new GoogleAuthProvider();
     try {
-      await signInWithPopup(auth, provider);
+      await signInWithPopup(auth, new GoogleAuthProvider());
     } catch (error) {
-      console.error("Login Error:", error);
       showToast("Login failed: " + error.message);
     }
   };
 
   const handleLogout = async () => {
     if (!isFirebaseConfigured) {
-      setUser(null);
-      setEditMode(false);
+      setUser(null); setEditMode(false);
       showToast("Logged out from Demo Mode.");
       return;
     }
-
     if (!auth) return;
     try {
-      await signOut(auth);
-      setEditMode(false);
+      await signOut(auth); setEditMode(false);
       showToast("Logged out securely.");
-    } catch (error) {
-      console.error("Logout Error:", error);
-    }
+    } catch (error) {}
   };
 
   const showToast = (msg) => {
@@ -357,13 +465,6 @@ export default function Portfolio() {
     e.preventDefault();
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
-
-  const handlePhotoChange = async (e) => {
-    const file = e.target.files && e.target.files[0];
-    if (!file) return;
-    const compressedImage = await compressImage(file);
-    setPhoto(compressedImage);
   };
 
   const handleCertImageChange = async (i, e) => {
@@ -380,8 +481,31 @@ export default function Portfolio() {
     updateProject(i, { image: compressedImage });
   };
 
+  const handleCardMouseMove = (e) => {
+    const { currentTarget: target } = e;
+    const rect = target.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    target.style.setProperty("--mouse-x", `${x}px`);
+    target.style.setProperty("--mouse-y", `${y}px`);
+
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateX = ((y - centerY) / centerY) * -8; // Deepened tilt
+    const rotateY = ((x - centerX) / centerX) * 8;
+    
+    target.style.setProperty("--rotate-x", `${rotateX}deg`);
+    target.style.setProperty("--rotate-y", `${rotateY}deg`);
+  };
+
+  const handleCardMouseLeave = (e) => {
+    const { currentTarget: target } = e;
+    target.style.setProperty("--rotate-x", `0deg`);
+    target.style.setProperty("--rotate-y", `0deg`);
+  };
+
   const initials = profile.name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
-  const reveal = (key) => `transition-all duration-700 ease-out ${visible[key] ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`;
 
   const Editable = ({ value, onChange, tag: Tag = "span", className = "", style = {}, placeholder = "" }) => (
     <Tag
@@ -393,7 +517,7 @@ export default function Portfolio() {
         ...style,
         outline: "none",
         borderRadius: 4,
-        ...(editMode ? { background: "rgba(212,175,106,0.08)", boxShadow: "0 0 0 1px rgba(212,175,106,0.35)", cursor: "text", padding: "1px 4px", margin: "-1px -4px" } : {}),
+        ...(editMode ? { background: "rgba(212,175,106,0.12)", boxShadow: "0 0 0 1px rgba(212,175,106,0.5)", cursor: "text", padding: "1px 4px", margin: "-1px -4px", transition: "all 0.2s" } : {}),
       }}
     >
       {value}
@@ -405,13 +529,14 @@ export default function Portfolio() {
     return (
       <div className="flex flex-wrap gap-2 items-center">
         {items.map((tag, i) => (
-          <span key={i} className="tag-pill font-mono text-[11px] uppercase tracking-wide px-3 py-1.5 rounded-full inline-flex items-center gap-1.5">
-            {tag}
+          <span key={i} className="tag-pill group relative font-mono text-[11px] uppercase tracking-wide px-3 py-1.5 rounded-full inline-flex items-center gap-1.5 overflow-hidden">
+            <span className="relative z-10">{tag}</span>
             {editMode && (
-              <button onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="opacity-70 hover:opacity-100">
-                <X size={11} />
+              <button onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="relative z-10 opacity-70 hover:opacity-100 hover:text-red-400 ml-1 transition-colors">
+                <X size={12} />
               </button>
             )}
+            <div className="absolute inset-0 bg-white/5 translate-y-[100%] group-hover:translate-y-0 transition-transform duration-300 z-0"></div>
           </span>
         ))}
         {editMode && (
@@ -425,7 +550,7 @@ export default function Portfolio() {
               }
             }}
             placeholder="+ add, Enter"
-            className="font-mono text-[11px] uppercase tracking-wide px-3 py-1.5 rounded-full bg-transparent"
+            className="font-mono text-[11px] uppercase tracking-wide px-3 py-1.5 rounded-full bg-transparent transition-colors focus:border-[var(--gold-bright)]"
             style={{ border: "1px dashed var(--border)", color: "var(--text-dim)", width: 110, outline: "none" }}
           />
         )}
@@ -435,125 +560,308 @@ export default function Portfolio() {
 
   const updateProject = (i, patch) => setProjects((prev) => prev.map((p, idx) => (idx === i ? { ...p, ...patch } : p)));
   const updateCert = (i, patch) => setCertificates((prev) => prev.map((c, idx) => (idx === i ? { ...c, ...patch } : c)));
+  const updateLog = (i, patch) => setActivityLogs((prev) => prev.map((l, idx) => (idx === i ? { ...l, ...patch } : l)));
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center bg-[#0A0E14] text-[#E8C888] font-mono text-sm uppercase tracking-widest">Loading Portfolio...</div>;
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#05070A] text-[#E8C888] font-mono text-sm tracking-widest relative overflow-hidden">
+        <div className="absolute inset-0 z-0 opacity-20 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#D4AF6A]/20 via-[#05070A] to-[#05070A] animate-pulse-slow"></div>
+        <div className="z-10 flex flex-col items-center gap-6">
+          <div className="w-16 h-16 border-t-2 border-l-2 border-[#E8C888] rounded-full animate-spin"></div>
+          <div className="overflow-hidden h-5 relative w-32 flex justify-center">
+            <span className="uppercase animate-slide-up absolute">Loading Portfolio...</span>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="font-body" style={{ background: "var(--bg)", color: "var(--text)", minHeight: "100vh" }}>
+    <div className="font-body selection:bg-[#D4AF6A]/30 selection:text-white" style={{ background: "var(--bg)", color: "var(--text)", minHeight: "100vh", overflowX: "hidden" }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
         :root{
-          --bg:#0A0E14; --panel: rgba(255,255,255,0.03); --panel-strong: rgba(255,255,255,0.045);
-          --border: rgba(255,255,255,0.09); --border-soft: rgba(255,255,255,0.06);
-          --gold:#D4AF6A; --gold-bright:#E8C888;
-          --text:#EFEFEF; --text-dim:#9A9FA8; --text-faint:#5C616B;
+          --bg: #05070A; 
+          --panel: rgba(255,255,255,0.02); 
+          --panel-strong: rgba(255,255,255,0.04);
+          --border: rgba(255,255,255,0.08); 
+          --border-soft: rgba(255,255,255,0.04);
+          --gold: #D4AF6A; 
+          --gold-bright: #E8C888;
+          --text: #F3F4F6; 
+          --text-dim: #9CA3AF; 
+          --text-faint: #6B7280;
         }
-        .font-display{ font-family:'Fraunces', serif; }
-        .font-body{ font-family:'Inter', sans-serif; }
-        .font-mono{ font-family:'JetBrains Mono', monospace; }
+        
+        .font-display{ font-family: 'Fraunces', serif; }
+        .font-body{ font-family: 'Inter', sans-serif; }
+        .font-mono{ font-family: 'JetBrains Mono', monospace; }
 
-        section[id]{ scroll-margin-top: 96px; }
+        section[id]{ scroll-margin-top: 120px; }
+        html{ scroll-behavior: smooth; cursor: none; }
 
-        .glow-field{ background: radial-gradient(650px circle at 82% -8%, rgba(212,175,106,0.16), transparent 60%), radial-gradient(500px circle at 6% 18%, rgba(212,175,106,0.06), transparent 55%); }
-        .grain{ background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E"); opacity:0.05; mix-blend-mode: overlay; }
+        /* Dynamic glow fields */
+        .glow-field { 
+          background: 
+            radial-gradient(800px circle at 85% 10%, rgba(212,175,106,0.08), transparent 60%), 
+            radial-gradient(1000px circle at 10% 90%, rgba(212,175,106,0.05), transparent 50%),
+            radial-gradient(600px circle at 50% 50%, rgba(212,175,106,0.03), transparent 60%);
+          filter: blur(40px);
+          animation: ambient-shift 25s ease-in-out infinite alternate;
+        }
+        .grain { 
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E"); 
+          opacity: 0.15; mix-blend-mode: overlay; pointer-events: none;
+        }
 
-        .nav-shell{ transition: background .3s ease, border-color .3s ease; }
-        .nav-link{ position:relative; color:var(--text-dim); transition:color .2s ease; cursor:pointer; background:none; border:none; }
+        @keyframes ambient-shift {
+          0% { transform: scale(1) translate(0,0); }
+          50% { transform: scale(1.08) translate(-2%, 2%); }
+          100% { transform: scale(1) translate(2%, -2%); }
+        }
+
+        /* 400ms Intro Text Animation */
+        @keyframes intro-text {
+          0% { opacity: 0; transform: translateY(20px) scale(0.9); filter: blur(5px); }
+          20% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+          80% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+          100% { opacity: 0; transform: translateY(-20px) scale(1.1); filter: blur(5px); }
+        }
+        .animate-intro-text {
+          animation: intro-text 0.4s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+        }
+
+        .final-intro-text {
+          background: linear-gradient(135deg, var(--gold-bright), #fff, var(--gold));
+          background-size: 200% 200%;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          animation: intro-final-pop 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards, gradient-flow 3s ease infinite;
+        }
+
+        @keyframes intro-final-pop {
+          0% { opacity: 0; transform: scale(0.8) translateY(30px); filter: blur(10px); }
+          100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+        }
+        
+        @keyframes gradient-flow {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+
+        /* Text gradient utility */
+        .text-gradient {
+          background: linear-gradient(135deg, var(--gold-bright), var(--gold));
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          animation: gradient-flow 4s ease infinite;
+          background-size: 200% 200%;
+        }
+
+        /* 3D Spotlight Cards */
+        .spotlight-card {
+          position: relative;
+          background: var(--panel);
+          border: 1px solid var(--border-soft);
+          border-radius: 1.5rem;
+          overflow: hidden;
+          transform: perspective(1500px) rotateX(var(--rotate-x, 0deg)) rotateY(var(--rotate-y, 0deg)) translateY(var(--translate-y, 0px)) scale(var(--scale-card, 1));
+          transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), background 0.4s ease, border-color 0.4s ease;
+          transform-style: preserve-3d;
+          will-change: transform;
+        }
+        
+        /* The inner glare */
+        .spotlight-card::before {
+          content: "";
+          position: absolute;
+          inset: 0;
+          opacity: 0;
+          transition: opacity 0.4s ease;
+          background: radial-gradient(
+            1000px circle at var(--mouse-x, 0) var(--mouse-y, 0),
+            rgba(255,255,255,0.06),
+            transparent 30%
+          );
+          z-index: 0;
+          pointer-events: none;
+        }
+        
+        .spotlight-card:hover { 
+          --translate-y: -8px;
+          --scale-card: 1.02;
+          background: var(--panel-strong); 
+          border-color: rgba(212,175,106,0.25);
+          box-shadow: 0 30px 60px -20px rgba(0,0,0,0.6), 0 0 30px rgba(212,175,106,0.05);
+        }
+        .spotlight-card:hover::before { opacity: 1; }
+        
+        .spotlight-content { position: relative; z-index: 1; transform: translateZ(40px); transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+        .spotlight-card:hover .spotlight-content { transform: translateZ(60px); }
+        
+        /* The tracing border glow */
+        .spotlight-border {
+          position: absolute; inset: 0; border-radius: 1.5rem; pointer-events: none;
+          padding: 1px;
+          background: radial-gradient(
+            500px circle at var(--mouse-x, 0) var(--mouse-y, 0),
+            rgba(212,175,106,0.8),
+            transparent 30%
+          );
+          -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+          -webkit-mask-composite: xor;
+          mask-composite: exclude;
+          opacity: 0;
+          transition: opacity 0.4s ease;
+        }
+        .spotlight-card:hover .spotlight-border { opacity: 1; }
+
+        /* Buttons */
+        .btn-gold{ 
+          background: linear-gradient(135deg, var(--gold-bright), var(--gold)); 
+          color: #05070A; 
+          transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
+          cursor: none; border: none; 
+          position: relative; overflow: hidden;
+        }
+        .btn-gold::after {
+          content: ''; position: absolute; inset: 0;
+          background: linear-gradient(rgba(255,255,255,0), rgba(255,255,255,0.3), rgba(255,255,255,0));
+          transform: translateY(-100%); transition: transform 0.6s;
+        }
+        .btn-gold:hover::after { transform: translateY(100%); }
+        .btn-gold:hover{ transform: translateY(-4px) scale(1.02); box-shadow: 0 20px 40px rgba(212,175,106,0.4); filter: brightness(1.1); }
+        
+        .btn-outline{ 
+          border: 1px solid var(--border); color: var(--text); 
+          transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
+          cursor: none; background: none; 
+        }
+        .btn-outline:hover{ 
+          border-color: rgba(212,175,106,0.6); 
+          background: rgba(212,175,106,0.08); 
+          transform: translateY(-4px) scale(1.02); 
+          color: var(--gold-bright);
+        }
+
+        .tag-pill{ border: 1px solid var(--border-soft); color: var(--text-dim); transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        .tag-pill:hover{ border-color: rgba(212,175,106,0.5); color: var(--gold-bright); transform: translateY(-2px); }
+
+        /* High-End Entrance Animations (Spring-like) */
+        .reveal-up { opacity: 0; transform: translateY(80px) scale(0.95); filter: blur(5px); transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal-up.is-visible { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+        
+        .reveal-scale { opacity: 0; transform: scale(0.85) translateY(50px); filter: blur(8px); transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal-scale.is-visible { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+        
+        /* 3D Flip Reveal */
+        .reveal-rotate { opacity: 0; transform: perspective(1000px) rotateX(20deg) translateY(60px); filter: blur(5px); transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal-rotate.is-visible { opacity: 1; transform: perspective(1000px) rotateX(0deg) translateY(0); filter: blur(0); }
+
+        .reveal-left { opacity: 0; transform: translateX(-60px); filter: blur(5px); transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal-left.is-visible { opacity: 1; transform: translateX(0); filter: blur(0); }
+        
+        .reveal-right { opacity: 0; transform: translateX(60px); filter: blur(5px); transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal-right.is-visible { opacity: 1; transform: translateX(0); filter: blur(0); }
+
+        .delay-100 { transition-delay: 100ms; }
+        .delay-200 { transition-delay: 200ms; }
+        .delay-300 { transition-delay: 300ms; }
+        .delay-400 { transition-delay: 400ms; }
+
+        /* Asynchronous Floating animations */
+        .hover-float { transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); animation: floating 6s ease-in-out infinite; }
+        .hover-float:hover { animation-play-state: paused; transform: translateY(-10px) scale(1.05); }
+        .hover-float:nth-child(2) { animation-delay: -2s; }
+        .hover-float:nth-child(3) { animation-delay: -4s; }
+
+        @keyframes floating {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-12px); }
+        }
+
+        /* Nav Links Hover Line */
+        .nav-link{ position:relative; color:var(--text-dim); transition:color .3s ease; cursor:none; background:none; border:none; }
         .nav-link:hover{ color:var(--text); }
-        .nav-link::after{ content:""; position:absolute; left:0; bottom:-6px; height:1px; width:0%; background:var(--gold-bright); transition:width .25s ease; }
+        .nav-link::after{ 
+          content:""; position:absolute; left:0; bottom:-6px; height:1px; width:0%; 
+          background:var(--gold-bright); transition:width .4s cubic-bezier(0.16, 1, 0.3, 1); 
+        }
         .nav-link:hover::after{ width:100%; }
 
-        .btn-gold{ background: linear-gradient(135deg, var(--gold-bright), var(--gold)); color:#1a1408; transition: transform .2s ease, box-shadow .2s ease, filter .2s ease; cursor:pointer; border:none; }
-        .btn-gold:hover{ transform:translateY(-2px); box-shadow:0 12px 28px rgba(212,175,106,0.25); filter:brightness(1.05); }
-        .btn-outline{ border:1px solid var(--border); color:var(--text); transition: all .2s ease; cursor:pointer; background:none; }
-        .btn-outline:hover{ border-color: rgba(212,175,106,0.5); background: rgba(212,175,106,0.06); transform:translateY(-2px); }
-        .btn-edit{ transition: all .2s ease; cursor:pointer; }
-        .btn-edit:hover{ transform:translateY(-2px); }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(212,175,106,0.4); }
 
-        .avatar-box{ cursor:pointer; }
-        .avatar-box .upload-hint{ opacity:0; transition:opacity .2s ease; }
-        .avatar-box:hover .upload-hint{ opacity:1; }
-        .avatar-box:hover .initials{ opacity:0.2; }
-
-        .pulse-dot{ position:relative; }
-        .pulse-dot::before{ content:""; position:absolute; inset:0; border-radius:50%; background:#5FD37A; opacity:0.55; animation: pulse 2s ease-out infinite; }
-        @keyframes pulse{ 0%{ transform:scale(1); opacity:0.55; } 100%{ transform:scale(2.4); opacity:0; } }
-
-        .card{ background: var(--panel); border:1px solid var(--border-soft); transition: background .25s ease, border-color .25s ease, transform .25s ease, box-shadow .25s ease; position:relative; }
-        .card:hover{ background: var(--panel-strong); border-color: rgba(212,175,106,0.25); transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.35); }
-
-        .proj-num{ -webkit-text-stroke: 1px var(--border); color:transparent; }
-        .cert-card::before{ content:""; position:absolute; top:0; left:0; right:0; height:2px; background: linear-gradient(90deg, var(--gold-bright), transparent); }
-        .tag-pill{ border:1px solid var(--border-soft); color:var(--text-dim); transition: all .2s ease; }
-        .tag-pill:hover{ border-color: rgba(212,175,106,0.4); color: var(--gold-bright); }
-
-        .card-controls{ position:absolute; top:12px; right:12px; display:flex; gap:6px; z-index:5; }
-        .icon-btn{ width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:rgba(10,14,20,0.7); border:1px solid var(--border); cursor:pointer; transition:all .15s ease; }
-        .icon-btn:hover{ border-color:var(--gold-bright); }
-        .add-card{ border:1.5px dashed var(--border); display:flex; align-items:center; justify-content:center; flex-direction:column; gap:8px; cursor:pointer; color:var(--text-dim); transition:all .2s ease; min-height:190px; }
-        .add-card:hover{ border-color:var(--gold-bright); color:var(--gold-bright); background:rgba(212,175,106,0.04); }
-
-        ::selection{ background: var(--gold); color:#1a1408; }
-        html{ scroll-behavior:smooth; }
-        [contenteditable]:empty:before{ content: attr(data-placeholder); color: var(--text-faint); }
+        .proj-num{ -webkit-text-stroke: 1px var(--border); color: transparent; transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+        .spotlight-card:hover .proj-num { -webkit-text-stroke: 1px var(--gold-bright); color: rgba(212,175,106,0.1); transform: scale(1.1) translateX(10px); }
+        
+        @keyframes pulse-slow {
+          0%, 100% { opacity: 0.1; transform: scale(0.95); }
+          50% { opacity: 0.3; transform: scale(1.05); }
+        }
       `}</style>
 
-      {/* Toast Notification */}
-      {toastMessage && (
-        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[100] px-4 py-2 rounded-full font-mono text-xs tracking-wider" 
-             style={{ background: "rgba(212,175,106,0.9)", color: "#1a1408", boxShadow: "0 4px 20px rgba(0,0,0,0.3)" }}>
-          {toastMessage}
-        </div>
+      {/* Render the Custom Cursor Component independent of App re-renders */}
+      <CustomCursor />
+
+      <div className="fixed top-0 left-0 h-[2px] bg-gradient-to-r from-[var(--gold)] to-[var(--gold-bright)] z-[100] transition-all duration-150 shadow-[0_0_15px_rgba(212,175,106,0.8)]" style={{ width: `${scrollProgress}%` }} />
+
+      <div className={`fixed top-24 left-1/2 -translate-x-1/2 z-[100] px-5 py-2.5 rounded-full font-mono text-xs tracking-wider border border-[var(--gold)] transition-all duration-500 flex items-center gap-2 ${toastMessage ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8 pointer-events-none'}`} 
+           style={{ background: "rgba(10,14,20,0.9)", color: "var(--gold-bright)", backdropFilter: "blur(10px)", boxShadow: "0 10px 40px rgba(0,0,0,0.5)" }}>
+        <Sparkles size={14} /> {toastMessage}
+      </div>
+
+      <div className="fixed inset-0 pointer-events-none glow-field z-0" />
+      <div className="fixed inset-0 pointer-events-none grain z-0" />
+
+      {}
+      {!loading && showIntro && (
+        <IntroScreen onComplete={() => setShowIntro(false)} />
       )}
 
-      <div className="fixed inset-0 pointer-events-none glow-field" style={{ zIndex: 0 }} />
-      <div className="fixed inset-0 pointer-events-none grain" style={{ zIndex: 0 }} />
-
-      <div className="relative" style={{ zIndex: 1 }}>
+      <div className="relative z-10">
         <header
-          className="nav-shell sticky top-0 z-50"
+          className="nav-shell fixed top-0 w-full z-50 transition-all duration-500"
           style={{
-            background: scrolled ? "rgba(10,14,20,0.75)" : "transparent",
-            backdropFilter: scrolled ? "blur(14px)" : "none",
+            background: scrolled ? "rgba(5,7,10,0.85)" : "transparent",
+            backdropFilter: scrolled ? "blur(20px)" : "none",
             borderBottom: scrolled ? "1px solid var(--border-soft)" : "1px solid transparent",
+            paddingTop: scrolled ? "0" : "1rem"
           }}
         >
-          <nav className="max-w-6xl mx-auto px-8 h-20 flex items-center justify-between">
-            <button onClick={goTo("top")} className="flex items-center gap-2.5" style={{ background: "none", border: "none", cursor: "pointer" }}>
-              <span className="w-8 h-8 rounded-full flex items-center justify-center font-display text-sm overflow-hidden" style={{ border: "1px solid var(--border)", color: "var(--gold-bright)" }}>
-                {photo ? <img src={photo} alt={profile.name} className="w-full h-full object-cover" /> : initials}
+          <nav className="max-w-7xl mx-auto px-6 md:px-12 h-24 flex items-center justify-between">
+            <button onClick={goTo("top")} className="group flex items-center gap-3.5 cursor-none bg-transparent border-none">
+              <span className="w-10 h-10 rounded-full flex items-center justify-center font-display text-base overflow-hidden border border-[var(--border)] text-[var(--gold-bright)] group-hover:border-[var(--gold-bright)] transition-colors relative bg-[var(--panel)]">
+                {initials}
               </span>
-              <span className="font-mono text-xs tracking-widest uppercase" style={{ color: "var(--text-dim)" }}>{profile.name}</span>
+              <div className="flex flex-col items-start">
+                <span className="font-mono text-xs tracking-[0.2em] uppercase text-[var(--text)] group-hover:text-[var(--gold-bright)] transition-colors">{profile.name}</span>
+                <span className="font-mono text-[9px] tracking-widest text-[var(--text-dim)] uppercase mt-0.5">Portfolio</span>
+              </div>
             </button>
             
-            <div className="hidden md:flex gap-10">
+            <div className="hidden md:flex gap-12">
               {NAV.map((n) => (
-                <button key={n.id} onClick={goTo(n.id)} className="nav-link font-mono text-xs tracking-wider uppercase">{n.label}</button>
+                <button key={n.id} onClick={goTo(n.id)} className="nav-link font-mono text-xs tracking-widest uppercase py-2">{n.label}</button>
               ))}
             </div>
             
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               {isAdminUser && (
                 <button
-                  onClick={() => {
-                    if (editMode) saveAllData(true);
-                    else setEditMode(true);
-                  }}
-                  className="btn-edit hidden sm:inline-flex items-center gap-2 font-mono text-xs tracking-wider uppercase px-4 py-2.5 rounded-full"
-                  style={{
-                    border: editMode ? "1px solid var(--gold-bright)" : "1px solid var(--border)",
-                    color: editMode ? "var(--gold-bright)" : "var(--text-dim)",
-                    background: editMode ? "rgba(212,175,106,0.08)" : "transparent",
-                  }}
+                  onClick={() => { if (editMode) saveAllData(true); else setEditMode(true); }}
+                  className="btn-outline hidden sm:inline-flex items-center gap-2 font-mono text-[11px] tracking-widest uppercase px-5 py-3 rounded-full"
+                  style={editMode ? { background: "rgba(212,175,106,0.15)", borderColor: "var(--gold-bright)", color: "var(--gold-bright)" } : {}}
                 >
-                  {editMode ? <Check size={13} /> : <Pencil size={13} />}
+                  {editMode ? <Check size={14} /> : <Pencil size={14} />}
                   {editMode ? "Save & Exit" : "Edit Site"}
                 </button>
               )}
-              <button onClick={goTo("contact")} className="btn-outline hidden sm:inline-flex font-mono text-xs tracking-wider uppercase px-5 py-2.5 rounded-full">
+              <button onClick={goTo("contact")} className="btn-outline hidden sm:inline-flex font-mono text-[11px] tracking-widest uppercase px-6 py-3 rounded-full hover:bg-white/5">
                 Let's talk
               </button>
             </div>
@@ -561,355 +869,404 @@ export default function Portfolio() {
         </header>
 
         {editMode && isAdminUser && (
-          <div className="max-w-6xl mx-auto px-8 pt-4">
-            <div className="font-mono text-[11px] tracking-wide px-4 py-2.5 rounded-lg inline-flex items-center gap-2" style={{ background: "rgba(212,175,106,0.08)", border: "1px solid rgba(212,175,106,0.3)", color: "var(--gold-bright)" }}>
-              <Pencil size={12} /> Edit mode is ON. Changes apply directly to the site for everyone. Don't forget to click "Save & Exit" when done.
+          <div className="max-w-7xl mx-auto px-6 md:px-12 pt-32">
+            <div className="font-mono text-[11px] tracking-wide px-4 py-3 rounded-xl flex items-center gap-3 backdrop-blur-md" style={{ background: "rgba(212,175,106,0.1)", border: "1px solid rgba(212,175,106,0.3)", color: "var(--gold-bright)" }}>
+              <div className="w-2 h-2 rounded-full bg-[var(--gold-bright)] animate-pulse"></div>
+              Live Edit Mode active. Changes are public upon saving.
             </div>
           </div>
         )}
 
-        <main id="top" className="max-w-6xl mx-auto px-8">
-          <section className="pt-20 pb-24 grid grid-cols-1 md:grid-cols-[1.2fr_0.8fr] gap-16 items-center">
-            <div>
-              <p className="font-mono text-xs tracking-widest uppercase mb-4" style={{ color: "var(--gold-bright)" }}>
-                <Editable value={profile.role} onChange={(v) => setProfile((p) => ({ ...p, role: v }))} /> — <Editable value={profile.focus} onChange={(v) => setProfile((p) => ({ ...p, focus: v }))} />
-              </p>
+        <main id="top" className="max-w-7xl mx-auto px-6 md:px-12">
+          {}
+          <section className="min-h-[90vh] pt-32 pb-24 flex flex-col justify-center items-center text-center relative">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] max-w-[800px] max-h-[800px] bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[var(--gold-bright)]/10 to-transparent blur-3xl rounded-full pointer-events-none"></div>
 
-              <h1 className="font-display leading-[1.05]" style={{ fontSize: "clamp(38px,5.2vw,68px)", fontWeight: 500 }}>
-                <Editable value={profile.headline} onChange={(v) => setProfile((p) => ({ ...p, headline: v }))} />
-                <br />
-                <Editable value={profile.headlineAccent} onChange={(v) => setProfile((p) => ({ ...p, headlineAccent: v }))} style={{ color: "var(--gold-bright)" }} />
+            <div className="max-w-4xl relative z-10 flex flex-col items-center">
+              <div className="reveal-up">
+                <p className="font-mono text-[11px] tracking-[0.3em] uppercase mb-8 flex items-center justify-center gap-3 text-[var(--gold-bright)]">
+                  <span className="w-12 h-[1px] bg-[var(--gold-bright)] opacity-50"></span>
+                  <Editable value={profile.role} onChange={(v) => setProfile((p) => ({ ...p, role: v }))} /> 
+                  <span className="opacity-50">/</span> 
+                  <Editable value={profile.focus} onChange={(v) => setProfile((p) => ({ ...p, focus: v }))} />
+                  <span className="w-12 h-[1px] bg-[var(--gold-bright)] opacity-50"></span>
+                </p>
+              </div>
+
+              <h1 className="font-display leading-[1.05] reveal-up delay-100" style={{ fontSize: "clamp(52px, 8vw, 110px)", fontWeight: 400, letterSpacing: "-0.02em" }}>
+                <Editable value={profile.headline} onChange={(v) => setProfile((p) => ({ ...p, headline: v }))} className="block" />
+                <span className="inline-block relative mt-2">
+                  <Editable value={profile.headlineAccent} onChange={(v) => setProfile((p) => ({ ...p, headlineAccent: v }))} className="text-gradient italic" />
+                  <svg className="absolute w-full h-[0.4em] -bottom-3 left-0 text-[var(--gold-bright)] opacity-40 pointer-events-none" viewBox="0 0 100 10" preserveAspectRatio="none">
+                    <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="2" fill="none" />
+                  </svg>
+                </span>
               </h1>
 
-              <p className="mt-7 max-w-lg text-[16px] leading-relaxed" style={{ color: "var(--text-dim)" }}>
+              <p className="mt-12 max-w-2xl text-[18px] md:text-[20px] leading-[1.8] font-light reveal-up delay-200" style={{ color: "var(--text-dim)" }}>
                 <Editable tag="span" value={profile.intro} onChange={(v) => setProfile((p) => ({ ...p, intro: v }))} />
               </p>
 
-              <div className="flex gap-4 mt-10 flex-wrap">
-                <button onClick={goTo("work")} className="btn-gold font-mono text-xs tracking-wider uppercase px-7 py-4 rounded-full font-semibold inline-flex items-center gap-2">
-                  View the work <ArrowUpRight size={14} />
+              <div className="flex gap-6 mt-14 flex-wrap justify-center reveal-up delay-300">
+                <button onClick={goTo("work")} className="btn-gold font-mono text-[11px] tracking-widest uppercase px-10 py-5 rounded-full font-semibold flex items-center gap-3">
+                  View the work <ArrowUpRight size={15} />
                 </button>
-                <button onClick={goTo("contact")} className="btn-outline font-mono text-xs tracking-wider uppercase px-7 py-4 rounded-full">
-                  Get in touch
+                <button onClick={goTo("contact")} className="btn-outline font-mono text-[11px] tracking-widest uppercase px-10 py-5 rounded-full flex items-center gap-3 bg-white/5">
+                  Let's Collaborate
                 </button>
               </div>
 
-              <div data-reveal="stats" className={`flex gap-10 mt-16 flex-wrap ${reveal("stats")}`}>
+              <div className="flex gap-16 lg:gap-24 mt-24 flex-wrap justify-center reveal-up delay-400">
                 {profile.stats.map((s, i) => (
-                  <div key={i} className="flex items-center gap-10">
-                    <div>
-                      <div className="font-display" style={{ fontSize: 30, color: "var(--gold-bright)" }}>
+                  <div key={i} className="flex items-center gap-16 lg:gap-24 group relative hover-float">
+                    <div className="relative z-10 cursor-none">
+                      <div className="font-display text-[48px] md:text-[56px] leading-none mb-4 transition-colors duration-300 group-hover:text-[var(--text)]" style={{ color: "var(--gold-bright)" }}>
                         <Editable value={s.v} onChange={(v) => setProfile((p) => ({ ...p, stats: p.stats.map((st, idx) => (idx === i ? { ...st, v } : st)) }))} />
                       </div>
-                      <div className="font-mono text-[10px] uppercase tracking-wider mt-1" style={{ color: "var(--text-faint)" }}>
+                      <div className="font-mono text-[11px] uppercase tracking-[0.2em] opacity-60">
                         <Editable value={s.k} onChange={(v) => setProfile((p) => ({ ...p, stats: p.stats.map((st, idx) => (idx === i ? { ...st, k: v } : st)) }))} />
                       </div>
                     </div>
-                    {i < profile.stats.length - 1 && <div style={{ width: 1, height: 32, background: "var(--border)" }} />}
+                    {i < profile.stats.length - 1 && <div className="hidden sm:block w-[1px] h-16 bg-gradient-to-b from-transparent via-[var(--border)] to-transparent" />}
                   </div>
                 ))}
               </div>
             </div>
-
-            {/* PROFILE PHOTO */}
-            <div data-reveal="photo" className={`flex justify-center ${reveal("photo")}`}>
-              <div className="relative">
-                <label
-                  htmlFor="photoInput"
-                  className="avatar-box relative flex items-center justify-center rounded-full overflow-hidden"
-                  style={{ width: 260, height: 260, border: "1px solid var(--border)", background: "linear-gradient(155deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01))" }}
-                >
-                  {photo ? (
-                    <img src={photo} alt={profile.name} className="w-full h-full object-cover" />
-                  ) : (
-                    <span className="initials font-display" style={{ fontSize: 68, color: "var(--gold-bright)", opacity: 0.85, transition: "opacity .2s ease" }}>{initials}</span>
-                  )}
-                  
-                  {editMode && (
-                    <div className="upload-hint absolute inset-0 flex flex-col items-center justify-center gap-2 rounded-full" style={{ background: "rgba(10,14,20,0.6)" }}>
-                      <Upload size={22} color="var(--gold-bright)" />
-                      <span className="font-mono text-[10px] tracking-wider uppercase" style={{ color: "var(--gold-bright)" }}>Change photo</span>
-                    </div>
-                  )}
-                </label>
-                {editMode && <input id="photoInput" type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} />}
-              </div>
-            </div>
           </section>
 
-          <section id="work" className="py-24" style={{ borderTop: "1px solid var(--border-soft)" }}>
-            <SectionHead eyebrow="Selected Work" title="Things I've shipped" count={`${projects.length} total`} />
-            <div className="grid grid-cols-1 gap-5">
+          {}
+          <section id="work" className="py-32 relative">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-[1px] bg-gradient-to-r from-transparent via-[var(--border-soft)] to-transparent"></div>
+            
+            <SectionHead eyebrow="Selected Work" title="Featured Projects" count={`${projects.length} artifacts`} />
+            
+            <div className="grid grid-cols-1 gap-12 md:gap-20 mt-20">
               {projects.map((p, i) => (
-                <div key={i} data-reveal={`proj-${i}`} className={`card rounded-2xl p-8 md:p-10 ${reveal(`proj-${i}`)}`}>
-                  {editMode && (
-                    <div className="card-controls">
-                      <span className="icon-btn" onClick={() => setProjects((prev) => prev.filter((_, idx) => idx !== i))}>
-                        <Trash2 size={13} color="#E88" />
-                      </span>
-                    </div>
-                  )}
-
-                  {/* PREVIEW IMAGE */}
-                  {p.image && (
-                    <div className="mb-7 rounded-xl overflow-hidden" style={{ border: "1px solid var(--border-soft)" }}>
-                      <img src={p.image} alt={p.title} className="w-full h-auto object-cover max-h-80" />
-                    </div>
-                  )}
-                  {editMode && (
-                    <div className="mb-7 flex flex-wrap gap-3">
-                      <label className="border border-dashed rounded-lg px-4 py-3 flex items-center gap-2 cursor-pointer hover:border-[var(--gold-bright)] transition-colors" style={{ borderColor: "var(--border)" }}>
-                        <ImageIcon size={15} color="var(--text-dim)" />
-                        <span className="font-mono text-[10px] uppercase tracking-wider" style={{ color: "var(--text-dim)" }}>
-                          {p.image ? "Replace preview image" : "Add preview image"}
+                <div 
+                  key={i} 
+                  className="spotlight-card group reveal-rotate"
+                  style={{ transitionDelay: `${i * 150}ms` }}
+                  onMouseMove={handleCardMouseMove}
+                  onMouseLeave={handleCardMouseLeave}
+                >
+                  <div className="spotlight-border"></div>
+                  <div className="spotlight-content p-8 md:p-12">
+                    
+                    {editMode && (
+                      <div className="absolute top-6 right-6 flex gap-2 z-20">
+                        <span className="w-10 h-10 rounded-full flex items-center justify-center bg-red-500/10 border border-red-500/20 text-red-400 cursor-none hover:bg-red-500/20 hover:scale-110 transition-all" onClick={() => setProjects((prev) => prev.filter((_, idx) => idx !== i))}>
+                          <Trash2 size={16} />
                         </span>
-                        <input type="file" accept="image/*" className="hidden" onChange={(e) => handleProjectImageChange(i, e)} />
-                      </label>
-                      {p.image && (
-                        <button
-                          onClick={() => updateProject(i, { image: null })}
-                          className="font-mono text-[10px] uppercase tracking-wider px-3 py-3 rounded-lg"
-                          style={{ border: "1px dashed var(--border)", color: "#E88" }}
-                        >
-                          Remove image
-                        </button>
-                      )}
-                    </div>
-                  )}
+                      </div>
+                    )}
 
-                  <div className="grid grid-cols-1 md:grid-cols-[100px_1fr_auto] gap-6 items-start">
-                    <div className="font-display proj-num" style={{ fontSize: 56, lineHeight: 1 }}>{String(i + 1).padStart(2, "0")}</div>
-                    <div>
-                      <div className="flex items-baseline gap-3 flex-wrap">
-                        <h3 className="font-display text-2xl" style={{ fontWeight: 500 }}>
+                    <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-12 lg:gap-16 items-center">
+                      <div className="order-2 lg:order-1 flex flex-col h-full justify-center">
+                        <div className="font-display proj-num text-[80px] leading-none mb-6 opacity-30 select-none">
+                          {String(i + 1).padStart(2, "0")}
+                        </div>
+                        
+                        <h3 className="font-display text-3xl md:text-4xl font-light mb-4 text-[var(--text)] group-hover:text-[var(--gold-bright)] transition-colors">
                           <Editable value={p.title} onChange={(v) => updateProject(i, { title: v })} />
                         </h3>
-                        <span className="font-mono text-xs uppercase tracking-wide" style={{ color: "var(--text-faint)" }}>
+                        
+                        <div className="font-mono text-[11px] uppercase tracking-widest text-[var(--text-faint)] mb-8 flex items-center gap-4">
+                          <span className="w-6 h-[1px] bg-[var(--border)]"></span>
                           <Editable value={p.subtitle} onChange={(v) => updateProject(i, { subtitle: v })} />
+                        </div>
+                        
+                        <p className="text-[15px] leading-[1.8] text-[var(--text-dim)] font-light mb-10">
+                          <Editable tag="span" value={p.desc} onChange={(v) => updateProject(i, { desc: v })} placeholder="Describe the project challenge, solution, and impact..." />
+                        </p>
+                        
+                        <div className="mb-10">
+                          <TagEditor items={p.stack} onChange={(items) => updateProject(i, { stack: items })} />
+                        </div>
+
+                        <div className="flex flex-wrap gap-4 mt-auto">
+                          {editMode ? (
+                            <div className="flex flex-col gap-3 w-full">
+                              <InputRow icon={<ExternalLink size={14}/>} value={p.live} onChange={(v) => updateProject(i, { live: v })} placeholder="Live URL" color="var(--gold-bright)" />
+                              <InputRow icon={<Github size={14}/>} value={p.source} onChange={(v) => updateProject(i, { source: v })} placeholder="Source URL" color="var(--text-dim)" />
+                            </div>
+                          ) : (
+                            <>
+                              {p.live !== "#" && (
+                                <a href={p.live} target="_blank" rel="noopener noreferrer" className="font-mono text-[11px] uppercase tracking-widest flex items-center gap-2 text-[var(--gold-bright)] hover:opacity-70 transition-opacity cursor-none">
+                                  <ExternalLink size={14} /> Live Site
+                                 </a>
+                              )}
+                              {p.source !== "#" && (
+                                <a href={p.source} target="_blank" rel="noopener noreferrer" className="font-mono text-[11px] uppercase tracking-widest flex items-center gap-2 text-[var(--text-dim)] hover:text-[var(--text)] transition-colors cursor-none">
+                                  <Github size={14} /> Source
+                                </a>
+                              )}
+                            </>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="order-1 lg:order-2 relative aspect-[4/3] lg:aspect-auto lg:h-[450px] w-full rounded-2xl overflow-hidden border border-[var(--border-soft)] bg-black/20 group/img shrink-0 shadow-2xl">
+                        {p.image ? (
+                          <img src={p.image} alt={p.title} className="w-full h-full object-cover opacity-80 group-hover/img:opacity-100 group-hover/img:scale-105 transition-all duration-700 ease-out" />
+                        ) : (
+                          <div className="w-full h-full flex flex-col items-center justify-center text-[var(--border)]">
+                            <Code2 size={64} strokeWidth={1} />
+                            <span className="font-mono text-xs uppercase tracking-widest mt-4 opacity-50">Project Visual</span>
+                          </div>
+                        )}
+                        
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#05070A] via-transparent to-transparent opacity-60 pointer-events-none"></div>
+
+                        {editMode && (
+                          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm opacity-0 hover:opacity-100 transition-opacity p-6">
+                            <label className="btn-outline px-6 py-3 rounded-full flex items-center gap-3 cursor-none">
+                              <ImageIcon size={16} /> 
+                              <span className="font-mono text-xs tracking-widest uppercase">Upload Image</span>
+                              <input type="file" accept="image/*" className="hidden" onChange={(e) => handleProjectImageChange(i, e)} />
+                            </label>
+                            {p.image && (
+                              <button onClick={() => updateProject(i, { image: null })} className="mt-4 font-mono text-[10px] uppercase text-red-400 tracking-widest hover:text-red-300">
+                                Remove Image
+                              </button>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              
+              {editMode && (
+                <div className="spotlight-card border-dashed border-2 hover:bg-white/[0.02] cursor-none min-h-[300px] flex flex-col items-center justify-center text-[var(--text-dim)] hover:text-[var(--gold-bright)] hover:border-[var(--gold-bright)] transition-all" onClick={() => setProjects((prev) => [...prev, emptyProject()])} onMouseMove={handleCardMouseMove} onMouseLeave={handleCardMouseLeave}>
+                  <div className="spotlight-border"></div>
+                  <div className="spotlight-content flex flex-col items-center gap-4">
+                    <div className="w-16 h-16 rounded-full border border-current flex items-center justify-center">
+                      <Plus size={24} />
+                    </div>
+                    <span className="font-mono text-sm uppercase tracking-[0.2em]">Add New Project</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          </section>
+
+          {}
+          <section id="certificates" className="py-32 relative">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-[1px] bg-gradient-to-r from-transparent via-[var(--border-soft)] to-transparent"></div>
+            
+            <SectionHead eyebrow="Credentials" title="Certifications" count={`${certificates.length} verified`} />
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-16">
+              {certificates.map((c, i) => (
+                <div key={i} className="spotlight-card group reveal-scale flex flex-col h-full min-h-[280px]" style={{ transitionDelay: `${i * 100}ms` }} onMouseMove={handleCardMouseMove} onMouseLeave={handleCardMouseLeave}>
+                  <div className="spotlight-border"></div>
+                  <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[var(--gold-bright)] to-transparent opacity-50"></div>
+                  
+                  <div className="spotlight-content p-8 flex flex-col h-full">
+                    {editMode && (
+                      <div className="absolute top-4 right-4 z-20">
+                        <span className="w-8 h-8 rounded-full flex items-center justify-center bg-red-500/10 text-red-400 cursor-none hover:bg-red-500/20 transition-all" onClick={() => setCertificates((prev) => prev.filter((_, idx) => idx !== i))}>
+                          <Trash2 size={14} />
                         </span>
                       </div>
-                      <p className="mt-3 text-[15px] leading-relaxed max-w-xl" style={{ color: "var(--text-dim)" }}>
-                        <Editable tag="span" value={p.desc} onChange={(v) => updateProject(i, { desc: v })} placeholder="Add a project description here..." />
-                      </p>
-                      <div className="mt-5">
-                        <TagEditor items={p.stack} onChange={(items) => updateProject(i, { stack: items })} />
-                      </div>
-                    </div>
-                    <div className="flex md:flex-col gap-4 md:gap-3 md:items-end" style={{ minWidth: editMode ? 200 : "auto" }}>
-                      {editMode ? (
-                        <>
-                          <div className="flex items-center gap-1.5 w-full">
-                            <ArrowUpRight size={12} color="var(--gold-bright)" />
-                            <input
-                              value={p.live}
-                              onChange={(e) => updateProject(i, { live: e.target.value })}
-                              placeholder="Website (Live) URL"
-                              className="font-mono text-[11px] px-2 py-1.5 rounded-md bg-transparent w-full"
-                              style={{ border: "1px dashed var(--border)", color: "var(--gold-bright)", outline: "none" }}
-                            />
-                          </div>
-                          <div className="flex items-center gap-1.5 w-full">
-                            <Github size={12} color="var(--text-dim)" />
-                            <input
-                              value={p.source}
-                              onChange={(e) => updateProject(i, { source: e.target.value })}
-                              placeholder="GitHub repo URL"
-                              className="font-mono text-[11px] px-2 py-1.5 rounded-md bg-transparent w-full"
-                              style={{ border: "1px dashed var(--border)", color: "var(--text-dim)", outline: "none" }}
-                            />
-                          </div>
-                          <div className="flex items-center gap-1.5 w-full">
-                            <LinkedinIcon size={12} color="var(--text-dim)" />
-                            <input
-                              value={p.linkedin || ""}
-                              onChange={(e) => updateProject(i, { linkedin: e.target.value })}
-                              placeholder="LinkedIn post URL (optional)"
-                              className="font-mono text-[11px] px-2 py-1.5 rounded-md bg-transparent w-full"
-                              style={{ border: "1px dashed var(--border)", color: "var(--text-dim)", outline: "none" }}
-                            />
-                          </div>
-                          <div className="flex items-center gap-1.5 w-full">
-                            <PlayCircle size={12} color="var(--text-dim)" />
-                            <input
-                              value={p.video || ""}
-                              onChange={(e) => updateProject(i, { video: e.target.value })}
-                              placeholder="Demo video URL (optional)"
-                              className="font-mono text-[11px] px-2 py-1.5 rounded-md bg-transparent w-full"
-                              style={{ border: "1px dashed var(--border)", color: "var(--text-dim)", outline: "none" }}
-                            />
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          <a href={p.live} target="_blank" rel="noopener noreferrer" className="font-mono text-xs uppercase tracking-wide flex items-center gap-1.5" style={{ color: "var(--gold-bright)" }}>
-                            <ArrowUpRight size={13} /> Website
-                          </a>
-                          <a href={p.source} target="_blank" rel="noopener noreferrer" className="font-mono text-xs uppercase tracking-wide flex items-center gap-1.5" style={{ color: "var(--text-dim)" }}>
-                            <Github size={13} /> GitHub
-                          </a>
-                          {p.linkedin && p.linkedin !== "#" && (
-                            <a href={p.linkedin} target="_blank" rel="noopener noreferrer" className="font-mono text-xs uppercase tracking-wide flex items-center gap-1.5" style={{ color: "var(--text-dim)" }}>
-                              <LinkedinIcon size={13} /> LinkedIn
-                            </a>
-                          )}
-                          {p.video && (
-                            <a href={p.video} target="_blank" rel="noopener noreferrer" className="font-mono text-xs uppercase tracking-wide flex items-center gap-1.5" style={{ color: "var(--text-dim)" }}>
-                              <PlayCircle size={13} /> Watch Demo
-                            </a>
-                          )}
-                        </>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-              {editMode && (
-                <div className="add-card rounded-2xl" onClick={() => setProjects((prev) => [...prev, emptyProject()])}>
-                  <Plus size={20} />
-                  <span className="font-mono text-xs uppercase tracking-wide">Add project</span>
-                </div>
-              )}
-            </div>
-          </section>
+                    )}
 
-          <section id="certificates" className="py-24" style={{ borderTop: "1px solid var(--border-soft)" }}>
-            <SectionHead eyebrow="Credentials" title="Certificates on record" count={`${certificates.length} total`} />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {certificates.map((c, i) => (
-                <div key={i} data-reveal={`cert-${i}`} className={`card cert-card rounded-2xl p-7 flex flex-col justify-between min-h-[190px] ${reveal(`cert-${i}`)}`}>
-                  {editMode && (
-                    <div className="card-controls">
-                      <span className="icon-btn" onClick={() => setCertificates((prev) => prev.filter((_, idx) => idx !== i))}>
-                        <Trash2 size={13} color="#E88" />
+                    <div className="flex items-center justify-between mb-8">
+                      <span className="font-mono text-[10px] tracking-[0.2em] uppercase px-3 py-1.5 rounded-full border border-[var(--gold-bright)]/30 text-[var(--gold-bright)] bg-[var(--gold-bright)]/5">
+                        <Editable value={c.seal} onChange={(v) => updateCert(i, { seal: v })} />
                       </span>
+                      <BadgeCheck size={24} className="text-[var(--border)] group-hover:text-[var(--gold-bright)] transition-colors duration-500" strokeWidth={1.2} />
                     </div>
-                  )}
-
-                  <div className="flex items-center justify-between pr-8">
-                    <span className="font-mono text-[10px] tracking-wider uppercase px-2.5 py-1 rounded-full" style={{ border: "1px solid var(--border)", color: "var(--gold-bright)" }}>
-                      <Editable value={c.seal} onChange={(v) => updateCert(i, { seal: v })} />
-                    </span>
-                    <BadgeCheck size={18} color="var(--gold-bright)" strokeWidth={1.6} />
-                  </div>
-                  
-                  <div className="mt-5">
-                    <h4 className="font-display text-[18px] leading-snug" style={{ fontWeight: 500 }}>
+                    
+                    <h4 className="font-display text-xl leading-snug font-light mb-3 group-hover:text-[var(--gold-bright)] transition-colors">
                       <Editable value={c.title} onChange={(v) => updateCert(i, { title: v })} />
                     </h4>
-                    <p className="font-mono text-xs mt-2" style={{ color: "var(--text-faint)" }}>
+                    
+                    <div className="font-mono text-[11px] uppercase tracking-wider text-[var(--text-dim)] mb-5 flex items-center gap-2">
                       <Editable value={c.issuer} onChange={(v) => updateCert(i, { issuer: v })} />
-                    </p>
-                    <p className="text-[13px] mt-4 leading-relaxed" style={{ color: "var(--text-dim)" }}>
-                       <Editable tag="span" value={c.desc} onChange={(v) => updateCert(i, { desc: v })} placeholder="Add certificate description..." />
-                    </p>
-                  </div>
-
-                  {c.image && (
-                    <div className="mt-5 rounded-lg overflow-hidden border border-[var(--border-soft)]">
-                       <img src={c.image} alt={c.title} className="w-full h-auto object-cover max-h-48" />
                     </div>
-                  )}
+                    
+                    <p className="text-[13px] leading-[1.7] text-[var(--text-faint)] font-light mb-6 flex-grow">
+                      <Editable tag="span" value={c.desc} onChange={(v) => updateCert(i, { desc: v })} placeholder="Add certificate description..." />
+                    </p>
 
-                  {editMode && (
-                    <label className="mt-5 border border-dashed border-[var(--border)] rounded-lg p-3 flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-[var(--gold-bright)] transition-colors">
-                       <ImageIcon size={16} color="var(--text-dim)" />
-                       <span className="font-mono text-[10px] uppercase tracking-wider text-[var(--text-dim)]">Upload Image</span>
-                       <input type="file" accept="image/*" className="hidden" onChange={(e) => handleCertImageChange(i, e)} />
-                    </label>
-                  )}
+                    {c.image && (
+                      <div className="mb-6 rounded-xl overflow-hidden border border-[var(--border-soft)] group/img relative h-40 bg-black/30 w-full shrink-0">
+                        <img src={c.image} alt={c.title} className="w-full h-full object-cover opacity-70 group-hover/img:opacity-100 group-hover/img:scale-105 transition-all duration-500" />
+                      </div>
+                    )}
 
-                  <div className="flex justify-between items-center mt-5 pt-4" style={{ borderTop: "1px solid var(--border-soft)" }}>
-                    <span className="font-mono text-[11px]" style={{ color: "var(--text-faint)" }}>
-                      <Editable value={c.date} onChange={(v) => updateCert(i, { date: v })} />
-                    </span>
-                    <span className="font-mono text-[10px] uppercase tracking-wide" style={{ color: "var(--gold-bright)" }}>Verify →</span>
+                    {editMode && (
+                      <label className="mb-6 border border-dashed border-[var(--border)] rounded-xl p-4 flex flex-col items-center justify-center gap-2 cursor-none hover:border-[var(--gold-bright)] hover:bg-[var(--gold-bright)]/5 transition-colors">
+                        <ImageIcon size={18} color="var(--text-dim)" />
+                        <span className="font-mono text-[10px] uppercase tracking-widest text-[var(--text-dim)]">Attach Image</span>
+                        <input type="file" accept="image/*" className="hidden" onChange={(e) => handleCertImageChange(i, e)} />
+                      </label>
+                    )}
+
+                    <div className="flex justify-between items-center mt-auto pt-6 border-t border-[var(--border-soft)]">
+                      <span className="font-mono text-[11px] tracking-widest text-[var(--text-faint)]">
+                        <Editable value={c.date} onChange={(v) => updateCert(i, { date: v })} />
+                      </span>
+                      <span className="font-mono text-[10px] uppercase tracking-widest text-[var(--text-dim)] group-hover:text-[var(--gold-bright)] transition-colors flex items-center gap-2">
+                        View <ArrowUpRight size={12} className="group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform" />
+                      </span>
+                    </div>
                   </div>
                 </div>
               ))}
+              
               {editMode && (
-                <div className="add-card rounded-2xl" onClick={() => setCertificates((prev) => [...prev, emptyCert()])}>
-                  <Plus size={20} />
-                  <span className="font-mono text-xs uppercase tracking-wide">Add certificate</span>
+                <div className="spotlight-card border-dashed border-2 hover:bg-white/[0.02] cursor-none min-h-[280px] flex flex-col items-center justify-center text-[var(--text-dim)] hover:text-[var(--gold-bright)] hover:border-[var(--gold-bright)] transition-all" onClick={() => setCertificates((prev) => [...prev, emptyCert()])} onMouseMove={handleCardMouseMove} onMouseLeave={handleCardMouseLeave}>
+                  <div className="spotlight-border"></div>
+                  <div className="spotlight-content flex flex-col items-center gap-4">
+                    <Plus size={24} />
+                    <span className="font-mono text-[11px] uppercase tracking-[0.2em]">Add Credential</span>
+                  </div>
                 </div>
               )}
             </div>
           </section>
 
-          <section id="skills" className="py-24" style={{ borderTop: "1px solid var(--border-soft)" }}>
-            <SectionHead eyebrow="Toolkit" title="What I work with" />
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-              {skillGroups.map((group, gi) => (
-                <div key={gi}>
-                  <div className="font-mono text-[11px] uppercase tracking-widest mb-4 flex items-center gap-2" style={{ color: "var(--gold-bright)" }}>
-                    <Sparkles size={12} />
-                    <Editable value={group.label} onChange={(v) => setSkillGroups((prev) => prev.map((g, idx) => (idx === gi ? { ...g, label: v } : g)))} />
-                  </div>
-                  <TagEditor items={group.items} onChange={(items) => setSkillGroups((prev) => prev.map((g, idx) => (idx === gi ? { ...g, items } : g)))} />
-                </div>
-              ))}
-            </div>
-          </section>
+          {}
+          <section id="activity" className="py-32 relative">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-[1px] bg-gradient-to-r from-transparent via-[var(--border-soft)] to-transparent"></div>
+            
+            <SectionHead eyebrow="Timeline" title="Activity & Milestones" count={`${activityLogs.length} updates`} />
+            
+            <div className="mt-20 relative before:absolute before:inset-0 before:ml-4 md:before:ml-6 before:-translate-x-px before:h-full before:w-[2px] before:bg-gradient-to-b before:from-[var(--gold-bright)] before:via-[var(--border)] before:to-transparent">
+              <div className="space-y-12">
+                {activityLogs.map((log, i) => (
+                  <div key={i} className="relative pl-12 md:pl-20 reveal-right group" style={{ transitionDelay: `${i * 100}ms` }}>
+                    <div className="absolute left-[7px] md:left-[15px] top-1.5 w-4 h-4 rounded-full bg-[var(--bg)] border-2 border-[var(--gold-bright)] shadow-[0_0_10px_rgba(212,175,106,0.5)] group-hover:bg-[var(--gold-bright)] group-hover:scale-125 transition-all duration-300"></div>
+                    
+                    {editMode && (
+                      <div className="absolute top-0 right-0 z-20">
+                        <span className="w-8 h-8 rounded-full flex items-center justify-center bg-red-500/10 text-red-400 cursor-none hover:bg-red-500/20 transition-all" onClick={() => setActivityLogs((prev) => prev.filter((_, idx) => idx !== i))}>
+                          <Trash2 size={14} />
+                        </span>
+                      </div>
+                    )}
 
-          <footer id="contact" className="py-24" style={{ borderTop: "1px solid var(--border-soft)" }}>
-            <div className="card rounded-3xl px-8 py-16 md:px-16 text-center" style={{ background: "radial-gradient(600px circle at 50% -20%, rgba(212,175,106,0.1), transparent 60%), var(--panel)" }}>
-              <p className="font-mono text-xs tracking-widest uppercase mb-5" style={{ color: "var(--gold-bright)" }}>Contact</p>
-              <h2 className="font-display leading-tight max-w-2xl mx-auto" style={{ fontSize: "clamp(30px,4.5vw,52px)", fontWeight: 500 }}>
-                Have something to build? <span style={{ color: "var(--gold-bright)" }}>Let's talk.</span>
-              </h2>
-              <div className="flex gap-4 mt-10 flex-wrap justify-center">
-                <a href={`mailto:${profile.email}`} className="btn-gold font-mono text-xs tracking-wider uppercase px-7 py-4 rounded-full font-semibold inline-flex items-center gap-2">
-                  <Mail size={14} /> <Editable value={profile.email} onChange={(v) => setProfile((p) => ({ ...p, email: v }))} />
-                </a>
-                <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className="btn-outline font-mono text-xs tracking-wider uppercase px-7 py-4 rounded-full inline-flex items-center gap-2">
-                  <LinkedinIcon size={14} /> LinkedIn
-                </a>
-                <a href={profile.github} target="_blank" rel="noopener noreferrer" className="btn-outline font-mono text-xs tracking-wider uppercase px-7 py-4 rounded-full inline-flex items-center gap-2">
-                  <Github size={14} /> GitHub
-                </a>
+                    <div className="spotlight-card p-6 md:p-8" onMouseMove={handleCardMouseMove} onMouseLeave={handleCardMouseLeave}>
+                      <div className="spotlight-border"></div>
+                      <div className="spotlight-content">
+                        <div className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-widest text-[var(--gold-bright)] mb-3">
+                          <Calendar size={14} />
+                          <Editable value={log.date} onChange={(v) => updateLog(i, { date: v })} placeholder="e.g. Aug 2026" />
+                        </div>
+                        <h4 className="font-display text-xl md:text-2xl mb-3 text-[var(--text)] group-hover:text-[var(--gold-bright)] transition-colors">
+                          <Editable value={log.title} onChange={(v) => updateLog(i, { title: v })} placeholder="Milestone Title" />
+                        </h4>
+                        <p className="text-[14px] leading-[1.8] text-[var(--text-dim)] font-light">
+                          <Editable tag="span" value={log.desc} onChange={(v) => updateLog(i, { desc: v })} placeholder="Describe this milestone or activity..." />
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
 
               {editMode && (
-                <div className="mt-8 max-w-md mx-auto flex flex-col gap-3">
-                  <div className="flex items-center gap-2">
-                    <LinkedinIcon size={13} />
-                    <input
-                      value={profile.linkedin}
-                      onChange={(e) => setProfile((p) => ({ ...p, linkedin: e.target.value }))}
-                      placeholder="LinkedIn profile URL"
-                      className="font-mono text-[11px] px-3 py-2 rounded-md bg-transparent w-full"
-                      style={{ border: "1px dashed var(--border)", color: "var(--text)", outline: "none" }}
-                    />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Github size={13} />
-                    <input
-                      value={profile.github}
-                      onChange={(e) => setProfile((p) => ({ ...p, github: e.target.value }))}
-                      placeholder="GitHub profile URL"
-                      className="font-mono text-[11px] px-3 py-2 rounded-md bg-transparent w-full"
-                      style={{ border: "1px dashed var(--border)", color: "var(--text)", outline: "none" }}
-                    />
+                <div className="relative pl-12 md:pl-20 mt-12">
+                  <div className="absolute left-[7px] md:left-[15px] top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-[var(--bg)] border-2 border-[var(--border-soft)]"></div>
+                  <div className="spotlight-card border-dashed border-2 hover:bg-white/[0.02] cursor-none py-6 flex flex-col items-center justify-center text-[var(--text-dim)] hover:text-[var(--gold-bright)] hover:border-[var(--gold-bright)] transition-all" onClick={() => setActivityLogs((prev) => [...prev, emptyLog()])} onMouseMove={handleCardMouseMove} onMouseLeave={handleCardMouseLeave}>
+                    <div className="spotlight-border"></div>
+                    <div className="spotlight-content flex items-center gap-3">
+                      <Plus size={18} />
+                      <span className="font-mono text-[11px] uppercase tracking-[0.2em]">Add Log Entry</span>
+                    </div>
                   </div>
                 </div>
               )}
             </div>
+          </section>
 
-            <div className="flex justify-between items-center flex-wrap gap-4 mt-14 font-mono text-[11px]" style={{ color: "var(--text-faint)" }}>
-              <span>© 2026 {profile.name}. Crafted with care.</span>
+          {}
+          <section id="skills" className="py-32 relative">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-[1px] bg-gradient-to-r from-transparent via-[var(--border-soft)] to-transparent"></div>
+            
+            <SectionHead eyebrow="Toolkit" title="Capabilities & Stack" />
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 mt-16 reveal-up">
+              {skillGroups.map((group, gi) => (
+                <div key={gi} className="relative pl-6 border-l border-[var(--border-soft)] hover:border-[var(--gold-bright)] transition-colors duration-500 reveal-scale" style={{ transitionDelay: `${gi * 150}ms` }}>
+                  <div className="absolute top-0 -left-[5px] w-[9px] h-[9px] rounded-full bg-[var(--bg)] border-2 border-[var(--border-soft)]"></div>
+                  <div className="absolute top-0 -left-[5px] w-[9px] h-[9px] rounded-full bg-[var(--gold-bright)] shadow-[0_0_10px_var(--gold-bright)] opacity-0 hover:opacity-100 transition-opacity duration-500"></div>
+                  
+                  <h4 className="font-mono text-[11px] uppercase tracking-[0.2em] mb-6 flex items-center gap-3 text-[var(--gold-bright)]">
+                    <Sparkles size={14} className="opacity-70" />
+                    <Editable value={group.label} onChange={(v) => setSkillGroups((prev) => prev.map((g, idx) => (idx === gi ? { ...g, label: v } : g)))} />
+                  </h4>
+                  <div className="pt-2">
+                    <TagEditor items={group.items} onChange={(items) => setSkillGroups((prev) => prev.map((g, idx) => (idx === gi ? { ...g, items } : g)))} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {}
+          <footer id="contact" className="py-32 relative">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-[1px] bg-gradient-to-r from-transparent via-[var(--border-soft)] to-transparent"></div>
+            
+            <div className="spotlight-card rounded-[2.5rem] px-6 py-24 md:px-16 text-center reveal-rotate" onMouseMove={handleCardMouseMove} onMouseLeave={handleCardMouseLeave}>
+              <div className="spotlight-border"></div>
+              <div className="spotlight-content">
+                <div className="w-16 h-16 mx-auto border border-[var(--border-soft)] rounded-full flex items-center justify-center mb-8 bg-[var(--panel)]">
+                  <Mail size={24} className="text-[var(--gold-bright)]" />
+                </div>
+                
+                <p className="font-mono text-[11px] tracking-[0.3em] uppercase mb-6 text-[var(--gold-bright)]">Initiate Contact</p>
+                
+                <h2 className="font-display leading-tight max-w-3xl mx-auto mb-12" style={{ fontSize: "clamp(36px, 5vw, 64px)", fontWeight: 400 }}>
+                  Ready to build something <span className="text-gradient italic block sm:inline mt-2 sm:mt-0">extraordinary?</span>
+                </h2>
+                
+                <div className="flex gap-6 justify-center flex-wrap">
+                  <a href={`mailto:${profile.email}`} className="btn-gold font-mono text-[11px] tracking-widest uppercase px-10 py-5 rounded-full font-semibold flex items-center gap-3 shadow-[0_0_30px_rgba(212,175,106,0.15)] hover:scale-105 transition-transform duration-300">
+                    <Editable value={profile.email} onChange={(v) => setProfile((p) => ({ ...p, email: v }))} />
+                  </a>
+                </div>
+
+                <div className="flex gap-8 justify-center mt-12">
+                  <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className="text-[var(--text-dim)] hover:text-[var(--gold-bright)] transition-colors cursor-none hover:-translate-y-1 transform duration-300 hover:scale-110">
+                    <LinkedinIcon size={24} />
+                  </a>
+                  <a href={profile.github} target="_blank" rel="noopener noreferrer" className="text-[var(--text-dim)] hover:text-[var(--gold-bright)] transition-colors cursor-none hover:-translate-y-1 transform duration-300 hover:scale-110">
+                    <Github size={24} />
+                  </a>
+                </div>
+
+                {editMode && (
+                  <div className="mt-16 max-w-md mx-auto space-y-4 p-6 border border-dashed border-[var(--border)] rounded-2xl bg-black/20">
+                    <InputRow icon={<LinkedinIcon size={14}/>} value={profile.linkedin} onChange={(v) => setProfile((p) => ({ ...p, linkedin: v }))} placeholder="LinkedIn URL" color="var(--text-dim)" />
+                    <InputRow icon={<Github size={14}/>} value={profile.github} onChange={(v) => setProfile((p) => ({ ...p, github: v }))} placeholder="GitHub URL" color="var(--text-dim)" />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="flex flex-col md:flex-row justify-between items-center gap-6 mt-24 font-mono text-[10px] uppercase tracking-widest text-[var(--text-faint)] reveal-up delay-200">
+              <span className="flex items-center gap-2">
+                © {new Date().getFullYear()} {profile.name} <span className="w-1 h-1 rounded-full bg-[var(--gold-bright)] animate-pulse"></span> Crafted with Precision
+              </span>
               
-              <div className="flex gap-6 items-center">
+              <div className="flex gap-8 items-center">
                 {user ? (
-                  <button onClick={handleLogout} className="flex items-center gap-1.5 hover:text-[var(--text)] transition-colors">
-                    <LogOut size={12} /> Sign Out ({user.email})
+                  <button onClick={handleLogout} className="flex items-center gap-2 hover:text-[var(--text)] transition-colors cursor-none">
+                    <LogOut size={14} /> Sign Out
                   </button>
                 ) : (
-                  <button onClick={handleGoogleLogin} className="flex items-center gap-1.5 hover:text-[var(--gold-bright)] transition-colors">
-                    <LogIn size={12} /> Admin Login
+                  <button onClick={handleGoogleLogin} className="flex items-center gap-2 hover:text-[var(--gold-bright)] transition-colors cursor-none group">
+                    <LogIn size={14} className="group-hover:scale-110 transition-transform" /> Admin
                   </button>
                 )}
                 
-                <button onClick={goTo("top")} className="flex items-center gap-1.5" style={{ color: "var(--text-dim)", background: "none", border: "none", cursor: "pointer" }}>
-                  Back to top <ArrowUp size={12} />
+                <button onClick={goTo("top")} className="flex items-center gap-2 hover:text-[var(--gold-bright)] transition-colors cursor-none group">
+                  Top <ArrowUp size={14} className="group-hover:-translate-y-1 transition-transform" />
                 </button>
               </div>
             </div>
@@ -922,12 +1279,33 @@ export default function Portfolio() {
 
 function SectionHead({ eyebrow, title, count }) {
   return (
-    <div className="flex items-end justify-between mb-14 flex-wrap gap-4">
+    <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 reveal-left">
       <div>
-        <p className="font-mono text-xs uppercase tracking-widest mb-3" style={{ color: "var(--gold-bright)" }}>{eyebrow}</p>
-        <h2 className="font-display" style={{ fontSize: "clamp(28px,3.5vw,44px)", fontWeight: 500 }}>{title}</h2>
+        <p className="font-mono text-[11px] uppercase tracking-[0.3em] mb-4 flex items-center gap-4 text-[var(--gold-bright)]">
+          <span className="w-12 h-[1px] bg-gradient-to-r from-[var(--gold-bright)] to-transparent opacity-70"></span>
+          {eyebrow}
+        </p>
+        <h2 className="font-display font-light" style={{ fontSize: "clamp(32px, 4vw, 52px)" }}>{title}</h2>
       </div>
-      {count && <div className="font-mono text-[13px]" style={{ color: "var(--text-faint)" }}>{count}</div>}
+      {count && (
+        <div className="font-mono text-[11px] uppercase tracking-widest text-[var(--text-dim)] border border-[var(--border-soft)] px-4 py-2 rounded-full bg-[var(--panel)] hover:border-[var(--gold-bright)] hover:text-[var(--gold-bright)] transition-all duration-300">
+          {count}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function InputRow({ icon, value, onChange, placeholder, color }) {
+  return (
+    <div className="flex items-center gap-3 bg-[var(--bg)] border border-[var(--border-soft)] rounded-lg px-4 py-2.5 focus-within:border-[var(--gold-bright)] transition-colors">
+      <div style={{ color }}>{icon}</div>
+      <input
+        value={value || ""}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        className="font-mono text-[11px] bg-transparent w-full outline-none text-[var(--text)] placeholder-[var(--text-faint)] tracking-wider"
+      />
     </div>
   );
 }
