@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   ArrowUpRight,
   Mail,
@@ -71,7 +71,7 @@ const DEFAULT_PROFILE = {
   focus: "Systems · Interfaces · Infrastructure",
   headline: "I build software that",
   headlineAccent: "earns trust.",
-  intro: "Six years of architecting scalable systems and designing intuitive interfaces. From database schemas to the final pixel, I build products that solve real problems.",
+  intro: "Six years designing and shipping products end to end — from database schema to the pixel a user taps. Selected work, credentials, and how to reach me, below.",
   email: "dhidna9090@gmail.com",
   linkedin: "https://www.linkedin.com/in/dhiraj-kumar-01b185350?utm_source=share_via&utm_content=profile&utm_medium=member_android",
   github: "https://github.com/dhirajkumar-09/My-Portfolio",
@@ -176,23 +176,20 @@ const IntroScreen = ({ onComplete }) => {
 
   useEffect(() => {
     let timeout;
-    
-    // Safety check so we don't start new timers after exit begins
     if (isExiting) return;
 
     if (index < GREETINGS.length - 1) {
       timeout = setTimeout(() => {
         setIndex((prev) => prev + 1);
-      }, 400);
+      }, 400); // 400ms per greeting
     } else {
       timeout = setTimeout(() => {
         setIsExiting(true);
         setTimeout(onComplete, 1200); 
       }, 1500); 
     }
-    
     return () => clearTimeout(timeout);
-  }, [index, isExiting]); // Removed onComplete to prevent potential loops if the parent re-renders
+  }, [index, isExiting, onComplete]);
 
   const isFinalName = index === GREETINGS.length - 1;
 
@@ -208,7 +205,6 @@ const IntroScreen = ({ onComplete }) => {
           {GREETINGS[index]}
         </h2>
       </div>
-      {/* Golden glow specifically for the name reveal */}
       {isFinalName && (
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--gold-bright)_0%,_transparent_40%)] opacity-20 mix-blend-screen animate-pulse-slow"></div>
       )}
@@ -255,7 +251,7 @@ const CustomCursor = () => {
       window.removeEventListener("mouseover", handleMouseOver);
       cancelAnimationFrame(animationFrameId);
     };
-  }, []); // Empty dependency array prevents restarting the RAF loop continuously
+  }, []);
 
   return (
     <>
@@ -336,7 +332,6 @@ export default function Portfolio() {
       { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
     );
     
-    // Slight delay to ensure DOM is ready, especially after intro finishes
     const observerTimer = setTimeout(() => {
       document.querySelectorAll(".reveal-up, .reveal-scale, .reveal-left, .reveal-right, .reveal-rotate").forEach((el) => observer.observe(el));
     }, 500);
@@ -349,7 +344,7 @@ export default function Portfolio() {
 
   useEffect(() => {
     if (!isFirebaseConfigured) {
-      setTimeout(() => setLoading(false), 800); 
+      setTimeout(() => setLoading(false), 300); 
       return;
     }
 
@@ -366,13 +361,12 @@ export default function Portfolio() {
       }
     });
 
-    // Reduced safety timer to 2.5 seconds to prevent long hangs on initial load
     const safetyTimer = setTimeout(() => {
       setLoading((prev) => {
         if (prev) console.warn("Firestore timeout. Showing default content.");
         return false;
       });
-    }, 2500);
+    }, 1500);
 
     const docRef = doc(db, 'portfolios', APP_ID);
     const unsubscribeData = onSnapshot(docRef, (docSnap) => {
@@ -385,7 +379,7 @@ export default function Portfolio() {
         if (data.skillGroups) setSkillGroups(data.skillGroups);
         if (data.activityLogs) setActivityLogs(data.activityLogs);
       }
-      setTimeout(() => setLoading(false), 800);
+      setTimeout(() => setLoading(false), 200);
     }, (error) => {
       clearTimeout(safetyTimer);
       console.error("Error fetching data:", error);
@@ -492,7 +486,7 @@ export default function Portfolio() {
 
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
-    const rotateX = ((y - centerY) / centerY) * -8; // Deepened tilt
+    const rotateX = ((y - centerY) / centerY) * -8;
     const rotateY = ((x - centerX) / centerX) * 8;
     
     target.style.setProperty("--rotate-x", `${rotateX}deg`);
@@ -504,6 +498,10 @@ export default function Portfolio() {
     target.style.setProperty("--rotate-x", `0deg`);
     target.style.setProperty("--rotate-y", `0deg`);
   };
+
+  const handleIntroComplete = useCallback(() => {
+    setShowIntro(false);
+  }, []);
 
   const initials = profile.name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
 
@@ -569,7 +567,7 @@ export default function Portfolio() {
         <div className="z-10 flex flex-col items-center gap-6">
           <div className="w-16 h-16 border-t-2 border-l-2 border-[#E8C888] rounded-full animate-spin"></div>
           <div className="overflow-hidden h-5 relative w-32 flex justify-center">
-            <span className="uppercase animate-slide-up absolute">Loading Portfolio...</span>
+            <span className="uppercase animate-slide-up absolute">Loading...</span>
           </div>
         </div>
       </div>
@@ -601,7 +599,6 @@ export default function Portfolio() {
         section[id]{ scroll-margin-top: 120px; }
         html{ scroll-behavior: smooth; cursor: none; }
 
-        /* Dynamic glow fields */
         .glow-field { 
           background: 
             radial-gradient(800px circle at 85% 10%, rgba(212,175,106,0.08), transparent 60%), 
@@ -621,7 +618,6 @@ export default function Portfolio() {
           100% { transform: scale(1) translate(2%, -2%); }
         }
 
-        /* 400ms Intro Text Animation */
         @keyframes intro-text {
           0% { opacity: 0; transform: translateY(20px) scale(0.9); filter: blur(5px); }
           20% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
@@ -651,7 +647,6 @@ export default function Portfolio() {
           100% { background-position: 0% 50%; }
         }
 
-        /* Text gradient utility */
         .text-gradient {
           background: linear-gradient(135deg, var(--gold-bright), var(--gold));
           -webkit-background-clip: text;
@@ -660,7 +655,6 @@ export default function Portfolio() {
           background-size: 200% 200%;
         }
 
-        /* 3D Spotlight Cards */
         .spotlight-card {
           position: relative;
           background: var(--panel);
@@ -673,7 +667,6 @@ export default function Portfolio() {
           will-change: transform;
         }
         
-        /* The inner glare */
         .spotlight-card::before {
           content: "";
           position: absolute;
@@ -701,7 +694,6 @@ export default function Portfolio() {
         .spotlight-content { position: relative; z-index: 1; transform: translateZ(40px); transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
         .spotlight-card:hover .spotlight-content { transform: translateZ(60px); }
         
-        /* The tracing border glow */
         .spotlight-border {
           position: absolute; inset: 0; border-radius: 1.5rem; pointer-events: none;
           padding: 1px;
@@ -718,7 +710,6 @@ export default function Portfolio() {
         }
         .spotlight-card:hover .spotlight-border { opacity: 1; }
 
-        /* Buttons */
         .btn-gold{ 
           background: linear-gradient(135deg, var(--gold-bright), var(--gold)); 
           color: #05070A; 
@@ -749,14 +740,12 @@ export default function Portfolio() {
         .tag-pill{ border: 1px solid var(--border-soft); color: var(--text-dim); transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
         .tag-pill:hover{ border-color: rgba(212,175,106,0.5); color: var(--gold-bright); transform: translateY(-2px); }
 
-        /* High-End Entrance Animations (Spring-like) */
         .reveal-up { opacity: 0; transform: translateY(80px) scale(0.95); filter: blur(5px); transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1); }
         .reveal-up.is-visible { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
         
         .reveal-scale { opacity: 0; transform: scale(0.85) translateY(50px); filter: blur(8px); transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1); }
         .reveal-scale.is-visible { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
         
-        /* 3D Flip Reveal */
         .reveal-rotate { opacity: 0; transform: perspective(1000px) rotateX(20deg) translateY(60px); filter: blur(5px); transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1); }
         .reveal-rotate.is-visible { opacity: 1; transform: perspective(1000px) rotateX(0deg) translateY(0); filter: blur(0); }
 
@@ -771,7 +760,6 @@ export default function Portfolio() {
         .delay-300 { transition-delay: 300ms; }
         .delay-400 { transition-delay: 400ms; }
 
-        /* Asynchronous Floating animations */
         .hover-float { transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); animation: floating 6s ease-in-out infinite; }
         .hover-float:hover { animation-play-state: paused; transform: translateY(-10px) scale(1.05); }
         .hover-float:nth-child(2) { animation-delay: -2s; }
@@ -782,7 +770,6 @@ export default function Portfolio() {
           50% { transform: translateY(-12px); }
         }
 
-        /* Nav Links Hover Line */
         .nav-link{ position:relative; color:var(--text-dim); transition:color .3s ease; cursor:none; background:none; border:none; }
         .nav-link:hover{ color:var(--text); }
         .nav-link::after{ 
@@ -805,7 +792,6 @@ export default function Portfolio() {
         }
       `}</style>
 
-      {/* Render the Custom Cursor Component independent of App re-renders */}
       <CustomCursor />
 
       <div className="fixed top-0 left-0 h-[2px] bg-gradient-to-r from-[var(--gold)] to-[var(--gold-bright)] z-[100] transition-all duration-150 shadow-[0_0_15px_rgba(212,175,106,0.8)]" style={{ width: `${scrollProgress}%` }} />
@@ -818,9 +804,8 @@ export default function Portfolio() {
       <div className="fixed inset-0 pointer-events-none glow-field z-0" />
       <div className="fixed inset-0 pointer-events-none grain z-0" />
 
-      {}
-      {!loading && showIntro && (
-        <IntroScreen onComplete={() => setShowIntro(false)} />
+      {showIntro && (
+        <IntroScreen onComplete={handleIntroComplete} />
       )}
 
       <div className="relative z-10">
@@ -878,7 +863,6 @@ export default function Portfolio() {
         )}
 
         <main id="top" className="max-w-7xl mx-auto px-6 md:px-12">
-          {}
           <section className="min-h-[90vh] pt-32 pb-24 flex flex-col justify-center items-center text-center relative">
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] max-w-[800px] max-h-[800px] bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[var(--gold-bright)]/10 to-transparent blur-3xl rounded-full pointer-events-none"></div>
 
@@ -934,7 +918,6 @@ export default function Portfolio() {
             </div>
           </section>
 
-          {}
           <section id="work" className="py-32 relative">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-[1px] bg-gradient-to-r from-transparent via-[var(--border-soft)] to-transparent"></div>
             
@@ -1006,9 +989,10 @@ export default function Portfolio() {
                         </div>
                       </div>
 
-                      <div className="order-1 lg:order-2 relative aspect-[4/3] lg:aspect-auto lg:h-[450px] w-full rounded-2xl overflow-hidden border border-[var(--border-soft)] bg-black/20 group/img shrink-0 shadow-2xl">
+                      {/* CHANGED FROM object-cover to object-contain so full photo/preview never crops out */}
+                      <div className="order-1 lg:order-2 relative aspect-[16/10] lg:aspect-auto lg:h-[420px] w-full rounded-2xl overflow-hidden border border-[var(--border-soft)] bg-[#030508] group/img shrink-0 shadow-2xl flex items-center justify-center p-2">
                         {p.image ? (
-                          <img src={p.image} alt={p.title} className="w-full h-full object-cover opacity-80 group-hover/img:opacity-100 group-hover/img:scale-105 transition-all duration-700 ease-out" />
+                          <img src={p.image} alt={p.title} className="w-full h-full object-contain opacity-90 group-hover/img:opacity-100 group-hover/img:scale-102 transition-all duration-700 ease-out" />
                         ) : (
                           <div className="w-full h-full flex flex-col items-center justify-center text-[var(--border)]">
                             <Code2 size={64} strokeWidth={1} />
@@ -1016,10 +1000,10 @@ export default function Portfolio() {
                           </div>
                         )}
                         
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#05070A] via-transparent to-transparent opacity-60 pointer-events-none"></div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#05070A] via-transparent to-transparent opacity-40 pointer-events-none"></div>
 
                         {editMode && (
-                          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm opacity-0 hover:opacity-100 transition-opacity p-6">
+                          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/70 backdrop-blur-sm opacity-0 hover:opacity-100 transition-opacity p-6 z-20">
                             <label className="btn-outline px-6 py-3 rounded-full flex items-center gap-3 cursor-none">
                               <ImageIcon size={16} /> 
                               <span className="font-mono text-xs tracking-widest uppercase">Upload Image</span>
@@ -1052,7 +1036,6 @@ export default function Portfolio() {
             </div>
           </section>
 
-          {}
           <section id="certificates" className="py-32 relative">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-[1px] bg-gradient-to-r from-transparent via-[var(--border-soft)] to-transparent"></div>
             
@@ -1093,8 +1076,8 @@ export default function Portfolio() {
                     </p>
 
                     {c.image && (
-                      <div className="mb-6 rounded-xl overflow-hidden border border-[var(--border-soft)] group/img relative h-40 bg-black/30 w-full shrink-0">
-                        <img src={c.image} alt={c.title} className="w-full h-full object-cover opacity-70 group-hover/img:opacity-100 group-hover/img:scale-105 transition-all duration-500" />
+                      <div className="mb-6 rounded-xl overflow-hidden border border-[var(--border-soft)] group/img relative h-40 bg-[#030508] w-full shrink-0 flex items-center justify-center p-1">
+                        <img src={c.image} alt={c.title} className="w-full h-full object-contain opacity-90 group-hover/img:opacity-100 transition-opacity" />
                       </div>
                     )}
 
@@ -1130,7 +1113,6 @@ export default function Portfolio() {
             </div>
           </section>
 
-          {}
           <section id="activity" className="py-32 relative">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-[1px] bg-gradient-to-r from-transparent via-[var(--border-soft)] to-transparent"></div>
             
@@ -1184,7 +1166,6 @@ export default function Portfolio() {
             </div>
           </section>
 
-          {}
           <section id="skills" className="py-32 relative">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-[1px] bg-gradient-to-r from-transparent via-[var(--border-soft)] to-transparent"></div>
             
@@ -1208,7 +1189,6 @@ export default function Portfolio() {
             </div>
           </section>
 
-          {}
           <footer id="contact" className="py-32 relative">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-[1px] bg-gradient-to-r from-transparent via-[var(--border-soft)] to-transparent"></div>
             
