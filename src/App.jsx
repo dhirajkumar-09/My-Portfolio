@@ -42,7 +42,7 @@ const Github = ({ size = 14, color = "currentColor" }) => (
 );
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
+  apiKey: "AIzaSyCBMHoaPc0aGZ4MV18zkDZd5c4-tWSRXl0",
   authDomain: "dhiraj-portfolio-09.firebaseapp.com",
   projectId: "dhiraj-portfolio-09",
   storageBucket: "dhiraj-portfolio-09.firebasestorage.app",
@@ -71,8 +71,8 @@ const DEFAULT_PROFILE = {
   name: "Dhiraj Kumar",
   role: "Full-Stack Engineer",
   focus: "Systems · Interfaces · Infrastructure",
-  headline: "I build software that",
-  headlineAccent: "solves real problems",
+  headline: "Building software,",
+  headlineAccent: "solves real problem.",
   intro: "Six years designing and shipping products end to end — from database schema to the pixel a user taps. Selected work, credentials, and how to reach me, below.",
   email: "dhidna9090@gmail.com",
   linkedin: "https://www.linkedin.com/in/dhiraj-kumar-01b185350?utm_source=share_via&utm_content=profile&utm_medium=member_android",
@@ -173,107 +173,137 @@ const GREETINGS = [
   "DHIRAJ KUMAR"
 ];
 
-// --- Smooth Typing Terminal Component ---
-const TerminalBlock = () => {
-  const fullSteps = [
-    { type: 'cmd', text: 'whoami' },
-    { type: 'output', text: 'dhiraj-kumar' },
-    { type: 'cmd', text: 'cat profile.json' },
-    { type: 'json', text: '{\n  "role": "Full-Stack Engineer",\n  "focus": ["Systems", "Interfaces", "AI"],\n  "status": "Building scalable web applications"\n}' },
-    { type: 'cmd', text: './run --build portfolio' },
-    { type: 'out-line', text: '✓ real-time firestore listeners connected' },
-    { type: 'out-line', text: '✓ portfolio dashboard rendered' },
-    { type: 'out-line', text: '✓ deployed to dhiraj-portfolio.netlify.app' }
-  ];
-
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  const [currentCharIndex, setCurrentCharIndex] = useState(0);
-  const [displayedLines, setDisplayedLines] = useState([]);
+const AnimatedTerminal = () => {
+  const [step, setStep] = useState(0);
+  const [cmd1, setCmd1] = useState("");
+  const [cmd2, setCmd2] = useState("");
+  const [cmd3, setCmd3] = useState("");
 
   useEffect(() => {
-    if (currentStepIndex >= fullSteps.length) return;
+    let t1 = "whoami";
+    let i1 = 0;
+    let int1;
+    // Delay before starting the first typing animation
+    const startDelay = setTimeout(() => {
+      int1 = setInterval(() => {
+         setCmd1(t1.slice(0, i1+1));
+         i1++;
+         if(i1 === t1.length) {
+            clearInterval(int1);
+            setTimeout(() => setStep(1), 600); // Pause, then show output and next cmd
+         }
+      }, 120);
+    }, 1200);
 
-    const currentStep = fullSteps[currentStepIndex];
+    return () => {
+      clearTimeout(startDelay);
+      clearInterval(int1);
+    };
+  }, []);
 
-    if (currentStep.type === 'cmd') {
-      // Typing effect for commands character by character
-      if (currentCharIndex < currentStep.text.length) {
-        const timer = setTimeout(() => {
-          setCurrentCharIndex(prev => prev + 1);
-        }, 60); // 60ms per character speed
-        return () => clearTimeout(timer);
-      } else {
-        // Command finished typing, pause slightly then push to lines and move to next step
-        const timer = setTimeout(() => {
-          setDisplayedLines(prev => [...prev, currentStep]);
-          setCurrentStepIndex(prev => prev + 1);
-          setCurrentCharIndex(0);
-        }, 400);
-        return () => clearTimeout(timer);
-      }
-    } else {
-      // Outputs/JSON appear instantly with a natural delay
-      const timer = setTimeout(() => {
-        setDisplayedLines(prev => [...prev, currentStep]);
-        setCurrentStepIndex(prev => prev + 1);
-      }, 350);
-      return () => clearTimeout(timer);
-    }
-  }, [currentStepIndex, currentCharIndex]);
+  useEffect(() => {
+     if (step >= 1) {
+         let t2 = "cat profile.json";
+         let i2 = 0;
+         let int2 = setInterval(() => {
+             setCmd2(t2.slice(0, i2+1));
+             i2++;
+             if(i2 === t2.length) {
+                 clearInterval(int2);
+                 setTimeout(() => setStep(2), 600);
+             }
+         }, 100);
+         return () => clearInterval(int2);
+     }
+  }, [step]);
+
+  useEffect(() => {
+     if (step >= 2) {
+         let t3 = "./run --build portfolio";
+         let i3 = 0;
+         let int3 = setInterval(() => {
+             setCmd3(t3.slice(0, i3+1));
+             i3++;
+             if(i3 === t3.length) {
+                 clearInterval(int3);
+                 setTimeout(() => setStep(3), 500); // Output line 1
+                 setTimeout(() => setStep(4), 1200); // Output line 2
+                 setTimeout(() => setStep(5), 1800); // Output line 3
+                 setTimeout(() => setStep(6), 2000); // New prompt
+             }
+         }, 80);
+         return () => clearInterval(int3);
+     }
+  }, [step]);
 
   return (
-    <div className="w-full rounded-xl overflow-hidden border border-[#1e2330] shadow-2xl font-mono text-[12px] md:text-[13px] text-left bg-[#0d1117]/95 backdrop-blur-md">
+    <div className="w-full rounded-xl overflow-hidden border border-[#30363d] bg-[#0d1117] shadow-2xl font-mono text-[12px] md:text-[14px] text-left hover-float">
       {/* Top Window Bar */}
       <div className="flex items-center px-4 py-3 bg-[#161b22] border-b border-[#30363d]">
         <div className="flex gap-2">
-          <div className="w-3 h-3 rounded-full bg-[#FF5F56] border border-[#E0443E]"></div>
-          <div className="w-3 h-3 rounded-full bg-[#FFBD2E] border border-[#DEA123]"></div>
-          <div className="w-3 h-3 rounded-full bg-[#27C93F] border border-[#1AAB29]"></div>
+          <div className="w-3 h-3 rounded-full bg-[#FF5F56]"></div>
+          <div className="w-3 h-3 rounded-full bg-[#FFBD2E]"></div>
+          <div className="w-3 h-3 rounded-full bg-[#27C93F]"></div>
         </div>
-        <div className="flex-1 text-center text-[#8b949e] text-xs font-mono">dhiraj@bce:~</div>
+        <div className="flex-1 text-center text-[#8b949e] text-xs">dhiraj@bce:~</div>
       </div>
       
-      {/* Terminal Content Body */}
-      <div className="p-5 md:p-6 space-y-3 text-[#c9d1d9] min-h-[300px] flex flex-col justify-start">
-        {displayedLines.map((line, idx) => {
-          if (line.type === 'cmd') {
-            return (
-              <div key={idx} className="leading-relaxed">
-                <span className="text-[#3fb950]">dhiraj@bce</span><span className="text-[#58a6ff]">:~</span>$ <span className="text-[#f0f6fc]">{line.text}</span>
+      {/* Terminal Body */}
+      <div className="p-5 md:p-6 space-y-4 text-[#c9d1d9] leading-relaxed">
+        {/* Cmd 1 */}
+        <div>
+          <span className="text-[#3fb950]">dhiraj@bce</span><span className="text-[#58a6ff]">:~</span>$ {cmd1}
+          {step === 0 && <span className="w-2 h-4 bg-gray-400 ml-1 inline-block animate-pulse align-middle"></span>}
+          {step >= 1 && (
+            <div className="mt-1 text-[#8b949e]">dhiraj-kumar</div>
+          )}
+        </div>
+        
+        {/* Cmd 2 */}
+        {step >= 1 && (
+          <div>
+            <span className="text-[#3fb950]">dhiraj@bce</span><span className="text-[#58a6ff]">:~</span>$ {cmd2}
+            {step === 1 && <span className="w-2 h-4 bg-gray-400 ml-1 inline-block animate-pulse align-middle"></span>}
+            {step >= 2 && (
+              <div className="mt-1 text-[#e3b341]">
+                {`{`}
+                <div className="pl-4">
+                  <span className="text-[#79c0ff]">"role"</span>: <span className="text-[#d2a8ff]">"Full-Stack Engineer"</span>,
+                </div>
+                <div className="pl-4">
+                  <span className="text-[#79c0ff]">"focus"</span>: [<span className="text-[#d2a8ff]">"Systems"</span>, <span className="text-[#d2a8ff]">"Interfaces"</span>, <span className="text-[#d2a8ff]">"AI"</span>],
+                </div>
+                <div className="pl-4">
+                  <span className="text-[#79c0ff]">"status"</span>: <span className="text-[#d2a8ff]">"Building scalable web applications"</span>
+                </div>
+                {`}`}
               </div>
-            );
-          } else if (line.type === 'output') {
-            return <div key={idx} className="text-[#8b949e]">{line.text}</div>;
-          } else if (line.type === 'json') {
-            return (
-              <div key={idx} className="text-[#e3b341] whitespace-pre-line bg-black/20 p-2.5 rounded border border-white/5">
-                {line.text}
-              </div>
-            );
-          } else {
-            return <div key={idx} className="text-[#8b949e]">{line.text}</div>;
-          }
-        })}
-
-        {/* Currently typing command line */}
-        {currentStepIndex < fullSteps.length && fullSteps[currentStepIndex].type === 'cmd' && (
-          <div className="leading-relaxed">
-            <span className="text-[#3fb950]">dhiraj@bce</span><span className="text-[#58a6ff]">:~</span>$ <span className="text-[#f0f6fc]">{fullSteps[currentStepIndex].text.substring(0, currentCharIndex)}</span>
-            <span className="w-2 h-4 ml-0.5 bg-[#c9d1d9] animate-pulse inline-block align-middle"></span>
+            )}
+          </div>
+        )}
+        
+        {/* Cmd 3 */}
+        {step >= 2 && (
+          <div>
+            <span className="text-[#3fb950]">dhiraj@bce</span><span className="text-[#58a6ff]">:~</span>$ {cmd3}
+            {step === 2 && <span className="w-2 h-4 bg-gray-400 ml-1 inline-block animate-pulse align-middle"></span>}
+            
+            {step >= 3 && <div className="mt-1 text-[#8b949e]">✓ real-time firestore listeners connected</div>}
+            {step >= 4 && <div className="text-[#8b949e]">✓ portfolio dashboard rendered</div>}
+            {step >= 5 && <div className="text-[#8b949e]">✓ deployed to dhiraj-portfolio.netlify.app</div>}
           </div>
         )}
 
-        {/* Idle cursor if finished */}
-        {currentStepIndex >= fullSteps.length && (
-          <div className="flex items-center pt-2">
-            <span className="text-[#3fb950]">dhiraj@bce</span><span className="text-[#58a6ff]">:~</span>$ <span className="w-2.5 h-4 ml-2 bg-[#c9d1d9] animate-pulse inline-block"></span>
+        {/* Final Prompt */}
+        {step >= 6 && (
+          <div className="pt-2">
+            <span className="text-[#3fb950]">dhiraj@bce</span><span className="text-[#58a6ff]">:~</span>$ <span className="w-2 h-4 bg-[#c9d1d9] ml-1 inline-block animate-pulse align-middle"></span>
           </div>
         )}
       </div>
     </div>
   );
 };
-// ------------------------------------------
 
 const IntroScreen = React.memo(({ onComplete }) => {
   const [index, setIndex] = useState(0);
@@ -390,6 +420,7 @@ export default function Portfolio() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [editMode, setEditMode] = useState(false);
   
+  // Messaging Form State
   const [msgForm, setMsgForm] = useState({ name: "", email: "", message: "" });
   const [sendingMsg, setSendingMsg] = useState(false);
   
@@ -460,6 +491,7 @@ export default function Portfolio() {
       return;
     }
 
+    // FIXED: Ensured visitors log in anonymously so they can send messages successfully
     const unsubscribeAuth = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
@@ -468,6 +500,7 @@ export default function Portfolio() {
           setEditMode(false);
         }
       } else {
+        // Automatically sign in as a guest to allow messaging (if enabled)
         try {
           await signInAnonymously(auth);
         } catch (error) {
@@ -548,6 +581,7 @@ export default function Portfolio() {
     setSendingMsg(true);
     try {
       if (isFirebaseConfigured && db) {
+        // Save to Firebase Firestore Database
         await addDoc(collection(db, 'artifacts', APP_ID, 'public', 'data', 'messages'), {
           name: msgForm.name,
           email: msgForm.email,
@@ -719,8 +753,7 @@ export default function Portfolio() {
   return (
     <div className="font-body selection:bg-[#D4AF6A]/30 selection:text-white" style={{ background: "var(--bg)", color: "var(--text)", minHeight: "100vh", overflowX: "hidden" }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
         :root{
           --bg: #05070A; 
@@ -738,7 +771,7 @@ export default function Portfolio() {
         .font-display{ font-family: 'Fraunces', serif; }
         .font-body{ font-family: 'Inter', sans-serif; }
         .font-mono{ font-family: 'JetBrains Mono', monospace; }
-        .font-cursive{ font-family: 'Dancing Script', cursive; }
+        .font-cursive{ font-family: 'Dancing Script', cursive; font-size: 1.15em; font-weight: 700; letter-spacing: 0; }
 
         section[id]{ scroll-margin-top: 120px; }
         html{ scroll-behavior: smooth; cursor: none; }
@@ -928,6 +961,7 @@ export default function Portfolio() {
 
       <CustomCursor />
 
+      {}
       <div className="fixed top-0 left-0 h-[2px] bg-gradient-to-r from-[var(--gold)] to-[var(--gold-bright)] z-[100] transition-all duration-150 shadow-[0_0_15px_rgba(212,175,106,0.8)]" style={{ width: `${scrollProgress}%` }} />
 
       <div className={`fixed top-24 left-1/2 -translate-x-1/2 z-[100] px-5 py-2.5 rounded-full font-mono text-xs tracking-wider border border-[var(--gold)] transition-all duration-500 flex items-center gap-2 ${toastMessage ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8 pointer-events-none'}`} 
@@ -942,6 +976,7 @@ export default function Portfolio() {
         <IntroScreen onComplete={handleIntroComplete} />
       )}
 
+      {}
       <div className="relative z-10">
         <header
           className="nav-shell fixed top-0 w-full z-50 transition-all duration-500"
@@ -987,6 +1022,7 @@ export default function Portfolio() {
           </nav>
         </header>
 
+        {}
         {editMode && isAdminUser && (
           <div className="max-w-7xl mx-auto px-6 md:px-12 pt-32">
             <div className="font-mono text-[11px] tracking-wide px-4 py-3 rounded-xl flex items-center gap-3 backdrop-blur-md" style={{ background: "rgba(212,175,106,0.1)", border: "1px solid rgba(212,175,106,0.3)", color: "var(--gold-bright)" }}>
@@ -996,17 +1032,17 @@ export default function Portfolio() {
           </div>
         )}
 
+        {}
         <main id="top" className="max-w-7xl mx-auto px-6 md:px-12">
-          {/* Side-by-Side Hero Section */}
-          <section className="min-h-[92vh] pt-36 pb-20 flex flex-col justify-center relative">
+          <section className="min-h-[95vh] pt-32 pb-16 flex flex-col justify-center relative">
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] max-w-[800px] max-h-[800px] bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[var(--gold-bright)]/10 to-transparent blur-3xl rounded-full pointer-events-none"></div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-12 lg:gap-16 items-center relative z-10">
+            <div className="w-full grid grid-cols-1 lg:grid-cols-[1fr_0.9fr] gap-12 lg:gap-16 items-center relative z-10">
               
-              {/* Left Column: Heading, Intro & Buttons */}
+              {/* Left Column: Text Content */}
               <div className="flex flex-col items-start text-left">
                 <div className="reveal-up">
-                  <p className="font-mono text-[11px] tracking-[0.3em] uppercase mb-6 flex items-center gap-3 text-[var(--gold-bright)]">
+                  <p className="font-mono text-[11px] tracking-[0.3em] uppercase mb-8 flex items-center gap-3 text-[var(--gold-bright)]">
                     <span className="w-8 h-[1px] bg-[var(--gold-bright)] opacity-50"></span>
                     <Editable value={profile.role} onChange={(v) => setProfile((p) => ({ ...p, role: v }))} /> 
                     <span className="opacity-50">/</span> 
@@ -1014,18 +1050,16 @@ export default function Portfolio() {
                   </p>
                 </div>
 
-                <h1 className="font-display leading-[1.05] reveal-up delay-100" style={{ fontSize: "clamp(42px, 5.5vw, 84px)", fontWeight: 400, letterSpacing: "-0.02em" }}>
-                  <Editable value={profile.headline} onChange={(v) => setProfile((p) => ({ ...p, headline: v }))} className="block" />
-                  <span className="inline-block relative mt-1">
-                    <Editable value={profile.headlineAccent} onChange={(v) => setProfile((p) => ({ ...p, headlineAccent: v }))} className="text-gradient font-cursive text-[1.155em] tracking-normal" />
-                  </span>
+                <h1 className="font-display leading-[1.05] reveal-up delay-100" style={{ fontSize: "clamp(46px, 6vw, 85px)", fontWeight: 400, letterSpacing: "-0.02em" }}>
+                  <Editable value={profile.headline} onChange={(v) => setProfile((p) => ({ ...p, headline: v }))} className="block mb-1" />
+                  <Editable value={profile.headlineAccent} onChange={(v) => setProfile((p) => ({ ...p, headlineAccent: v }))} className="text-gradient font-cursive block pb-2" />
                 </h1>
 
-                <p className="mt-8 max-w-xl text-[16px] md:text-[18px] leading-[1.8] font-light reveal-up delay-200" style={{ color: "var(--text-dim)" }}>
+                <p className="mt-8 max-w-lg text-[16px] md:text-[18px] leading-[1.8] font-light reveal-up delay-200" style={{ color: "var(--text-dim)" }}>
                   <Editable tag="span" value={profile.intro} onChange={(v) => setProfile((p) => ({ ...p, intro: v }))} />
                 </p>
 
-                <div className="flex gap-5 mt-10 flex-wrap reveal-up delay-300">
+                <div className="flex gap-4 md:gap-6 mt-12 flex-wrap reveal-up delay-300">
                   <button onClick={goTo("work")} className="btn-gold font-mono text-[11px] tracking-widest uppercase px-8 py-4 rounded-full font-semibold flex items-center gap-3">
                     View the work <ArrowUpRight size={15} />
                   </button>
@@ -1035,22 +1069,27 @@ export default function Portfolio() {
                 </div>
               </div>
 
-              {/* Right Column: Side-by-Side Animated Terminal Block */}
-              <div className="reveal-right delay-200 w-full">
-                <TerminalBlock />
+              {/* Right Column: Animated Terminal */}
+              <div className="reveal-left delay-400 w-full relative z-10 hidden md:block">
+                 <AnimatedTerminal />
+              </div>
+              
+              {/* Mobile Only Terminal */}
+              <div className="reveal-up delay-400 w-full relative z-10 md:hidden mt-8">
+                 <AnimatedTerminal />
               </div>
 
             </div>
 
-            {/* Stats bar underneath */}
-            <div className="flex gap-12 lg:gap-20 mt-20 pt-16 border-t border-[var(--border-soft)] flex-wrap justify-center lg:justify-start reveal-up delay-400">
+            {/* Bottom Stats Row */}
+            <div className="flex gap-12 lg:gap-24 mt-24 flex-wrap justify-start lg:justify-center w-full z-10 reveal-up delay-500 border-t border-[var(--border-soft)] pt-12">
               {profile.stats.map((s, i) => (
-                <div key={i} className="flex items-center gap-12 lg:gap-20 group relative hover-float">
-                  <div className="relative z-10 cursor-none">
-                    <div className="font-display text-[42px] md:text-[50px] leading-none mb-3 transition-colors duration-300 group-hover:text-[var(--text)]" style={{ color: "var(--gold-bright)" }}>
+                <div key={i} className="flex items-center gap-12 lg:gap-24 group relative hover-float">
+                  <div className="relative z-10 cursor-none flex flex-col md:flex-row md:items-center gap-4">
+                    <div className="font-display text-[42px] md:text-[52px] leading-none transition-colors duration-300 group-hover:text-[var(--text)]" style={{ color: "var(--gold-bright)" }}>
                       <Editable value={s.v} onChange={(v) => setProfile((p) => ({ ...p, stats: p.stats.map((st, idx) => (idx === i ? { ...st, v } : st)) }))} />
                     </div>
-                    <div className="font-mono text-[11px] uppercase tracking-[0.2em] opacity-60">
+                    <div className="font-mono text-[10px] md:text-[11px] uppercase tracking-[0.2em] opacity-60 max-w-[100px] leading-relaxed">
                       <Editable value={s.k} onChange={(v) => setProfile((p) => ({ ...p, stats: p.stats.map((st, idx) => (idx === i ? { ...st, k: v } : st)) }))} />
                     </div>
                   </div>
@@ -1060,6 +1099,7 @@ export default function Portfolio() {
             </div>
           </section>
 
+          {}
           <section id="work" className="py-32 relative">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-[1px] bg-gradient-to-r from-transparent via-[var(--border-soft)] to-transparent"></div>
             
@@ -1133,6 +1173,7 @@ export default function Portfolio() {
                           </div>
                         </div>
 
+                        {/* FULL PREVIEW CONTAINER */}
                         <div className="order-1 lg:order-2 relative aspect-[16/10] lg:aspect-auto lg:h-[420px] w-full rounded-2xl overflow-hidden border border-[var(--border-soft)] bg-[#030508] group/img shrink-0 shadow-2xl flex items-center justify-center p-3">
                           {p.image ? (
                             <img src={p.image} alt={p.title} className="w-full h-full object-contain opacity-90 group-hover/img:opacity-100 group-hover/img:scale-102 transition-all duration-700 ease-out" />
@@ -1180,6 +1221,7 @@ export default function Portfolio() {
             </div>
           </section>
 
+          {}
           <section id="certificates" className="py-32 relative">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-[1px] bg-gradient-to-r from-transparent via-[var(--border-soft)] to-transparent"></div>
             
@@ -1268,6 +1310,7 @@ export default function Portfolio() {
             </div>
           </section>
 
+          {}
           <section id="activity" className="py-32 relative">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-[1px] bg-gradient-to-r from-transparent via-[var(--border-soft)] to-transparent"></div>
             
@@ -1347,6 +1390,7 @@ export default function Portfolio() {
             </div>
           </section>
 
+          {}
           <section id="contact" className="py-32 relative">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-[1px] bg-gradient-to-r from-transparent via-[var(--border-soft)] to-transparent"></div>
             
@@ -1361,7 +1405,7 @@ export default function Portfolio() {
                   <p className="font-mono text-[11px] tracking-[0.3em] uppercase mb-4 text-[var(--gold-bright)]">Initiate Contact</p>
                   
                   <h2 className="font-display text-3xl md:text-4xl leading-tight mb-6 font-light">
-                    Let's build something <span className="text-gradient font-cursive text-[1.1em] tracking-normal">extraordinary.</span>
+                    Let's build something <span className="text-gradient italic">extraordinary.</span>
                   </h2>
                   
                   <p className="text-[15px] leading-relaxed text-[var(--text-dim)] font-light mb-8">
