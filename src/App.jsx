@@ -42,7 +42,7 @@ const Github = ({ size = 14, color = "currentColor" }) => (
 );
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCBMHoaPc0aGZ4MV18zkDZd5c4-tWSRXl0",
+  apiKey: "YOUR_API_KEY",
   authDomain: "dhiraj-portfolio-09.firebaseapp.com",
   projectId: "dhiraj-portfolio-09",
   storageBucket: "dhiraj-portfolio-09.firebasestorage.app",
@@ -72,7 +72,7 @@ const DEFAULT_PROFILE = {
   role: "Full-Stack Engineer",
   focus: "Systems · Interfaces · Infrastructure",
   headline: "I build software that",
-  headlineAccent: "earns trust.",
+  headlineAccent: "solves real problems",
   intro: "Six years designing and shipping products end to end — from database schema to the pixel a user taps. Selected work, credentials, and how to reach me, below.",
   email: "dhidna9090@gmail.com",
   linkedin: "https://www.linkedin.com/in/dhiraj-kumar-01b185350?utm_source=share_via&utm_content=profile&utm_medium=member_android",
@@ -172,6 +172,55 @@ const GREETINGS = [
   "Welcome",
   "DHIRAJ KUMAR"
 ];
+
+// --- Custom Terminal Component Added Here ---
+const TerminalBlock = () => {
+  return (
+    <div className="w-full max-w-3xl mx-auto mt-20 mb-10 reveal-up delay-400 rounded-xl overflow-hidden border border-[#1e2330] shadow-2xl font-mono text-[13px] md:text-[14px] text-left hover-float z-20 relative">
+      <div className="absolute inset-0 bg-[#0d1117] opacity-95"></div>
+      
+      {/* Top Window Bar */}
+      <div className="relative flex items-center px-4 py-3 bg-[#161b22] border-b border-[#30363d] z-10">
+        <div className="flex gap-2">
+          <div className="w-3 h-3 rounded-full bg-[#FF5F56] border border-[#E0443E]"></div>
+          <div className="w-3 h-3 rounded-full bg-[#FFBD2E] border border-[#DEA123]"></div>
+          <div className="w-3 h-3 rounded-full bg-[#27C93F] border border-[#1AAB29]"></div>
+        </div>
+        <div className="flex-1 text-center text-[#8b949e] text-xs font-mono">dhiraj@bce:~</div>
+      </div>
+      
+      {/* Terminal Content Body */}
+      <div className="relative p-6 md:p-8 space-y-5 text-[#c9d1d9] z-10">
+        <div>
+          <span className="text-[#3fb950]">dhiraj@bce</span><span className="text-[#58a6ff]">:~</span>$ whoami<br/>
+          <span className="text-[#8b949e] mt-1 inline-block">dhiraj-kumar</span>
+        </div>
+        
+        <div>
+          <span className="text-[#3fb950]">dhiraj@bce</span><span className="text-[#58a6ff]">:~</span>$ cat profile.json<br/>
+          <span className="text-[#e3b341] mt-1 inline-block">{`{`}</span><br/>
+          &nbsp;&nbsp;<span className="text-[#a5d6ff]">"role"</span>: <span className="text-[#d2a8ff]">"B.Tech CSE (IoT) Student"</span>,<br/>
+          &nbsp;&nbsp;<span className="text-[#a5d6ff]">"college"</span>: <span className="text-[#d2a8ff]">"Bakhtiyarpur College of Engineering"</span>,<br/>
+          &nbsp;&nbsp;<span className="text-[#a5d6ff]">"focus"</span>: [<span className="text-[#d2a8ff]">"full-stack web dev"</span>, <span className="text-[#d2a8ff]">"software engineering"</span>, <span className="text-[#d2a8ff]">"ai implementation"</span>],<br/>
+          &nbsp;&nbsp;<span className="text-[#a5d6ff]">"status"</span>: <span className="text-[#d2a8ff]">"building CodeSkill AI & EduForge"</span><br/>
+          <span className="text-[#e3b341]">{`}`}</span>
+        </div>
+        
+        <div>
+          <span className="text-[#3fb950]">dhiraj@bce</span><span className="text-[#58a6ff]">:~</span>$ ./run --build portfolio<br/>
+          <span className="text-[#8b949e] mt-1 inline-block">✓ real-time firestore listeners connected</span><br/>
+          <span className="text-[#8b949e]">✓ portfolio dashboard rendered</span><br/>
+          <span className="text-[#8b949e]">✓ deployed to dhiraj-portfolio.netlify.app</span>
+        </div>
+        
+        <div className="flex items-center">
+          <span className="text-[#3fb950]">dhiraj@bce</span><span className="text-[#58a6ff]">:~</span>$ <span className="w-2.5 h-4 ml-2 bg-[#c9d1d9] animate-pulse inline-block"></span>
+        </div>
+      </div>
+    </div>
+  );
+};
+// ------------------------------------------
 
 const IntroScreen = React.memo(({ onComplete }) => {
   const [index, setIndex] = useState(0);
@@ -359,7 +408,6 @@ export default function Portfolio() {
       return;
     }
 
-    // FIXED: Ensured visitors log in anonymously so they can send messages successfully
     const unsubscribeAuth = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
@@ -368,7 +416,6 @@ export default function Portfolio() {
           setEditMode(false);
         }
       } else {
-        // Automatically sign in as a guest to allow messaging (if enabled)
         try {
           await signInAnonymously(auth);
         } catch (error) {
@@ -448,31 +495,21 @@ export default function Portfolio() {
     
     setSendingMsg(true);
     try {
-      // Sending email directly using FormSubmit's AJAX API
-      // This will send the email to the address saved in profile.email
-      const response = await fetch(`https://formsubmit.co/ajax/${profile.email}`, {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
+      if (isFirebaseConfigured && db) {
+        await addDoc(collection(db, 'artifacts', APP_ID, 'public', 'data', 'messages'), {
           name: msgForm.name,
           email: msgForm.email,
           message: msgForm.message,
-          _subject: `New Portfolio Message from ${msgForm.name}`
-        })
-      });
-
-      if (response.ok) {
-        showToast("Message sent to your email successfully!");
-        setMsgForm({ name: "", email: "", message: "" });
+          timestamp: new Date().toISOString()
+        });
+        showToast("Message sent securely to the database!");
       } else {
-        showToast("Failed to send message. Please try again.");
+        showToast("Demo Mode: Message processed locally.");
       }
+      setMsgForm({ name: "", email: "", message: "" });
     } catch (err) {
       console.error(err);
-      showToast("Network error. Could not send email.");
+      showToast("Error saving to database. Check Firebase rules.");
     } finally {
       setSendingMsg(false);
     }
@@ -631,6 +668,7 @@ export default function Portfolio() {
     <div className="font-body selection:bg-[#D4AF6A]/30 selection:text-white" style={{ background: "var(--bg)", color: "var(--text)", minHeight: "100vh", overflowX: "hidden" }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap');
 
         :root{
           --bg: #05070A; 
@@ -648,6 +686,7 @@ export default function Portfolio() {
         .font-display{ font-family: 'Fraunces', serif; }
         .font-body{ font-family: 'Inter', sans-serif; }
         .font-mono{ font-family: 'JetBrains Mono', monospace; }
+        .font-cursive{ font-family: 'Dancing Script', cursive; }
 
         section[id]{ scroll-margin-top: 120px; }
         html{ scroll-behavior: smooth; cursor: none; }
@@ -908,7 +947,7 @@ export default function Portfolio() {
         )}
 
         <main id="top" className="max-w-7xl mx-auto px-6 md:px-12">
-          <section className="min-h-[90vh] pt-32 pb-24 flex flex-col justify-center items-center text-center relative">
+          <section className="min-h-[95vh] pt-32 pb-16 flex flex-col justify-center items-center text-center relative">
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] max-w-[800px] max-h-[800px] bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[var(--gold-bright)]/10 to-transparent blur-3xl rounded-full pointer-events-none"></div>
 
             <div className="max-w-4xl relative z-10 flex flex-col items-center">
@@ -925,10 +964,7 @@ export default function Portfolio() {
               <h1 className="font-display leading-[1.05] reveal-up delay-100" style={{ fontSize: "clamp(52px, 8vw, 110px)", fontWeight: 400, letterSpacing: "-0.02em" }}>
                 <Editable value={profile.headline} onChange={(v) => setProfile((p) => ({ ...p, headline: v }))} className="block" />
                 <span className="inline-block relative mt-2">
-                  <Editable value={profile.headlineAccent} onChange={(v) => setProfile((p) => ({ ...p, headlineAccent: v }))} className="text-gradient italic" />
-                  <svg className="absolute w-full h-[0.4em] -bottom-3 left-0 text-[var(--gold-bright)] opacity-40 pointer-events-none" viewBox="0 0 100 10" preserveAspectRatio="none">
-                    <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="2" fill="none" />
-                  </svg>
+                  <Editable value={profile.headlineAccent} onChange={(v) => setProfile((p) => ({ ...p, headlineAccent: v }))} className="text-gradient font-cursive text-[1.1em] tracking-normal" />
                 </span>
               </h1>
 
@@ -936,7 +972,7 @@ export default function Portfolio() {
                 <Editable tag="span" value={profile.intro} onChange={(v) => setProfile((p) => ({ ...p, intro: v }))} />
               </p>
 
-              <div className="flex gap-6 mt-14 flex-wrap justify-center reveal-up delay-300">
+              <div className="flex gap-6 mt-12 flex-wrap justify-center reveal-up delay-300">
                 <button onClick={goTo("work")} className="btn-gold font-mono text-[11px] tracking-widest uppercase px-10 py-5 rounded-full font-semibold flex items-center gap-3">
                   View the work <ArrowUpRight size={15} />
                 </button>
@@ -945,7 +981,10 @@ export default function Portfolio() {
                 </button>
               </div>
 
-              <div className="flex gap-16 lg:gap-24 mt-24 flex-wrap justify-center reveal-up delay-400">
+              {/* Added Terminal Block Here */}
+              <TerminalBlock />
+
+              <div className="flex gap-16 lg:gap-24 mt-16 flex-wrap justify-center reveal-up delay-500">
                 {profile.stats.map((s, i) => (
                   <div key={i} className="flex items-center gap-16 lg:gap-24 group relative hover-float">
                     <div className="relative z-10 cursor-none">
@@ -1269,7 +1308,7 @@ export default function Portfolio() {
                   <p className="font-mono text-[11px] tracking-[0.3em] uppercase mb-4 text-[var(--gold-bright)]">Initiate Contact</p>
                   
                   <h2 className="font-display text-3xl md:text-4xl leading-tight mb-6 font-light">
-                    Let's build something <span className="text-gradient italic">extraordinary.</span>
+                    Let's build something <span className="text-gradient font-cursive text-[1.1em] tracking-normal">extraordinary.</span>
                   </h2>
                   
                   <p className="text-[15px] leading-relaxed text-[var(--text-dim)] font-light mb-8">
