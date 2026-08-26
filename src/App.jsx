@@ -71,8 +71,8 @@ const DEFAULT_PROFILE = {
   name: "Dhiraj Kumar",
   role: "Full-Stack Engineer",
   focus: "Systems · Interfaces · Infrastructure",
-  headline: "I build software that",
-  headlineAccent: "earns trust.",
+  headline: "Building software,",
+  headlineAccent: "solves real problem.",
   intro: "Six years designing and shipping products end to end — from database schema to the pixel a user taps. Selected work, credentials, and how to reach me, below.",
   email: "dhidna9090@gmail.com",
   linkedin: "https://www.linkedin.com/in/dhiraj-kumar-01b185350?utm_source=share_via&utm_content=profile&utm_medium=member_android",
@@ -448,31 +448,22 @@ export default function Portfolio() {
     
     setSendingMsg(true);
     try {
-      // Sending email directly using FormSubmit's AJAX API
-      // This will send the email to the address saved in profile.email
-      const response = await fetch(`https://formsubmit.co/ajax/${profile.email}`, {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
+      if (isFirebaseConfigured && db) {
+        // Save to Firebase Firestore Database
+        await addDoc(collection(db, 'artifacts', APP_ID, 'public', 'data', 'messages'), {
           name: msgForm.name,
           email: msgForm.email,
           message: msgForm.message,
-          _subject: `New Portfolio Message from ${msgForm.name}`
-        })
-      });
-
-      if (response.ok) {
-        showToast("Message sent to your email successfully!");
-        setMsgForm({ name: "", email: "", message: "" });
+          timestamp: new Date().toISOString()
+        });
+        showToast("Message sent securely to the database!");
       } else {
-        showToast("Failed to send message. Please try again.");
+        showToast("Demo Mode: Message processed locally.");
       }
+      setMsgForm({ name: "", email: "", message: "" });
     } catch (err) {
       console.error(err);
-      showToast("Network error. Could not send email.");
+      showToast("Error saving to database. Check Firebase rules.");
     } finally {
       setSendingMsg(false);
     }
@@ -630,7 +621,7 @@ export default function Portfolio() {
   return (
     <div className="font-body selection:bg-[#D4AF6A]/30 selection:text-white" style={{ background: "var(--bg)", color: "var(--text)", minHeight: "100vh", overflowX: "hidden" }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:ital@1&display=swap');
 
         :root{
           --bg: #05070A; 
@@ -648,6 +639,7 @@ export default function Portfolio() {
         .font-display{ font-family: 'Fraunces', serif; }
         .font-body{ font-family: 'Inter', sans-serif; }
         .font-mono{ font-family: 'JetBrains Mono', monospace; }
+        .font-cursive{ font-family: 'Playfair Display', serif; font-style: italic; }
 
         section[id]{ scroll-margin-top: 120px; }
         html{ scroll-behavior: smooth; cursor: none; }
@@ -852,6 +844,7 @@ export default function Portfolio() {
         <IntroScreen onComplete={handleIntroComplete} />
       )}
 
+      {}
       <div className="relative z-10">
         <header
           className="nav-shell fixed top-0 w-full z-50 transition-all duration-500"
@@ -925,10 +918,7 @@ export default function Portfolio() {
               <h1 className="font-display leading-[1.05] reveal-up delay-100" style={{ fontSize: "clamp(52px, 8vw, 110px)", fontWeight: 400, letterSpacing: "-0.02em" }}>
                 <Editable value={profile.headline} onChange={(v) => setProfile((p) => ({ ...p, headline: v }))} className="block" />
                 <span className="inline-block relative mt-2">
-                  <Editable value={profile.headlineAccent} onChange={(v) => setProfile((p) => ({ ...p, headlineAccent: v }))} className="text-gradient italic" />
-                  <svg className="absolute w-full h-[0.4em] -bottom-3 left-0 text-[var(--gold-bright)] opacity-40 pointer-events-none" viewBox="0 0 100 10" preserveAspectRatio="none">
-                    <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="2" fill="none" />
-                  </svg>
+                  <Editable value={profile.headlineAccent} onChange={(v) => setProfile((p) => ({ ...p, headlineAccent: v }))} className="text-gradient font-cursive" />
                 </span>
               </h1>
 
