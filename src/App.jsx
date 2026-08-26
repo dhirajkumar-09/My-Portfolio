@@ -173,6 +173,138 @@ const GREETINGS = [
   "DHIRAJ KUMAR"
 ];
 
+const AnimatedTerminal = () => {
+  const [step, setStep] = useState(0);
+  const [cmd1, setCmd1] = useState("");
+  const [cmd2, setCmd2] = useState("");
+  const [cmd3, setCmd3] = useState("");
+
+  useEffect(() => {
+    let t1 = "whoami";
+    let i1 = 0;
+    let int1;
+    // Delay before starting the first typing animation
+    const startDelay = setTimeout(() => {
+      int1 = setInterval(() => {
+         setCmd1(t1.slice(0, i1+1));
+         i1++;
+         if(i1 === t1.length) {
+            clearInterval(int1);
+            setTimeout(() => setStep(1), 600); // Pause, then show output and next cmd
+         }
+      }, 120);
+    }, 1200);
+
+    return () => {
+      clearTimeout(startDelay);
+      clearInterval(int1);
+    };
+  }, []);
+
+  useEffect(() => {
+     if (step >= 1) {
+         let t2 = "cat profile.json";
+         let i2 = 0;
+         let int2 = setInterval(() => {
+             setCmd2(t2.slice(0, i2+1));
+             i2++;
+             if(i2 === t2.length) {
+                 clearInterval(int2);
+                 setTimeout(() => setStep(2), 600);
+             }
+         }, 100);
+         return () => clearInterval(int2);
+     }
+  }, [step]);
+
+  useEffect(() => {
+     if (step >= 2) {
+         let t3 = "./run --build portfolio";
+         let i3 = 0;
+         let int3 = setInterval(() => {
+             setCmd3(t3.slice(0, i3+1));
+             i3++;
+             if(i3 === t3.length) {
+                 clearInterval(int3);
+                 setTimeout(() => setStep(3), 500); // Output line 1
+                 setTimeout(() => setStep(4), 1200); // Output line 2
+                 setTimeout(() => setStep(5), 1800); // Output line 3
+                 setTimeout(() => setStep(6), 2000); // New prompt
+             }
+         }, 80);
+         return () => clearInterval(int3);
+     }
+  }, [step]);
+
+  return (
+    <div className="w-full rounded-xl overflow-hidden border border-[#30363d] bg-[#0d1117] shadow-2xl font-mono text-[12px] md:text-[14px] text-left hover-float">
+      {/* Top Window Bar */}
+      <div className="flex items-center px-4 py-3 bg-[#161b22] border-b border-[#30363d]">
+        <div className="flex gap-2">
+          <div className="w-3 h-3 rounded-full bg-[#FF5F56]"></div>
+          <div className="w-3 h-3 rounded-full bg-[#FFBD2E]"></div>
+          <div className="w-3 h-3 rounded-full bg-[#27C93F]"></div>
+        </div>
+        <div className="flex-1 text-center text-[#8b949e] text-xs">dhiraj@bce:~</div>
+      </div>
+      
+      {/* Terminal Body */}
+      <div className="p-5 md:p-6 space-y-4 text-[#c9d1d9] leading-relaxed">
+        {/* Cmd 1 */}
+        <div>
+          <span className="text-[#3fb950]">dhiraj@bce</span><span className="text-[#58a6ff]">:~</span>$ {cmd1}
+          {step === 0 && <span className="w-2 h-4 bg-gray-400 ml-1 inline-block animate-pulse align-middle"></span>}
+          {step >= 1 && (
+            <div className="mt-1 text-[#8b949e]">dhiraj-kumar</div>
+          )}
+        </div>
+        
+        {/* Cmd 2 */}
+        {step >= 1 && (
+          <div>
+            <span className="text-[#3fb950]">dhiraj@bce</span><span className="text-[#58a6ff]">:~</span>$ {cmd2}
+            {step === 1 && <span className="w-2 h-4 bg-gray-400 ml-1 inline-block animate-pulse align-middle"></span>}
+            {step >= 2 && (
+              <div className="mt-1 text-[#e3b341]">
+                {`{`}
+                <div className="pl-4">
+                  <span className="text-[#79c0ff]">"role"</span>: <span className="text-[#d2a8ff]">"Full-Stack Engineer"</span>,
+                </div>
+                <div className="pl-4">
+                  <span className="text-[#79c0ff]">"focus"</span>: [<span className="text-[#d2a8ff]">"Systems"</span>, <span className="text-[#d2a8ff]">"Interfaces"</span>, <span className="text-[#d2a8ff]">"AI"</span>],
+                </div>
+                <div className="pl-4">
+                  <span className="text-[#79c0ff]">"status"</span>: <span className="text-[#d2a8ff]">"Building scalable web applications"</span>
+                </div>
+                {`}`}
+              </div>
+            )}
+          </div>
+        )}
+        
+        {/* Cmd 3 */}
+        {step >= 2 && (
+          <div>
+            <span className="text-[#3fb950]">dhiraj@bce</span><span className="text-[#58a6ff]">:~</span>$ {cmd3}
+            {step === 2 && <span className="w-2 h-4 bg-gray-400 ml-1 inline-block animate-pulse align-middle"></span>}
+            
+            {step >= 3 && <div className="mt-1 text-[#8b949e]">✓ real-time firestore listeners connected</div>}
+            {step >= 4 && <div className="text-[#8b949e]">✓ portfolio dashboard rendered</div>}
+            {step >= 5 && <div className="text-[#8b949e]">✓ deployed to dhiraj-portfolio.netlify.app</div>}
+          </div>
+        )}
+
+        {/* Final Prompt */}
+        {step >= 6 && (
+          <div className="pt-2">
+            <span className="text-[#3fb950]">dhiraj@bce</span><span className="text-[#58a6ff]">:~</span>$ <span className="w-2 h-4 bg-[#c9d1d9] ml-1 inline-block animate-pulse align-middle"></span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
 const IntroScreen = React.memo(({ onComplete }) => {
   const [index, setIndex] = useState(0);
   const [isExiting, setIsExiting] = useState(false);
@@ -621,7 +753,7 @@ export default function Portfolio() {
   return (
     <div className="font-body selection:bg-[#D4AF6A]/30 selection:text-white" style={{ background: "var(--bg)", color: "var(--text)", minHeight: "100vh", overflowX: "hidden" }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:ital@1&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
         :root{
           --bg: #05070A; 
@@ -639,7 +771,7 @@ export default function Portfolio() {
         .font-display{ font-family: 'Fraunces', serif; }
         .font-body{ font-family: 'Inter', sans-serif; }
         .font-mono{ font-family: 'JetBrains Mono', monospace; }
-        .font-cursive{ font-family: 'Playfair Display', serif; font-style: italic; }
+        .font-cursive{ font-family: 'Dancing Script', cursive; font-size: 1.15em; font-weight: 700; letter-spacing: 0; }
 
         section[id]{ scroll-margin-top: 120px; }
         html{ scroll-behavior: smooth; cursor: none; }
@@ -900,56 +1032,70 @@ export default function Portfolio() {
           </div>
         )}
 
+        {}
         <main id="top" className="max-w-7xl mx-auto px-6 md:px-12">
-          <section className="min-h-[90vh] pt-32 pb-24 flex flex-col justify-center items-center text-center relative">
+          <section className="min-h-[95vh] pt-32 pb-16 flex flex-col justify-center relative">
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] max-w-[800px] max-h-[800px] bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[var(--gold-bright)]/10 to-transparent blur-3xl rounded-full pointer-events-none"></div>
 
-            <div className="max-w-4xl relative z-10 flex flex-col items-center">
-              <div className="reveal-up">
-                <p className="font-mono text-[11px] tracking-[0.3em] uppercase mb-8 flex items-center justify-center gap-3 text-[var(--gold-bright)]">
-                  <span className="w-12 h-[1px] bg-[var(--gold-bright)] opacity-50"></span>
-                  <Editable value={profile.role} onChange={(v) => setProfile((p) => ({ ...p, role: v }))} /> 
-                  <span className="opacity-50">/</span> 
-                  <Editable value={profile.focus} onChange={(v) => setProfile((p) => ({ ...p, focus: v }))} />
-                  <span className="w-12 h-[1px] bg-[var(--gold-bright)] opacity-50"></span>
+            <div className="w-full grid grid-cols-1 lg:grid-cols-[1fr_0.9fr] gap-12 lg:gap-16 items-center relative z-10">
+              
+              {/* Left Column: Text Content */}
+              <div className="flex flex-col items-start text-left">
+                <div className="reveal-up">
+                  <p className="font-mono text-[11px] tracking-[0.3em] uppercase mb-8 flex items-center gap-3 text-[var(--gold-bright)]">
+                    <span className="w-8 h-[1px] bg-[var(--gold-bright)] opacity-50"></span>
+                    <Editable value={profile.role} onChange={(v) => setProfile((p) => ({ ...p, role: v }))} /> 
+                    <span className="opacity-50">/</span> 
+                    <Editable value={profile.focus} onChange={(v) => setProfile((p) => ({ ...p, focus: v }))} />
+                  </p>
+                </div>
+
+                <h1 className="font-display leading-[1.05] reveal-up delay-100" style={{ fontSize: "clamp(46px, 6vw, 85px)", fontWeight: 400, letterSpacing: "-0.02em" }}>
+                  <Editable value={profile.headline} onChange={(v) => setProfile((p) => ({ ...p, headline: v }))} className="block mb-1" />
+                  <Editable value={profile.headlineAccent} onChange={(v) => setProfile((p) => ({ ...p, headlineAccent: v }))} className="text-gradient font-cursive block pb-2" />
+                </h1>
+
+                <p className="mt-8 max-w-lg text-[16px] md:text-[18px] leading-[1.8] font-light reveal-up delay-200" style={{ color: "var(--text-dim)" }}>
+                  <Editable tag="span" value={profile.intro} onChange={(v) => setProfile((p) => ({ ...p, intro: v }))} />
                 </p>
+
+                <div className="flex gap-4 md:gap-6 mt-12 flex-wrap reveal-up delay-300">
+                  <button onClick={goTo("work")} className="btn-gold font-mono text-[11px] tracking-widest uppercase px-8 py-4 rounded-full font-semibold flex items-center gap-3">
+                    View the work <ArrowUpRight size={15} />
+                  </button>
+                  <button onClick={goTo("contact")} className="btn-outline font-mono text-[11px] tracking-widest uppercase px-8 py-4 rounded-full flex items-center gap-3 bg-white/5">
+                    Let's Collaborate
+                  </button>
+                </div>
               </div>
 
-              <h1 className="font-display leading-[1.05] reveal-up delay-100" style={{ fontSize: "clamp(52px, 8vw, 110px)", fontWeight: 400, letterSpacing: "-0.02em" }}>
-                <Editable value={profile.headline} onChange={(v) => setProfile((p) => ({ ...p, headline: v }))} className="block" />
-                <span className="inline-block relative mt-2">
-                  <Editable value={profile.headlineAccent} onChange={(v) => setProfile((p) => ({ ...p, headlineAccent: v }))} className="text-gradient font-cursive" />
-                </span>
-              </h1>
-
-              <p className="mt-12 max-w-2xl text-[18px] md:text-[20px] leading-[1.8] font-light reveal-up delay-200" style={{ color: "var(--text-dim)" }}>
-                <Editable tag="span" value={profile.intro} onChange={(v) => setProfile((p) => ({ ...p, intro: v }))} />
-              </p>
-
-              <div className="flex gap-6 mt-14 flex-wrap justify-center reveal-up delay-300">
-                <button onClick={goTo("work")} className="btn-gold font-mono text-[11px] tracking-widest uppercase px-10 py-5 rounded-full font-semibold flex items-center gap-3">
-                  View the work <ArrowUpRight size={15} />
-                </button>
-                <button onClick={goTo("contact")} className="btn-outline font-mono text-[11px] tracking-widest uppercase px-10 py-5 rounded-full flex items-center gap-3 bg-white/5">
-                  Let's Collaborate
-                </button>
+              {/* Right Column: Animated Terminal */}
+              <div className="reveal-left delay-400 w-full relative z-10 hidden md:block">
+                 <AnimatedTerminal />
+              </div>
+              
+              {/* Mobile Only Terminal */}
+              <div className="reveal-up delay-400 w-full relative z-10 md:hidden mt-8">
+                 <AnimatedTerminal />
               </div>
 
-              <div className="flex gap-16 lg:gap-24 mt-24 flex-wrap justify-center reveal-up delay-400">
-                {profile.stats.map((s, i) => (
-                  <div key={i} className="flex items-center gap-16 lg:gap-24 group relative hover-float">
-                    <div className="relative z-10 cursor-none">
-                      <div className="font-display text-[48px] md:text-[56px] leading-none mb-4 transition-colors duration-300 group-hover:text-[var(--text)]" style={{ color: "var(--gold-bright)" }}>
-                        <Editable value={s.v} onChange={(v) => setProfile((p) => ({ ...p, stats: p.stats.map((st, idx) => (idx === i ? { ...st, v } : st)) }))} />
-                      </div>
-                      <div className="font-mono text-[11px] uppercase tracking-[0.2em] opacity-60">
-                        <Editable value={s.k} onChange={(v) => setProfile((p) => ({ ...p, stats: p.stats.map((st, idx) => (idx === i ? { ...st, k: v } : st)) }))} />
-                      </div>
+            </div>
+
+            {/* Bottom Stats Row */}
+            <div className="flex gap-12 lg:gap-24 mt-24 flex-wrap justify-start lg:justify-center w-full z-10 reveal-up delay-500 border-t border-[var(--border-soft)] pt-12">
+              {profile.stats.map((s, i) => (
+                <div key={i} className="flex items-center gap-12 lg:gap-24 group relative hover-float">
+                  <div className="relative z-10 cursor-none flex flex-col md:flex-row md:items-center gap-4">
+                    <div className="font-display text-[42px] md:text-[52px] leading-none transition-colors duration-300 group-hover:text-[var(--text)]" style={{ color: "var(--gold-bright)" }}>
+                      <Editable value={s.v} onChange={(v) => setProfile((p) => ({ ...p, stats: p.stats.map((st, idx) => (idx === i ? { ...st, v } : st)) }))} />
                     </div>
-                    {i < profile.stats.length - 1 && <div className="hidden sm:block w-[1px] h-16 bg-gradient-to-b from-transparent via-[var(--border)] to-transparent" />}
+                    <div className="font-mono text-[10px] md:text-[11px] uppercase tracking-[0.2em] opacity-60 max-w-[100px] leading-relaxed">
+                      <Editable value={s.k} onChange={(v) => setProfile((p) => ({ ...p, stats: p.stats.map((st, idx) => (idx === i ? { ...st, k: v } : st)) }))} />
+                    </div>
                   </div>
-                ))}
-              </div>
+                  {i < profile.stats.length - 1 && <div className="hidden sm:block w-[1px] h-12 bg-gradient-to-b from-transparent via-[var(--border)] to-transparent" />}
+                </div>
+              ))}
             </div>
           </section>
 
