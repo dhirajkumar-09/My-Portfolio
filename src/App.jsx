@@ -25,10 +25,9 @@ import {
   MessageSquare
 } from "lucide-react";
 
-// IMPORT FIREBASE
 import { initializeApp } from "firebase/app";
 import { getFirestore, doc, onSnapshot, setDoc, collection, addDoc } from "firebase/firestore";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "firebase/auth";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, signInAnonymously } from "firebase/auth";
 
 const LinkedinIcon = ({ size = 14, color = "currentColor" }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill={color} xmlns="http://www.w3.org/2000/svg">
@@ -360,11 +359,25 @@ export default function Portfolio() {
       return;
     }
 
-    const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      if (currentUser && currentUser.email !== ADMIN_EMAIL) {
-        showToast("Logged in, but you don't have admin editing rights.");
-        setEditMode(false);
+    // FIXED: Ensured visitors log in anonymously so they can send messages successfully
+    const unsubscribeAuth = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+        if (currentUser.email && currentUser.email !== ADMIN_EMAIL) {
+          showToast("Logged in, but you don't have admin editing rights.");
+          setEditMode(false);
+        }
+      } else {
+        // Automatically sign in as a guest to allow messaging (if enabled)
+        try {
+          await signInAnonymously(auth);
+        } catch (error) {
+          if (error.code === 'auth/admin-restricted-operation') {
+            console.warn("Note: Anonymous Auth is disabled in Firebase console. Messages will be sent unauthenticated.");
+          } else {
+            console.error("Anonymous sign-in failed:", error);
+          }
+        }
       }
     });
 
@@ -432,20 +445,34 @@ export default function Portfolio() {
       showToast("Please fill in all fields before sending.");
       return;
     }
-
+    
     setSendingMsg(true);
     try {
-      if (isFirebaseConfigured && db) {
-        await addDoc(collection(db, 'artifacts', APP_ID, 'public', 'data', 'messages'), {
-          ...msgForm,
-          timestamp: new Date().toISOString()
-        });
+      // Sending email directly using FormSubmit's AJAX API
+      // This will send the email to the address saved in profile.email
+      const response = await fetch(`https://formsubmit.co/ajax/${profile.email}`, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          name: msgForm.name,
+          email: msgForm.email,
+          message: msgForm.message,
+          _subject: `New Portfolio Message from ${msgForm.name}`
+        })
+      });
+
+      if (response.ok) {
+        showToast("Message sent to your email successfully!");
+        setMsgForm({ name: "", email: "", message: "" });
+      } else {
+        showToast("Failed to send message. Please try again.");
       }
-      showToast("Message sent successfully! Thank you for reaching out.");
-      setMsgForm({ name: "", email: "", message: "" });
     } catch (err) {
-      showToast("Message sent locally! (Firebase write simulated)");
-      setMsgForm({ name: "", email: "", message: "" });
+      console.error(err);
+      showToast("Network error. Could not send email.");
     } finally {
       setSendingMsg(false);
     }
@@ -810,6 +837,7 @@ export default function Portfolio() {
 
       <CustomCursor />
 
+      {}
       <div className="fixed top-0 left-0 h-[2px] bg-gradient-to-r from-[var(--gold)] to-[var(--gold-bright)] z-[100] transition-all duration-150 shadow-[0_0_15px_rgba(212,175,106,0.8)]" style={{ width: `${scrollProgress}%` }} />
 
       <div className={`fixed top-24 left-1/2 -translate-x-1/2 z-[100] px-5 py-2.5 rounded-full font-mono text-xs tracking-wider border border-[var(--gold)] transition-all duration-500 flex items-center gap-2 ${toastMessage ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8 pointer-events-none'}`} 
@@ -869,6 +897,7 @@ export default function Portfolio() {
           </nav>
         </header>
 
+        {}
         {editMode && isAdminUser && (
           <div className="max-w-7xl mx-auto px-6 md:px-12 pt-32">
             <div className="font-mono text-[11px] tracking-wide px-4 py-3 rounded-xl flex items-center gap-3 backdrop-blur-md" style={{ background: "rgba(212,175,106,0.1)", border: "1px solid rgba(212,175,106,0.3)", color: "var(--gold-bright)" }}>
@@ -934,7 +963,7 @@ export default function Portfolio() {
             </div>
           </section>
 
-          {/* PROJECTS SECTION - NEWEST FIRST */}
+          {}
           <section id="work" className="py-32 relative">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-[1px] bg-gradient-to-r from-transparent via-[var(--border-soft)] to-transparent"></div>
             
@@ -1008,7 +1037,7 @@ export default function Portfolio() {
                           </div>
                         </div>
 
-                        {/* FULL PREVIEW CONTAINER (object-contain with clean padding) */}
+                        {/* FULL PREVIEW CONTAINER */}
                         <div className="order-1 lg:order-2 relative aspect-[16/10] lg:aspect-auto lg:h-[420px] w-full rounded-2xl overflow-hidden border border-[var(--border-soft)] bg-[#030508] group/img shrink-0 shadow-2xl flex items-center justify-center p-3">
                           {p.image ? (
                             <img src={p.image} alt={p.title} className="w-full h-full object-contain opacity-90 group-hover/img:opacity-100 group-hover/img:scale-102 transition-all duration-700 ease-out" />
@@ -1056,7 +1085,7 @@ export default function Portfolio() {
             </div>
           </section>
 
-          {/* CERTIFICATES SECTION - NEWEST FIRST + VERIFY LINK */}
+          {}
           <section id="certificates" className="py-32 relative">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-[1px] bg-gradient-to-r from-transparent via-[var(--border-soft)] to-transparent"></div>
             
@@ -1145,7 +1174,7 @@ export default function Portfolio() {
             </div>
           </section>
 
-          {/* ACTIVITY SECTION - NEWEST FIRST */}
+          {}
           <section id="activity" className="py-32 relative">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-[1px] bg-gradient-to-r from-transparent via-[var(--border-soft)] to-transparent"></div>
             
@@ -1225,12 +1254,11 @@ export default function Portfolio() {
             </div>
           </section>
 
-          {/* CONTACT & MESSAGING SECTION */}
+          {}
           <section id="contact" className="py-32 relative">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-[1px] bg-gradient-to-r from-transparent via-[var(--border-soft)] to-transparent"></div>
             
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              {/* Left Column: Direct info & social links */}
               <div className="spotlight-card rounded-[2.5rem] p-8 md:p-12 reveal-left" onMouseMove={handleCardMouseMove} onMouseLeave={handleCardMouseLeave}>
                 <div className="spotlight-border"></div>
                 <div className="spotlight-content">
@@ -1272,7 +1300,6 @@ export default function Portfolio() {
                 </div>
               </div>
 
-              {/* Right Column: Direct Messaging Form */}
               <div className="spotlight-card rounded-[2.5rem] p-8 md:p-12 reveal-right" onMouseMove={handleCardMouseMove} onMouseLeave={handleCardMouseLeave}>
                 <div className="spotlight-border"></div>
                 <div className="spotlight-content">
