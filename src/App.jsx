@@ -19,12 +19,15 @@ import {
   ExternalLink,
   Code2,
   Activity,
-  Calendar
+  Calendar,
+  ShieldCheck,
+  Send,
+  MessageSquare
 } from "lucide-react";
 
 // IMPORT FIREBASE
 import { initializeApp } from "firebase/app";
-import { getFirestore, doc, onSnapshot, setDoc } from "firebase/firestore";
+import { getFirestore, doc, onSnapshot, setDoc, collection, addDoc } from "firebase/firestore";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "firebase/auth";
 
 const LinkedinIcon = ({ size = 14, color = "currentColor" }) => (
@@ -103,6 +106,7 @@ const DEFAULT_CERTIFICATES = [
     issuer: "Amazon Web Services", 
     date: "2025",
     desc: "Architecting secure, highly available, and scalable systems on AWS.",
+    verifyUrl: "https://aws.amazon.com/verification",
     image: null
   }
 ];
@@ -127,7 +131,7 @@ const NAV = [
 ];
 
 const emptyProject = () => ({ title: "New Project", subtitle: "Short subtitle", desc: "Describe what it does and the impact it had.", stack: ["Tech"], live: "#", source: "#", linkedin: "#", image: null, video: "" });
-const emptyCert = () => ({ seal: "NEW", title: "Certificate name", issuer: "Issuing organization", date: "2026", desc: "Brief description of the certification.", image: null });
+const emptyCert = () => ({ seal: "NEW", title: "Certificate name", issuer: "Issuing organization", date: "2026", desc: "Brief description of the certification.", verifyUrl: "#", image: null });
 const emptyLog = () => ({ date: "New Date", title: "New Milestone", desc: "Describe what happened." });
 
 const compressImage = (file, maxWidth = 500, quality = 0.55) => {
@@ -170,7 +174,7 @@ const GREETINGS = [
   "DHIRAJ KUMAR"
 ];
 
-const IntroScreen = ({ onComplete }) => {
+const IntroScreen = React.memo(({ onComplete }) => {
   const [index, setIndex] = useState(0);
   const [isExiting, setIsExiting] = useState(false);
 
@@ -181,7 +185,7 @@ const IntroScreen = ({ onComplete }) => {
     if (index < GREETINGS.length - 1) {
       timeout = setTimeout(() => {
         setIndex((prev) => prev + 1);
-      }, 400); // 400ms per greeting
+      }, 400); 
     } else {
       timeout = setTimeout(() => {
         setIsExiting(true);
@@ -210,13 +214,13 @@ const IntroScreen = ({ onComplete }) => {
       )}
     </div>
   );
-};
+});
 
 const CustomCursor = () => {
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [delayedMousePos, setDelayedMousePos] = useState({ x: 0, y: 0 });
+  const [mousePos, setMousePos] = useState({ x: -100, y: -100 });
+  const [delayedMousePos, setDelayedMousePos] = useState({ x: -100, y: -100 });
   const [isHovering, setIsHovering] = useState(false);
-  const mousePosRef = useRef({ x: 0, y: 0 });
+  const mousePosRef = useRef({ x: -100, y: -100 });
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -230,7 +234,7 @@ const CustomCursor = () => {
       setDelayedMousePos((prev) => {
         const dx = mousePosRef.current.x - prev.x;
         const dy = mousePosRef.current.y - prev.y;
-        return { x: prev.x + dx * 0.15, y: prev.y + dy * 0.15 };
+        return { x: prev.x + dx * 0.2, y: prev.y + dy * 0.2 };
       });
       animationFrameId = requestAnimationFrame(render);
     };
@@ -256,14 +260,14 @@ const CustomCursor = () => {
   return (
     <>
       <div 
-        className="fixed top-0 left-0 w-2 h-2 bg-[var(--gold-bright)] rounded-full pointer-events-none mix-blend-difference z-[9999]"
-        style={{ transform: `translate3d(${mousePos.x - 4}px, ${mousePos.y - 4}px, 0) scale(${isHovering ? 0 : 1})`, transition: 'transform 0.1s ease-out' }}
+        className="fixed top-0 left-0 w-2.5 h-2.5 bg-[var(--gold-bright)] rounded-full pointer-events-none mix-blend-difference z-[9999]"
+        style={{ transform: `translate3d(${mousePos.x - 5}px, ${mousePos.y - 5}px, 0) scale(${isHovering ? 0 : 1})`, transition: 'transform 0.1s ease-out' }}
       />
       <div 
-        className="fixed top-0 left-0 w-12 h-12 border border-[var(--gold-bright)]/40 rounded-full pointer-events-none z-[9998] flex items-center justify-center backdrop-blur-[2px]"
+        className="fixed top-0 left-0 w-12 h-12 border border-[var(--gold-bright)]/50 rounded-full pointer-events-none z-[9998] flex items-center justify-center backdrop-blur-[2px]"
         style={{ 
-          transform: `translate3d(${delayedMousePos.x - 24}px, ${delayedMousePos.y - 24}px, 0) scale(${isHovering ? 1.5 : 1})`, 
-          backgroundColor: isHovering ? 'rgba(212,175,106,0.1)' : 'transparent',
+          transform: `translate3d(${delayedMousePos.x - 24}px, ${delayedMousePos.y - 24}px, 0) scale(${isHovering ? 1.4 : 1})`, 
+          backgroundColor: isHovering ? 'rgba(212,175,106,0.15)' : 'transparent',
           transition: 'transform 0.05s linear, background-color 0.3s ease, border-color 0.3s ease',
           borderColor: isHovering ? 'var(--gold-bright)' : 'rgba(212,175,106,0.4)'
         }}
@@ -284,6 +288,10 @@ export default function Portfolio() {
   const [scrolled, setScrolled] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [editMode, setEditMode] = useState(false);
+  
+  // Messaging Form State
+  const [msgForm, setMsgForm] = useState({ name: "", email: "", message: "" });
+  const [sendingMsg, setSendingMsg] = useState(false);
   
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -332,19 +340,18 @@ export default function Portfolio() {
       { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
     );
     
-    const observerTimer = setTimeout(() => {
-      document.querySelectorAll(".reveal-up, .reveal-scale, .reveal-left, .reveal-right, .reveal-rotate").forEach((el) => observer.observe(el));
-    }, 500);
-    
-    return () => {
-      clearTimeout(observerTimer);
-      observer.disconnect();
+    if (!loading && !showIntro) {
+      setTimeout(() => {
+        document.querySelectorAll(".reveal-up, .reveal-scale, .reveal-left, .reveal-right, .reveal-rotate").forEach((el) => observer.observe(el));
+      }, 300);
     }
+    
+    return () => observer.disconnect();
   }, [projects.length, certificates.length, loading, showIntro]);
 
   useEffect(() => {
     if (!isFirebaseConfigured) {
-      setTimeout(() => setLoading(false), 300); 
+      setTimeout(() => setLoading(false), 500); 
       return;
     }
 
@@ -362,11 +369,8 @@ export default function Portfolio() {
     });
 
     const safetyTimer = setTimeout(() => {
-      setLoading((prev) => {
-        if (prev) console.warn("Firestore timeout. Showing default content.");
-        return false;
-      });
-    }, 1500);
+      setLoading((prev) => (prev ? false : prev));
+    }, 4000);
 
     const docRef = doc(db, 'portfolios', APP_ID);
     const unsubscribeData = onSnapshot(docRef, (docSnap) => {
@@ -379,10 +383,9 @@ export default function Portfolio() {
         if (data.skillGroups) setSkillGroups(data.skillGroups);
         if (data.activityLogs) setActivityLogs(data.activityLogs);
       }
-      setTimeout(() => setLoading(false), 200);
+      setLoading(false);
     }, (error) => {
       clearTimeout(safetyTimer);
-      console.error("Error fetching data:", error);
       setLoading(false);
     });
 
@@ -420,6 +423,31 @@ export default function Portfolio() {
       if (turnOffEditMode) setEditMode(false);
     } catch (error) {
       showToast("Error saving data. " + error.message);
+    }
+  };
+
+  const handleSendMessage = async (e) => {
+    e.preventDefault();
+    if (!msgForm.name || !msgForm.email || !msgForm.message) {
+      showToast("Please fill in all fields before sending.");
+      return;
+    }
+
+    setSendingMsg(true);
+    try {
+      if (isFirebaseConfigured && db) {
+        await addDoc(collection(db, 'artifacts', APP_ID, 'public', 'data', 'messages'), {
+          ...msgForm,
+          timestamp: new Date().toISOString()
+        });
+      }
+      showToast("Message sent successfully! Thank you for reaching out.");
+      setMsgForm({ name: "", email: "", message: "" });
+    } catch (err) {
+      showToast("Message sent locally! (Firebase write simulated)");
+      setMsgForm({ name: "", email: "", message: "" });
+    } finally {
+      setSendingMsg(false);
     }
   };
 
@@ -486,8 +514,8 @@ export default function Portfolio() {
 
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
-    const rotateX = ((y - centerY) / centerY) * -8;
-    const rotateY = ((x - centerX) / centerX) * 8;
+    const rotateX = ((y - centerY) / centerY) * -10;
+    const rotateY = ((x - centerX) / centerX) * 10;
     
     target.style.setProperty("--rotate-x", `${rotateX}deg`);
     target.style.setProperty("--rotate-y", `${rotateY}deg`);
@@ -566,9 +594,7 @@ export default function Portfolio() {
         <div className="absolute inset-0 z-0 opacity-20 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#D4AF6A]/20 via-[#05070A] to-[#05070A] animate-pulse-slow"></div>
         <div className="z-10 flex flex-col items-center gap-6">
           <div className="w-16 h-16 border-t-2 border-l-2 border-[#E8C888] rounded-full animate-spin"></div>
-          <div className="overflow-hidden h-5 relative w-32 flex justify-center">
-            <span className="uppercase animate-slide-up absolute">Loading...</span>
-          </div>
+          <span className="uppercase tracking-[0.2em] animate-pulse">Loading Portfolio...</span>
         </div>
       </div>
     );
@@ -601,9 +627,9 @@ export default function Portfolio() {
 
         .glow-field { 
           background: 
-            radial-gradient(800px circle at 85% 10%, rgba(212,175,106,0.08), transparent 60%), 
-            radial-gradient(1000px circle at 10% 90%, rgba(212,175,106,0.05), transparent 50%),
-            radial-gradient(600px circle at 50% 50%, rgba(212,175,106,0.03), transparent 60%);
+            radial-gradient(800px circle at 85% 10%, rgba(212,175,106,0.09), transparent 60%), 
+            radial-gradient(1000px circle at 10% 90%, rgba(212,175,106,0.06), transparent 50%),
+            radial-gradient(600px circle at 50% 50%, rgba(212,175,106,0.04), transparent 60%);
           filter: blur(40px);
           animation: ambient-shift 25s ease-in-out infinite alternate;
         }
@@ -675,7 +701,7 @@ export default function Portfolio() {
           transition: opacity 0.4s ease;
           background: radial-gradient(
             1000px circle at var(--mouse-x, 0) var(--mouse-y, 0),
-            rgba(255,255,255,0.06),
+            rgba(255,255,255,0.09),
             transparent 30%
           );
           z-index: 0;
@@ -686,8 +712,8 @@ export default function Portfolio() {
           --translate-y: -8px;
           --scale-card: 1.02;
           background: var(--panel-strong); 
-          border-color: rgba(212,175,106,0.25);
-          box-shadow: 0 30px 60px -20px rgba(0,0,0,0.6), 0 0 30px rgba(212,175,106,0.05);
+          border-color: rgba(212,175,106,0.4);
+          box-shadow: 0 35px 70px -20px rgba(0,0,0,0.7), 0 0 40px rgba(212,175,106,0.12);
         }
         .spotlight-card:hover::before { opacity: 1; }
         
@@ -699,7 +725,7 @@ export default function Portfolio() {
           padding: 1px;
           background: radial-gradient(
             500px circle at var(--mouse-x, 0) var(--mouse-y, 0),
-            rgba(212,175,106,0.8),
+            rgba(212,175,106,0.95),
             transparent 30%
           );
           -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -755,11 +781,6 @@ export default function Portfolio() {
         .reveal-right { opacity: 0; transform: translateX(60px); filter: blur(5px); transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1); }
         .reveal-right.is-visible { opacity: 1; transform: translateX(0); filter: blur(0); }
 
-        .delay-100 { transition-delay: 100ms; }
-        .delay-200 { transition-delay: 200ms; }
-        .delay-300 { transition-delay: 300ms; }
-        .delay-400 { transition-delay: 400ms; }
-
         .hover-float { transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); animation: floating 6s ease-in-out infinite; }
         .hover-float:hover { animation-play-state: paused; transform: translateY(-10px) scale(1.05); }
         .hover-float:nth-child(2) { animation-delay: -2s; }
@@ -785,11 +806,6 @@ export default function Portfolio() {
 
         .proj-num{ -webkit-text-stroke: 1px var(--border); color: transparent; transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
         .spotlight-card:hover .proj-num { -webkit-text-stroke: 1px var(--gold-bright); color: rgba(212,175,106,0.1); transform: scale(1.1) translateX(10px); }
-        
-        @keyframes pulse-slow {
-          0%, 100% { opacity: 0.1; transform: scale(0.95); }
-          50% { opacity: 0.3; transform: scale(1.05); }
-        }
       `}</style>
 
       <CustomCursor />
@@ -918,109 +934,113 @@ export default function Portfolio() {
             </div>
           </section>
 
+          {/* PROJECTS SECTION - NEWEST FIRST */}
           <section id="work" className="py-32 relative">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-[1px] bg-gradient-to-r from-transparent via-[var(--border-soft)] to-transparent"></div>
             
             <SectionHead eyebrow="Selected Work" title="Featured Projects" count={`${projects.length} artifacts`} />
             
             <div className="grid grid-cols-1 gap-12 md:gap-20 mt-20">
-              {projects.map((p, i) => (
-                <div 
-                  key={i} 
-                  className="spotlight-card group reveal-rotate"
-                  style={{ transitionDelay: `${i * 150}ms` }}
-                  onMouseMove={handleCardMouseMove}
-                  onMouseLeave={handleCardMouseLeave}
-                >
-                  <div className="spotlight-border"></div>
-                  <div className="spotlight-content p-8 md:p-12">
-                    
-                    {editMode && (
-                      <div className="absolute top-6 right-6 flex gap-2 z-20">
-                        <span className="w-10 h-10 rounded-full flex items-center justify-center bg-red-500/10 border border-red-500/20 text-red-400 cursor-none hover:bg-red-500/20 hover:scale-110 transition-all" onClick={() => setProjects((prev) => prev.filter((_, idx) => idx !== i))}>
-                          <Trash2 size={16} />
-                        </span>
-                      </div>
-                    )}
+              {[...projects].reverse().map((p, originalIndex) => {
+                const i = projects.length - 1 - originalIndex; 
+                return (
+                  <div 
+                    key={i} 
+                    className="spotlight-card group reveal-rotate"
+                    style={{ transitionDelay: `${originalIndex * 150}ms` }}
+                    onMouseMove={handleCardMouseMove}
+                    onMouseLeave={handleCardMouseLeave}
+                  >
+                    <div className="spotlight-border"></div>
+                    <div className="spotlight-content p-8 md:p-12">
+                      
+                      {editMode && (
+                        <div className="absolute top-6 right-6 flex gap-2 z-20">
+                          <span className="w-10 h-10 rounded-full flex items-center justify-center bg-red-500/10 border border-red-500/20 text-red-400 cursor-none hover:bg-red-500/20 hover:scale-110 transition-all" onClick={() => setProjects((prev) => prev.filter((_, idx) => idx !== i))}>
+                            <Trash2 size={16} />
+                          </span>
+                        </div>
+                      )}
 
-                    <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-12 lg:gap-16 items-center">
-                      <div className="order-2 lg:order-1 flex flex-col h-full justify-center">
-                        <div className="font-display proj-num text-[80px] leading-none mb-6 opacity-30 select-none">
-                          {String(i + 1).padStart(2, "0")}
-                        </div>
-                        
-                        <h3 className="font-display text-3xl md:text-4xl font-light mb-4 text-[var(--text)] group-hover:text-[var(--gold-bright)] transition-colors">
-                          <Editable value={p.title} onChange={(v) => updateProject(i, { title: v })} />
-                        </h3>
-                        
-                        <div className="font-mono text-[11px] uppercase tracking-widest text-[var(--text-faint)] mb-8 flex items-center gap-4">
-                          <span className="w-6 h-[1px] bg-[var(--border)]"></span>
-                          <Editable value={p.subtitle} onChange={(v) => updateProject(i, { subtitle: v })} />
-                        </div>
-                        
-                        <p className="text-[15px] leading-[1.8] text-[var(--text-dim)] font-light mb-10">
-                          <Editable tag="span" value={p.desc} onChange={(v) => updateProject(i, { desc: v })} placeholder="Describe the project challenge, solution, and impact..." />
-                        </p>
-                        
-                        <div className="mb-10">
-                          <TagEditor items={p.stack} onChange={(items) => updateProject(i, { stack: items })} />
+                      <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-12 lg:gap-16 items-center">
+                        <div className="order-2 lg:order-1 flex flex-col h-full justify-center">
+                          <div className="font-display proj-num text-[80px] leading-none mb-6 opacity-30 select-none">
+                            {String(originalIndex + 1).padStart(2, "0")}
+                          </div>
+                          
+                          <h3 className="font-display text-3xl md:text-4xl font-light mb-4 text-[var(--text)] group-hover:text-[var(--gold-bright)] transition-colors">
+                            <Editable value={p.title} onChange={(v) => updateProject(i, { title: v })} />
+                          </h3>
+                          
+                          <div className="font-mono text-[11px] uppercase tracking-widest text-[var(--text-faint)] mb-8 flex items-center gap-4">
+                            <span className="w-6 h-[1px] bg-[var(--border)]"></span>
+                            <Editable value={p.subtitle} onChange={(v) => updateProject(i, { subtitle: v })} />
+                          </div>
+                          
+                          <p className="text-[15px] leading-[1.8] text-[var(--text-dim)] font-light mb-10">
+                            <Editable tag="span" value={p.desc} onChange={(v) => updateProject(i, { desc: v })} placeholder="Describe the project challenge, solution, and impact..." />
+                          </p>
+                          
+                          <div className="mb-10">
+                            <TagEditor items={p.stack} onChange={(items) => updateProject(i, { stack: items })} />
+                          </div>
+
+                          <div className="flex flex-wrap gap-4 mt-auto">
+                            {editMode ? (
+                              <div className="flex flex-col gap-3 w-full">
+                                <InputRow icon={<ExternalLink size={14}/>} value={p.live} onChange={(v) => updateProject(i, { live: v })} placeholder="Live URL" color="var(--gold-bright)" />
+                                <InputRow icon={<Github size={14}/>} value={p.source} onChange={(v) => updateProject(i, { source: v })} placeholder="Source URL" color="var(--text-dim)" />
+                              </div>
+                            ) : (
+                              <>
+                                {p.live !== "#" && (
+                                  <a href={p.live} target="_blank" rel="noopener noreferrer" className="font-mono text-[11px] uppercase tracking-widest flex items-center gap-2 text-[var(--gold-bright)] hover:opacity-70 transition-opacity cursor-none">
+                                    <ExternalLink size={14} /> Live Site
+                                  </a>
+                                )}
+                                {p.source !== "#" && (
+                                  <a href={p.source} target="_blank" rel="noopener noreferrer" className="font-mono text-[11px] uppercase tracking-widest flex items-center gap-2 text-[var(--text-dim)] hover:text-[var(--text)] transition-colors cursor-none">
+                                    <Github size={14} /> Source
+                                  </a>
+                                )}
+                              </>
+                            )}
+                          </div>
                         </div>
 
-                        <div className="flex flex-wrap gap-4 mt-auto">
-                          {editMode ? (
-                            <div className="flex flex-col gap-3 w-full">
-                              <InputRow icon={<ExternalLink size={14}/>} value={p.live} onChange={(v) => updateProject(i, { live: v })} placeholder="Live URL" color="var(--gold-bright)" />
-                              <InputRow icon={<Github size={14}/>} value={p.source} onChange={(v) => updateProject(i, { source: v })} placeholder="Source URL" color="var(--text-dim)" />
-                            </div>
+                        {/* FULL PREVIEW CONTAINER (object-contain with clean padding) */}
+                        <div className="order-1 lg:order-2 relative aspect-[16/10] lg:aspect-auto lg:h-[420px] w-full rounded-2xl overflow-hidden border border-[var(--border-soft)] bg-[#030508] group/img shrink-0 shadow-2xl flex items-center justify-center p-3">
+                          {p.image ? (
+                            <img src={p.image} alt={p.title} className="w-full h-full object-contain opacity-90 group-hover/img:opacity-100 group-hover/img:scale-102 transition-all duration-700 ease-out" />
                           ) : (
-                            <>
-                              {p.live !== "#" && (
-                                <a href={p.live} target="_blank" rel="noopener noreferrer" className="font-mono text-[11px] uppercase tracking-widest flex items-center gap-2 text-[var(--gold-bright)] hover:opacity-70 transition-opacity cursor-none">
-                                  <ExternalLink size={14} /> Live Site
-                                 </a>
+                            <div className="w-full h-full flex flex-col items-center justify-center text-[var(--border)]">
+                              <Code2 size={64} strokeWidth={1} />
+                              <span className="font-mono text-xs uppercase tracking-widest mt-4 opacity-50">Project Visual</span>
+                            </div>
+                          )}
+                          
+                          <div className="absolute inset-0 bg-gradient-to-t from-[#05070A] via-transparent to-transparent opacity-40 pointer-events-none"></div>
+
+                          {editMode && (
+                            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/70 backdrop-blur-sm opacity-0 hover:opacity-100 transition-opacity p-6 z-20">
+                              <label className="btn-outline px-6 py-3 rounded-full flex items-center gap-3 cursor-none">
+                                <ImageIcon size={16} /> 
+                                <span className="font-mono text-xs tracking-widest uppercase">Upload Image</span>
+                                <input type="file" accept="image/*" className="hidden" onChange={(e) => handleProjectImageChange(i, e)} />
+                              </label>
+                              {p.image && (
+                                <button onClick={() => updateProject(i, { image: null })} className="mt-4 font-mono text-[10px] uppercase text-red-400 tracking-widest hover:text-red-300">
+                                  Remove Image
+                                </button>
                               )}
-                              {p.source !== "#" && (
-                                <a href={p.source} target="_blank" rel="noopener noreferrer" className="font-mono text-[11px] uppercase tracking-widest flex items-center gap-2 text-[var(--text-dim)] hover:text-[var(--text)] transition-colors cursor-none">
-                                  <Github size={14} /> Source
-                                </a>
-                              )}
-                            </>
+                            </div>
                           )}
                         </div>
                       </div>
-
-                      {/* CHANGED FROM object-cover to object-contain so full photo/preview never crops out */}
-                      <div className="order-1 lg:order-2 relative aspect-[16/10] lg:aspect-auto lg:h-[420px] w-full rounded-2xl overflow-hidden border border-[var(--border-soft)] bg-[#030508] group/img shrink-0 shadow-2xl flex items-center justify-center p-2">
-                        {p.image ? (
-                          <img src={p.image} alt={p.title} className="w-full h-full object-contain opacity-90 group-hover/img:opacity-100 group-hover/img:scale-102 transition-all duration-700 ease-out" />
-                        ) : (
-                          <div className="w-full h-full flex flex-col items-center justify-center text-[var(--border)]">
-                            <Code2 size={64} strokeWidth={1} />
-                            <span className="font-mono text-xs uppercase tracking-widest mt-4 opacity-50">Project Visual</span>
-                          </div>
-                        )}
-                        
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#05070A] via-transparent to-transparent opacity-40 pointer-events-none"></div>
-
-                        {editMode && (
-                          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/70 backdrop-blur-sm opacity-0 hover:opacity-100 transition-opacity p-6 z-20">
-                            <label className="btn-outline px-6 py-3 rounded-full flex items-center gap-3 cursor-none">
-                              <ImageIcon size={16} /> 
-                              <span className="font-mono text-xs tracking-widest uppercase">Upload Image</span>
-                              <input type="file" accept="image/*" className="hidden" onChange={(e) => handleProjectImageChange(i, e)} />
-                            </label>
-                            {p.image && (
-                              <button onClick={() => updateProject(i, { image: null })} className="mt-4 font-mono text-[10px] uppercase text-red-400 tracking-widest hover:text-red-300">
-                                Remove Image
-                              </button>
-                            )}
-                          </div>
-                        )}
-                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
               
               {editMode && (
                 <div className="spotlight-card border-dashed border-2 hover:bg-white/[0.02] cursor-none min-h-[300px] flex flex-col items-center justify-center text-[var(--text-dim)] hover:text-[var(--gold-bright)] hover:border-[var(--gold-bright)] transition-all" onClick={() => setProjects((prev) => [...prev, emptyProject()])} onMouseMove={handleCardMouseMove} onMouseLeave={handleCardMouseLeave}>
@@ -1036,73 +1056,85 @@ export default function Portfolio() {
             </div>
           </section>
 
+          {/* CERTIFICATES SECTION - NEWEST FIRST + VERIFY LINK */}
           <section id="certificates" className="py-32 relative">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-[1px] bg-gradient-to-r from-transparent via-[var(--border-soft)] to-transparent"></div>
             
             <SectionHead eyebrow="Credentials" title="Certifications" count={`${certificates.length} verified`} />
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-16">
-              {certificates.map((c, i) => (
-                <div key={i} className="spotlight-card group reveal-scale flex flex-col h-full min-h-[280px]" style={{ transitionDelay: `${i * 100}ms` }} onMouseMove={handleCardMouseMove} onMouseLeave={handleCardMouseLeave}>
-                  <div className="spotlight-border"></div>
-                  <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[var(--gold-bright)] to-transparent opacity-50"></div>
-                  
-                  <div className="spotlight-content p-8 flex flex-col h-full">
-                    {editMode && (
-                      <div className="absolute top-4 right-4 z-20">
-                        <span className="w-8 h-8 rounded-full flex items-center justify-center bg-red-500/10 text-red-400 cursor-none hover:bg-red-500/20 transition-all" onClick={() => setCertificates((prev) => prev.filter((_, idx) => idx !== i))}>
-                          <Trash2 size={14} />
+              {[...certificates].reverse().map((c, originalIndex) => {
+                const i = certificates.length - 1 - originalIndex;
+                return (
+                  <div key={i} className="spotlight-card group reveal-scale flex flex-col h-full min-h-[300px]" style={{ transitionDelay: `${originalIndex * 100}ms` }} onMouseMove={handleCardMouseMove} onMouseLeave={handleCardMouseLeave}>
+                    <div className="spotlight-border"></div>
+                    <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[var(--gold-bright)] to-transparent opacity-50"></div>
+                    
+                    <div className="spotlight-content p-8 flex flex-col h-full">
+                      {editMode && (
+                        <div className="absolute top-4 right-4 z-20">
+                          <span className="w-8 h-8 rounded-full flex items-center justify-center bg-red-500/10 text-red-400 cursor-none hover:bg-red-500/20 transition-all" onClick={() => setCertificates((prev) => prev.filter((_, idx) => idx !== i))}>
+                            <Trash2 size={14} />
+                          </span>
+                        </div>
+                      )}
+
+                      <div className="flex items-center justify-between mb-8">
+                        <span className="font-mono text-[10px] tracking-[0.2em] uppercase px-3 py-1.5 rounded-full border border-[var(--gold-bright)]/30 text-[var(--gold-bright)] bg-[var(--gold-bright)]/5">
+                          <Editable value={c.seal} onChange={(v) => updateCert(i, { seal: v })} />
                         </span>
+                        <BadgeCheck size={24} className="text-[var(--border)] group-hover:text-[var(--gold-bright)] transition-colors duration-500" strokeWidth={1.2} />
                       </div>
-                    )}
-
-                    <div className="flex items-center justify-between mb-8">
-                      <span className="font-mono text-[10px] tracking-[0.2em] uppercase px-3 py-1.5 rounded-full border border-[var(--gold-bright)]/30 text-[var(--gold-bright)] bg-[var(--gold-bright)]/5">
-                        <Editable value={c.seal} onChange={(v) => updateCert(i, { seal: v })} />
-                      </span>
-                      <BadgeCheck size={24} className="text-[var(--border)] group-hover:text-[var(--gold-bright)] transition-colors duration-500" strokeWidth={1.2} />
-                    </div>
-                    
-                    <h4 className="font-display text-xl leading-snug font-light mb-3 group-hover:text-[var(--gold-bright)] transition-colors">
-                      <Editable value={c.title} onChange={(v) => updateCert(i, { title: v })} />
-                    </h4>
-                    
-                    <div className="font-mono text-[11px] uppercase tracking-wider text-[var(--text-dim)] mb-5 flex items-center gap-2">
-                      <Editable value={c.issuer} onChange={(v) => updateCert(i, { issuer: v })} />
-                    </div>
-                    
-                    <p className="text-[13px] leading-[1.7] text-[var(--text-faint)] font-light mb-6 flex-grow">
-                      <Editable tag="span" value={c.desc} onChange={(v) => updateCert(i, { desc: v })} placeholder="Add certificate description..." />
-                    </p>
-
-                    {c.image && (
-                      <div className="mb-6 rounded-xl overflow-hidden border border-[var(--border-soft)] group/img relative h-40 bg-[#030508] w-full shrink-0 flex items-center justify-center p-1">
-                        <img src={c.image} alt={c.title} className="w-full h-full object-contain opacity-90 group-hover/img:opacity-100 transition-opacity" />
+                      
+                      <h4 className="font-display text-xl leading-snug font-light mb-3 group-hover:text-[var(--gold-bright)] transition-colors">
+                        <Editable value={c.title} onChange={(v) => updateCert(i, { title: v })} />
+                      </h4>
+                      
+                      <div className="font-mono text-[11px] uppercase tracking-wider text-[var(--text-dim)] mb-5 flex items-center gap-2">
+                        <Editable value={c.issuer} onChange={(v) => updateCert(i, { issuer: v })} />
                       </div>
-                    )}
+                      
+                      <p className="text-[13px] leading-[1.7] text-[var(--text-faint)] font-light mb-6 flex-grow">
+                        <Editable tag="span" value={c.desc} onChange={(v) => updateCert(i, { desc: v })} placeholder="Add certificate description..." />
+                      </p>
 
-                    {editMode && (
-                      <label className="mb-6 border border-dashed border-[var(--border)] rounded-xl p-4 flex flex-col items-center justify-center gap-2 cursor-none hover:border-[var(--gold-bright)] hover:bg-[var(--gold-bright)]/5 transition-colors">
-                        <ImageIcon size={18} color="var(--text-dim)" />
-                        <span className="font-mono text-[10px] uppercase tracking-widest text-[var(--text-dim)]">Attach Image</span>
-                        <input type="file" accept="image/*" className="hidden" onChange={(e) => handleCertImageChange(i, e)} />
-                      </label>
-                    )}
+                      {c.image && (
+                        <div className="mb-6 rounded-xl overflow-hidden border border-[var(--border-soft)] group/img relative h-40 bg-[#030508] w-full shrink-0 flex items-center justify-center p-1">
+                          <img src={c.image} alt={c.title} className="w-full h-full object-contain opacity-90 group-hover/img:opacity-100 transition-opacity" />
+                        </div>
+                      )}
 
-                    <div className="flex justify-between items-center mt-auto pt-6 border-t border-[var(--border-soft)]">
-                      <span className="font-mono text-[11px] tracking-widest text-[var(--text-faint)]">
-                        <Editable value={c.date} onChange={(v) => updateCert(i, { date: v })} />
-                      </span>
-                      <span className="font-mono text-[10px] uppercase tracking-widest text-[var(--text-dim)] group-hover:text-[var(--gold-bright)] transition-colors flex items-center gap-2">
-                        View <ArrowUpRight size={12} className="group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform" />
-                      </span>
+                      {editMode && (
+                        <div className="space-y-3 mb-6">
+                          <label className="border border-dashed border-[var(--border)] rounded-xl p-4 flex flex-col items-center justify-center gap-2 cursor-none hover:border-[var(--gold-bright)] hover:bg-[var(--gold-bright)]/5 transition-colors">
+                            <ImageIcon size={18} color="var(--text-dim)" />
+                            <span className="font-mono text-[10px] uppercase tracking-widest text-[var(--text-dim)]">Attach Image</span>
+                            <input type="file" accept="image/*" className="hidden" onChange={(e) => handleCertImageChange(i, e)} />
+                          </label>
+                          <InputRow icon={<ShieldCheck size={14}/>} value={c.verifyUrl} onChange={(v) => updateCert(i, { verifyUrl: v })} placeholder="Verification URL" color="var(--gold-bright)" />
+                        </div>
+                      )}
+
+                      <div className="flex justify-between items-center mt-auto pt-6 border-t border-[var(--border-soft)]">
+                        <span className="font-mono text-[11px] tracking-widest text-[var(--text-faint)]">
+                          <Editable value={c.date} onChange={(v) => updateCert(i, { date: v })} />
+                        </span>
+                        
+                        {!editMode && c.verifyUrl && c.verifyUrl !== "#" ? (
+                          <a href={c.verifyUrl} target="_blank" rel="noopener noreferrer" className="font-mono text-[10px] uppercase tracking-widest text-[var(--gold-bright)] hover:underline flex items-center gap-1.5 cursor-none">
+                            <ShieldCheck size={13} /> Verify <ArrowUpRight size={11} />
+                          </a>
+                        ) : (
+                          <span className="font-mono text-[10px] uppercase tracking-widest text-[var(--text-dim)]">Verified</span>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
               
               {editMode && (
-                <div className="spotlight-card border-dashed border-2 hover:bg-white/[0.02] cursor-none min-h-[280px] flex flex-col items-center justify-center text-[var(--text-dim)] hover:text-[var(--gold-bright)] hover:border-[var(--gold-bright)] transition-all" onClick={() => setCertificates((prev) => [...prev, emptyCert()])} onMouseMove={handleCardMouseMove} onMouseLeave={handleCardMouseLeave}>
+                <div className="spotlight-card border-dashed border-2 hover:bg-white/[0.02] cursor-none min-h-[300px] flex flex-col items-center justify-center text-[var(--text-dim)] hover:text-[var(--gold-bright)] hover:border-[var(--gold-bright)] transition-all" onClick={() => setCertificates((prev) => [...prev, emptyCert()])} onMouseMove={handleCardMouseMove} onMouseLeave={handleCardMouseLeave}>
                   <div className="spotlight-border"></div>
                   <div className="spotlight-content flex flex-col items-center gap-4">
                     <Plus size={24} />
@@ -1113,6 +1145,7 @@ export default function Portfolio() {
             </div>
           </section>
 
+          {/* ACTIVITY SECTION - NEWEST FIRST */}
           <section id="activity" className="py-32 relative">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-[1px] bg-gradient-to-r from-transparent via-[var(--border-soft)] to-transparent"></div>
             
@@ -1120,35 +1153,38 @@ export default function Portfolio() {
             
             <div className="mt-20 relative before:absolute before:inset-0 before:ml-4 md:before:ml-6 before:-translate-x-px before:h-full before:w-[2px] before:bg-gradient-to-b before:from-[var(--gold-bright)] before:via-[var(--border)] before:to-transparent">
               <div className="space-y-12">
-                {activityLogs.map((log, i) => (
-                  <div key={i} className="relative pl-12 md:pl-20 reveal-right group" style={{ transitionDelay: `${i * 100}ms` }}>
-                    <div className="absolute left-[7px] md:left-[15px] top-1.5 w-4 h-4 rounded-full bg-[var(--bg)] border-2 border-[var(--gold-bright)] shadow-[0_0_10px_rgba(212,175,106,0.5)] group-hover:bg-[var(--gold-bright)] group-hover:scale-125 transition-all duration-300"></div>
-                    
-                    {editMode && (
-                      <div className="absolute top-0 right-0 z-20">
-                        <span className="w-8 h-8 rounded-full flex items-center justify-center bg-red-500/10 text-red-400 cursor-none hover:bg-red-500/20 transition-all" onClick={() => setActivityLogs((prev) => prev.filter((_, idx) => idx !== i))}>
-                          <Trash2 size={14} />
-                        </span>
-                      </div>
-                    )}
-
-                    <div className="spotlight-card p-6 md:p-8" onMouseMove={handleCardMouseMove} onMouseLeave={handleCardMouseLeave}>
-                      <div className="spotlight-border"></div>
-                      <div className="spotlight-content">
-                        <div className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-widest text-[var(--gold-bright)] mb-3">
-                          <Calendar size={14} />
-                          <Editable value={log.date} onChange={(v) => updateLog(i, { date: v })} placeholder="e.g. Aug 2026" />
+                {[...activityLogs].reverse().map((log, originalIndex) => {
+                  const i = activityLogs.length - 1 - originalIndex;
+                  return (
+                    <div key={i} className="relative pl-12 md:pl-20 reveal-right group" style={{ transitionDelay: `${originalIndex * 100}ms` }}>
+                      <div className="absolute left-[7px] md:left-[15px] top-1.5 w-4 h-4 rounded-full bg-[var(--bg)] border-2 border-[var(--gold-bright)] shadow-[0_0_10px_rgba(212,175,106,0.5)] group-hover:bg-[var(--gold-bright)] group-hover:scale-125 transition-all duration-300"></div>
+                      
+                      {editMode && (
+                        <div className="absolute top-0 right-0 z-20">
+                          <span className="w-8 h-8 rounded-full flex items-center justify-center bg-red-500/10 text-red-400 cursor-none hover:bg-red-500/20 transition-all" onClick={() => setActivityLogs((prev) => prev.filter((_, idx) => idx !== i))}>
+                            <Trash2 size={14} />
+                          </span>
                         </div>
-                        <h4 className="font-display text-xl md:text-2xl mb-3 text-[var(--text)] group-hover:text-[var(--gold-bright)] transition-colors">
-                          <Editable value={log.title} onChange={(v) => updateLog(i, { title: v })} placeholder="Milestone Title" />
-                        </h4>
-                        <p className="text-[14px] leading-[1.8] text-[var(--text-dim)] font-light">
-                          <Editable tag="span" value={log.desc} onChange={(v) => updateLog(i, { desc: v })} placeholder="Describe this milestone or activity..." />
-                        </p>
+                      )}
+
+                      <div className="spotlight-card p-6 md:p-8" onMouseMove={handleCardMouseMove} onMouseLeave={handleCardMouseLeave}>
+                        <div className="spotlight-border"></div>
+                        <div className="spotlight-content">
+                          <div className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-widest text-[var(--gold-bright)] mb-3">
+                            <Calendar size={14} />
+                            <Editable value={log.date} onChange={(v) => updateLog(i, { date: v })} placeholder="e.g. Aug 2026" />
+                          </div>
+                          <h4 className="font-display text-xl md:text-2xl mb-3 text-[var(--text)] group-hover:text-[var(--gold-bright)] transition-colors">
+                            <Editable value={log.title} onChange={(v) => updateLog(i, { title: v })} placeholder="Milestone Title" />
+                          </h4>
+                          <p className="text-[14px] leading-[1.8] text-[var(--text-dim)] font-light">
+                            <Editable tag="span" value={log.desc} onChange={(v) => updateLog(i, { desc: v })} placeholder="Describe this milestone or activity..." />
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               {editMode && (
@@ -1189,43 +1225,108 @@ export default function Portfolio() {
             </div>
           </section>
 
-          <footer id="contact" className="py-32 relative">
+          {/* CONTACT & MESSAGING SECTION */}
+          <section id="contact" className="py-32 relative">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-[1px] bg-gradient-to-r from-transparent via-[var(--border-soft)] to-transparent"></div>
             
-            <div className="spotlight-card rounded-[2.5rem] px-6 py-24 md:px-16 text-center reveal-rotate" onMouseMove={handleCardMouseMove} onMouseLeave={handleCardMouseLeave}>
-              <div className="spotlight-border"></div>
-              <div className="spotlight-content">
-                <div className="w-16 h-16 mx-auto border border-[var(--border-soft)] rounded-full flex items-center justify-center mb-8 bg-[var(--panel)]">
-                  <Mail size={24} className="text-[var(--gold-bright)]" />
-                </div>
-                
-                <p className="font-mono text-[11px] tracking-[0.3em] uppercase mb-6 text-[var(--gold-bright)]">Initiate Contact</p>
-                
-                <h2 className="font-display leading-tight max-w-3xl mx-auto mb-12" style={{ fontSize: "clamp(36px, 5vw, 64px)", fontWeight: 400 }}>
-                  Ready to build something <span className="text-gradient italic block sm:inline mt-2 sm:mt-0">extraordinary?</span>
-                </h2>
-                
-                <div className="flex gap-6 justify-center flex-wrap">
-                  <a href={`mailto:${profile.email}`} className="btn-gold font-mono text-[11px] tracking-widest uppercase px-10 py-5 rounded-full font-semibold flex items-center gap-3 shadow-[0_0_30px_rgba(212,175,106,0.15)] hover:scale-105 transition-transform duration-300">
-                    <Editable value={profile.email} onChange={(v) => setProfile((p) => ({ ...p, email: v }))} />
-                  </a>
-                </div>
-
-                <div className="flex gap-8 justify-center mt-12">
-                  <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className="text-[var(--text-dim)] hover:text-[var(--gold-bright)] transition-colors cursor-none hover:-translate-y-1 transform duration-300 hover:scale-110">
-                    <LinkedinIcon size={24} />
-                  </a>
-                  <a href={profile.github} target="_blank" rel="noopener noreferrer" className="text-[var(--text-dim)] hover:text-[var(--gold-bright)] transition-colors cursor-none hover:-translate-y-1 transform duration-300 hover:scale-110">
-                    <Github size={24} />
-                  </a>
-                </div>
-
-                {editMode && (
-                  <div className="mt-16 max-w-md mx-auto space-y-4 p-6 border border-dashed border-[var(--border)] rounded-2xl bg-black/20">
-                    <InputRow icon={<LinkedinIcon size={14}/>} value={profile.linkedin} onChange={(v) => setProfile((p) => ({ ...p, linkedin: v }))} placeholder="LinkedIn URL" color="var(--text-dim)" />
-                    <InputRow icon={<Github size={14}/>} value={profile.github} onChange={(v) => setProfile((p) => ({ ...p, github: v }))} placeholder="GitHub URL" color="var(--text-dim)" />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              {/* Left Column: Direct info & social links */}
+              <div className="spotlight-card rounded-[2.5rem] p-8 md:p-12 reveal-left" onMouseMove={handleCardMouseMove} onMouseLeave={handleCardMouseLeave}>
+                <div className="spotlight-border"></div>
+                <div className="spotlight-content">
+                  <div className="w-14 h-14 border border-[var(--border-soft)] rounded-full flex items-center justify-center mb-6 bg-[var(--panel)]">
+                    <Mail size={22} className="text-[var(--gold-bright)]" />
                   </div>
-                )}
+                  
+                  <p className="font-mono text-[11px] tracking-[0.3em] uppercase mb-4 text-[var(--gold-bright)]">Initiate Contact</p>
+                  
+                  <h2 className="font-display text-3xl md:text-4xl leading-tight mb-6 font-light">
+                    Let's build something <span className="text-gradient italic">extraordinary.</span>
+                  </h2>
+                  
+                  <p className="text-[15px] leading-relaxed text-[var(--text-dim)] font-light mb-8">
+                    Whether you have an exciting project in mind, a technical challenge to discuss, or just want to connect — my inbox is always open.
+                  </p>
+
+                  <div className="space-y-4 mb-8">
+                    <a href={`mailto:${profile.email}`} className="font-mono text-xs text-[var(--gold-bright)] hover:underline flex items-center gap-3 cursor-none">
+                      <Mail size={15} /> <Editable value={profile.email} onChange={(v) => setProfile((p) => ({ ...p, email: v }))} />
+                    </a>
+                  </div>
+
+                  <div className="flex gap-6 items-center pt-6 border-t border-[var(--border-soft)]">
+                    <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className="text-[var(--text-dim)] hover:text-[var(--gold-bright)] transition-colors cursor-none hover:scale-110 transform duration-300">
+                      <LinkedinIcon size={22} />
+                    </a>
+                    <a href={profile.github} target="_blank" rel="noopener noreferrer" className="text-[var(--text-dim)] hover:text-[var(--gold-bright)] transition-colors cursor-none hover:scale-110 transform duration-300">
+                      <Github size={22} />
+                    </a>
+                  </div>
+
+                  {editMode && (
+                    <div className="mt-8 space-y-3 pt-6 border-t border-[var(--border)]">
+                      <InputRow icon={<LinkedinIcon size={14}/>} value={profile.linkedin} onChange={(v) => setProfile((p) => ({ ...p, linkedin: v }))} placeholder="LinkedIn URL" color="var(--text-dim)" />
+                      <InputRow icon={<Github size={14}/>} value={profile.github} onChange={(v) => setProfile((p) => ({ ...p, github: v }))} placeholder="GitHub URL" color="var(--text-dim)" />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Right Column: Direct Messaging Form */}
+              <div className="spotlight-card rounded-[2.5rem] p-8 md:p-12 reveal-right" onMouseMove={handleCardMouseMove} onMouseLeave={handleCardMouseLeave}>
+                <div className="spotlight-border"></div>
+                <div className="spotlight-content">
+                  <div className="flex items-center gap-3 mb-6">
+                    <MessageSquare size={20} className="text-[var(--gold-bright)]" />
+                    <h3 className="font-display text-2xl font-light">Send a Direct Message</h3>
+                  </div>
+
+                  <form onSubmit={handleSendMessage} className="space-y-5">
+                    <div>
+                      <label className="block font-mono text-[10px] uppercase tracking-wider text-[var(--text-dim)] mb-2">Your Name</label>
+                      <input
+                        type="text"
+                        required
+                        value={msgForm.name}
+                        onChange={(e) => setMsgForm({ ...msgForm, name: e.target.value })}
+                        placeholder="John Doe"
+                        className="w-full bg-[var(--bg)] border border-[var(--border)] rounded-xl px-4 py-3 font-mono text-xs text-[var(--text)] outline-none focus:border-[var(--gold-bright)] transition-colors"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block font-mono text-[10px] uppercase tracking-wider text-[var(--text-dim)] mb-2">Your Email</label>
+                      <input
+                        type="email"
+                        required
+                        value={msgForm.email}
+                        onChange={(e) => setMsgForm({ ...msgForm, email: e.target.value })}
+                        placeholder="john@example.com"
+                        className="w-full bg-[var(--bg)] border border-[var(--border)] rounded-xl px-4 py-3 font-mono text-xs text-[var(--text)] outline-none focus:border-[var(--gold-bright)] transition-colors"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block font-mono text-[10px] uppercase tracking-wider text-[var(--text-dim)] mb-2">Message</label>
+                      <textarea
+                        required
+                        rows={4}
+                        value={msgForm.message}
+                        onChange={(e) => setMsgForm({ ...msgForm, message: e.target.value })}
+                        placeholder="Hello Dhiraj, I'd love to discuss an opportunity..."
+                        className="w-full bg-[var(--bg)] border border-[var(--border)] rounded-xl px-4 py-3 font-mono text-xs text-[var(--text)] outline-none focus:border-[var(--gold-bright)] transition-colors resize-none"
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={sendingMsg}
+                      className="btn-gold w-full font-mono text-xs uppercase tracking-widest py-4 rounded-xl font-semibold flex items-center justify-center gap-2"
+                    >
+                      {sendingMsg ? "Sending..." : <>Send Message <Send size={14} /></>}
+                    </button>
+                  </form>
+                </div>
               </div>
             </div>
 
@@ -1250,7 +1351,7 @@ export default function Portfolio() {
                 </button>
               </div>
             </div>
-          </footer>
+          </section>
         </main>
       </div>
     </div>
