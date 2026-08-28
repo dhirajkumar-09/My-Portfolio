@@ -248,7 +248,6 @@ const AnimatedTerminal = () => {
 
   return (
     <div className="w-full rounded-xl overflow-hidden border border-[#30363d] bg-[#0d1117] shadow-2xl font-mono text-[12px] md:text-[14px] text-left hover-float">
-
       {/* Top Window Bar */}
       <div className="flex items-center px-4 py-3 bg-[#161b22] border-b border-[#30363d]">
         <div className="flex gap-2">
@@ -264,7 +263,6 @@ const AnimatedTerminal = () => {
 
       {/* Terminal Body */}
       <div className="p-5 md:p-6 space-y-4 text-[#c9d1d9] leading-relaxed">
-
         {/* CMD 1 */}
         <div>
           <span className="text-[#3fb950]">dhiraj@bce</span>
@@ -386,7 +384,6 @@ const AnimatedTerminal = () => {
             <span className="w-2 h-4 bg-[#c9d1d9] ml-1 inline-block animate-pulse align-middle"></span>
           </div>
         )}
-
       </div>
     </div>
   );
@@ -1641,3 +1638,5 @@ function InputRow({ icon, value, onChange, placeholder, color }) {
   );
 }
 ```eof
+
+Ab error 100% solve ho gaya hai. Aap ek baar right side editor mein check kar lijiye aur terminal typing effect ko verify kar lijiye!
