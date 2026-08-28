@@ -162,6 +162,7 @@ const getApproxSizeKB = (obj) => {
 };
 
 const GREETINGS = [
+  "DHIRAJ KUMAR"
   "Hello", 
   "नमस्ते", 
   "Hola", 
@@ -169,8 +170,7 @@ const GREETINGS = [
   "Ciao", 
   "Konnichiwa", 
   "Merhaba", 
-  "Welcome",
-  "DHIRAJ KUMAR"
+  "Welcome"
 ];
 
 const AnimatedTerminal = () => {
@@ -183,15 +183,16 @@ const AnimatedTerminal = () => {
     let t1 = "whoami";
     let i1 = 0;
     let int1;
-    // Delay before starting the first typing animation
+
     const startDelay = setTimeout(() => {
       int1 = setInterval(() => {
-         setCmd1(t1.slice(0, i1+1));
-         i1++;
-         if(i1 === t1.length) {
-            clearInterval(int1);
-            setTimeout(() => setStep(1), 600); // Pause, then show output and next cmd
-         }
+        setCmd1(t1.slice(0, i1 + 1));
+        i1++;
+
+        if (i1 === t1.length) {
+          clearInterval(int1);
+          setTimeout(() => setStep(1), 600);
+        }
       }, 120);
     }, 1200);
 
@@ -202,42 +203,52 @@ const AnimatedTerminal = () => {
   }, []);
 
   useEffect(() => {
-     if (step >= 1) {
-         let t2 = "cat profile.json";
-         let i2 = 0;
-         let int2 = setInterval(() => {
-             setCmd2(t2.slice(0, i2+1));
-             i2++;
-             if(i2 === t2.length) {
-                 clearInterval(int2);
-                 setTimeout(() => setStep(2), 600);
-             }
-         }, 100);
-         return () => clearInterval(int2);
-     }
+    if (step >= 1) {
+      let t2 = "cat profile.json";
+      let i2 = 0;
+
+      let int2 = setInterval(() => {
+        setCmd2(t2.slice(0, i2 + 1));
+        i2++;
+
+        if (i2 === t2.length) {
+          clearInterval(int2);
+          setTimeout(() => setStep(2), 600);
+        }
+      }, 100);
+
+      return () => clearInterval(int2);
+    }
   }, [step]);
 
   useEffect(() => {
-     if (step >= 2) {
-         let t3 = "./run --build portfolio";
-         let i3 = 0;
-         let int3 = setInterval(() => {
-             setCmd3(t3.slice(0, i3+1));
-             i3++;
-             if(i3 === t3.length) {
-                 clearInterval(int3);
-                 setTimeout(() => setStep(3), 500); // Output line 1
-                 setTimeout(() => setStep(4), 1200); // Output line 2
-                 setTimeout(() => setStep(5), 1800); // Output line 3
-                 setTimeout(() => setStep(6), 2000); // New prompt
-             }
-         }, 80);
-         return () => clearInterval(int3);
-     }
+    if (step >= 2) {
+      let t3 = "./run --build port";
+      let i3 = 0;
+
+      let int3 = setInterval(() => {
+        setCmd3(t3.slice(0, i3 + 1));
+        i3++;
+
+        if (i3 === t3.length) {
+          clearInterval(int3);
+
+          setTimeout(() => setStep(3), 800);
+setTimeout(() => setStep(4), 1500);
+setTimeout(() => setStep(5), 2200);
+setTimeout(() => setStep(6), 2900);
+setTimeout(() => setStep(7), 3600);
+setTimeout(() => setStep(8), 4300);
+        }
+      }, 80);
+
+      return () => clearInterval(int3);
+    }
   }, [step]);
 
   return (
     <div className="w-full rounded-xl overflow-hidden border border-[#30363d] bg-[#0d1117] shadow-2xl font-mono text-[12px] md:text-[14px] text-left hover-float">
+
       {/* Top Window Bar */}
       <div className="flex items-center px-4 py-3 bg-[#161b22] border-b border-[#30363d]">
         <div className="flex gap-2">
@@ -245,61 +256,137 @@ const AnimatedTerminal = () => {
           <div className="w-3 h-3 rounded-full bg-[#FFBD2E]"></div>
           <div className="w-3 h-3 rounded-full bg-[#27C93F]"></div>
         </div>
-        <div className="flex-1 text-center text-[#8b949e] text-xs">dhiraj@bce:~</div>
+
+        <div className="flex-1 text-center text-[#8b949e] text-xs">
+          dhiraj@bce:~
+        </div>
       </div>
-      
+
       {/* Terminal Body */}
       <div className="p-5 md:p-6 space-y-4 text-[#c9d1d9] leading-relaxed">
-        {/* Cmd 1 */}
+
+        {/* CMD 1 */}
         <div>
-          <span className="text-[#3fb950]">dhiraj@bce</span><span className="text-[#58a6ff]">:~</span>$ {cmd1}
-          {step === 0 && <span className="w-2 h-4 bg-gray-400 ml-1 inline-block animate-pulse align-middle"></span>}
+          <span className="text-[#3fb950]">dhiraj@bce</span>
+          <span className="text-[#58a6ff]">:~</span>$ {cmd1}
+
+          {step === 0 && (
+            <span className="w-2 h-4 bg-gray-400 ml-1 inline-block animate-pulse align-middle"></span>
+          )}
+
           {step >= 1 && (
-            <div className="mt-1 text-[#8b949e]">dhiraj-kumar</div>
+            <div className="mt-1 text-[#8b949e]">
+              dhiraj-kumar
+            </div>
           )}
         </div>
-        
-        {/* Cmd 2 */}
+
+        {/* CMD 2 */}
         {step >= 1 && (
           <div>
-            <span className="text-[#3fb950]">dhiraj@bce</span><span className="text-[#58a6ff]">:~</span>$ {cmd2}
-            {step === 1 && <span className="w-2 h-4 bg-gray-400 ml-1 inline-block animate-pulse align-middle"></span>}
+            <span className="text-[#3fb950]">dhiraj@bce</span>
+            <span className="text-[#58a6ff]">:~</span>$ {cmd2}
+
+            {step === 1 && (
+              <span className="w-2 h-4 bg-gray-400 ml-1 inline-block animate-pulse align-middle"></span>
+            )}
+
             {step >= 2 && (
               <div className="mt-1 text-[#e3b341]">
-                {`{`}
+                {"{"}
+
                 <div className="pl-4">
-                  <span className="text-[#79c0ff]">"role"</span>: <span className="text-[#d2a8ff]">"Full-Stack Engineer"</span>,
+                  <span className="text-[#79c0ff]">"user"</span>:{" "}
+                  <span className="text-[#d2a8ff]">"Dhiraj"</span>,
                 </div>
+
                 <div className="pl-4">
-                  <span className="text-[#79c0ff]">"focus"</span>: [<span className="text-[#d2a8ff]">"Systems"</span>, <span className="text-[#d2a8ff]">"Interfaces"</span>, <span className="text-[#d2a8ff]">"AI"</span>],
+                  <span className="text-[#79c0ff]">"role"</span>:{" "}
+                  <span className="text-[#d2a8ff]">
+                    "CSE (IoT) Student"
+                  </span>,
                 </div>
+
                 <div className="pl-4">
-                  <span className="text-[#79c0ff]">"status"</span>: <span className="text-[#d2a8ff]">"Building scalable web applications"</span>
+                  <span className="text-[#79c0ff]">"focus"</span>: [
+                  <span className="text-[#d2a8ff]">"DSA"</span>,{" "}
+                  <span className="text-[#d2a8ff]">"Full-Stack"</span>,{" "}
+                  <span className="text-[#d2a8ff]">"IoT"</span>,{" "}
+                  <span className="text-[#d2a8ff]">"AI"</span>],
                 </div>
-                {`}`}
+
+                <div className="pl-4">
+                  <span className="text-[#79c0ff]">"stack"</span>: [
+                  <span className="text-[#d2a8ff]">"Python"</span>,{" "}
+                  <span className="text-[#d2a8ff]">"React"</span>,{" "}
+                  <span className="text-[#d2a8ff]">"Firebase"</span>,{" "}
+                  <span className="text-[#d2a8ff]">"JavaScript"</span>],
+                </div>
+
+                <div className="pl-4">
+                  <span className="text-[#79c0ff]">"status"</span>:{" "}
+                  <span className="text-[#d2a8ff]">
+                    "Learning • Building • Solving"
+                  </span>
+                </div>
+
+                {"}"}
               </div>
             )}
           </div>
         )}
-        
-        {/* Cmd 3 */}
+
+        {/* CMD 3 */}
         {step >= 2 && (
           <div>
-            <span className="text-[#3fb950]">dhiraj@bce</span><span className="text-[#58a6ff]">:~</span>$ {cmd3}
-            {step === 2 && <span className="w-2 h-4 bg-gray-400 ml-1 inline-block animate-pulse align-middle"></span>}
-            
-            {step >= 3 && <div className="mt-1 text-[#8b949e]">✓ real-time firestore listeners connected</div>}
-            {step >= 4 && <div className="text-[#8b949e]">✓ portfolio dashboard rendered</div>}
-            {step >= 5 && <div className="text-[#8b949e]">✓ deployed to dhiraj-portfolio.netlify.app</div>}
+            <span className="text-[#3fb950]">dhiraj@bce</span>
+            <span className="text-[#58a6ff]">:~</span>$ {cmd3}
+
+            {step === 2 && (
+              <span className="w-2 h-4 bg-gray-400 ml-1 inline-block animate-pulse align-middle"></span>
+            )}
+
+            {step >= 3 && (
+              <div className="mt-1 text-[#8b949e]">
+                ✓ Firebase connected
+              </div>
+            )}
+
+            {step >= 4 && (
+              <div className="text-[#8b949e]">
+                ✓ Portfolio dashboard rendered
+              </div>
+            )}
+
+            {step >= 5 && (
+              <div className="text-[#8b949e]">
+                ✓ EduForge project loaded
+              </div>
+            )}
+
+            {step >= 6 && (
+              <div className="text-[#8b949e]">
+                ✓ DSA progress synced
+              </div>
+            )}
+
+            {step >= 7 && (
+              <div className="text-[#8b949e]">
+                ✓ Portfolio deployed successfully
+              </div>
+            )}
           </div>
         )}
 
         {/* Final Prompt */}
-        {step >= 6 && (
+        {step >= 8 && (
           <div className="pt-2">
-            <span className="text-[#3fb950]">dhiraj@bce</span><span className="text-[#58a6ff]">:~</span>$ <span className="w-2 h-4 bg-[#c9d1d9] ml-1 inline-block animate-pulse align-middle"></span>
+            <span className="text-[#3fb950]">dhiraj@bce</span>
+            <span className="text-[#58a6ff]">:~</span>${" "}
+            <span className="w-2 h-4 bg-[#c9d1d9] ml-1 inline-block animate-pulse align-middle"></span>
           </div>
         )}
+
       </div>
     </div>
   );
