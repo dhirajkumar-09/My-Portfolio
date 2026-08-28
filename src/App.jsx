@@ -162,7 +162,6 @@ const getApproxSizeKB = (obj) => {
 };
 
 const GREETINGS = [
-  "DHIRAJ KUMAR"
   "Hello", 
   "नमस्ते", 
   "Hola", 
@@ -171,6 +170,7 @@ const GREETINGS = [
   "Konnichiwa", 
   "Merhaba", 
   "Welcome"
+   "DHIRAJ KUMAR"
 ];
 
 const AnimatedTerminal = () => {
