@@ -169,8 +169,8 @@ const GREETINGS = [
   "Ciao", 
   "Konnichiwa", 
   "Merhaba", 
-  "Welcome"
-   "DHIRAJ KUMAR"
+  "Welcome",
+  "DHIRAJ KUMAR"
 ];
 
 const AnimatedTerminal = () => {
@@ -234,11 +234,11 @@ const AnimatedTerminal = () => {
           clearInterval(int3);
 
           setTimeout(() => setStep(3), 800);
-setTimeout(() => setStep(4), 1500);
-setTimeout(() => setStep(5), 2200);
-setTimeout(() => setStep(6), 2900);
-setTimeout(() => setStep(7), 3600);
-setTimeout(() => setStep(8), 4300);
+          setTimeout(() => setStep(4), 1500);
+          setTimeout(() => setStep(5), 2200);
+          setTimeout(() => setStep(6), 2900);
+          setTimeout(() => setStep(7), 3600);
+          setTimeout(() => setStep(8), 4300);
         }
       }, 80);
 
@@ -1048,7 +1048,7 @@ export default function Portfolio() {
 
       <CustomCursor />
 
-      {}
+      {/* Scroll Progress Indicator */}
       <div className="fixed top-0 left-0 h-[2px] bg-gradient-to-r from-[var(--gold)] to-[var(--gold-bright)] z-[100] transition-all duration-150 shadow-[0_0_15px_rgba(212,175,106,0.8)]" style={{ width: `${scrollProgress}%` }} />
 
       <div className={`fixed top-24 left-1/2 -translate-x-1/2 z-[100] px-5 py-2.5 rounded-full font-mono text-xs tracking-wider border border-[var(--gold)] transition-all duration-500 flex items-center gap-2 ${toastMessage ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8 pointer-events-none'}`} 
@@ -1063,7 +1063,7 @@ export default function Portfolio() {
         <IntroScreen onComplete={handleIntroComplete} />
       )}
 
-      {}
+      {/* Navigation Shell */}
       <div className="relative z-10">
         <header
           className="nav-shell fixed top-0 w-full z-50 transition-all duration-500"
@@ -1109,7 +1109,7 @@ export default function Portfolio() {
           </nav>
         </header>
 
-        {}
+        {/* Edit Mode Notice */}
         {editMode && isAdminUser && (
           <div className="max-w-7xl mx-auto px-6 md:px-12 pt-32">
             <div className="font-mono text-[11px] tracking-wide px-4 py-3 rounded-xl flex items-center gap-3 backdrop-blur-md" style={{ background: "rgba(212,175,106,0.1)", border: "1px solid rgba(212,175,106,0.3)", color: "var(--gold-bright)" }}>
@@ -1119,7 +1119,7 @@ export default function Portfolio() {
           </div>
         )}
 
-        {}
+        {/* Hero Section */}
         <main id="top" className="max-w-7xl mx-auto px-6 md:px-12">
           <section className="min-h-[95vh] pt-32 pb-16 flex flex-col justify-center relative">
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] max-w-[800px] max-h-[800px] bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[var(--gold-bright)]/10 to-transparent blur-3xl rounded-full pointer-events-none"></div>
@@ -1186,7 +1186,7 @@ export default function Portfolio() {
             </div>
           </section>
 
-          {}
+          {/* Work Section */}
           <section id="work" className="py-32 relative">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-[1px] bg-gradient-to-r from-transparent via-[var(--border-soft)] to-transparent"></div>
             
@@ -1308,7 +1308,7 @@ export default function Portfolio() {
             </div>
           </section>
 
-          {}
+          {/* Certificates Section */}
           <section id="certificates" className="py-32 relative">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-[1px] bg-gradient-to-r from-transparent via-[var(--border-soft)] to-transparent"></div>
             
@@ -1397,7 +1397,7 @@ export default function Portfolio() {
             </div>
           </section>
 
-          {}
+          {/* Activity Section */}
           <section id="activity" className="py-32 relative">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-[1px] bg-gradient-to-r from-transparent via-[var(--border-soft)] to-transparent"></div>
             
@@ -1477,7 +1477,7 @@ export default function Portfolio() {
             </div>
           </section>
 
-          {}
+          {/* Contact Section */}
           <section id="contact" className="py-32 relative">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-[1px] bg-gradient-to-r from-transparent via-[var(--border-soft)] to-transparent"></div>
             
@@ -1640,3 +1640,4 @@ function InputRow({ icon, value, onChange, placeholder, color }) {
     </div>
   );
 }
+```eof
