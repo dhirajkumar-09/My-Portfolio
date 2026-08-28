@@ -1637,6 +1637,3 @@ function InputRow({ icon, value, onChange, placeholder, color }) {
     </div>
   );
 }
-```eof
-
-Ab error 100% solve ho gaya hai. Aap ek baar right side editor mein check kar lijiye aur terminal typing effect ko verify kar lijiye!
