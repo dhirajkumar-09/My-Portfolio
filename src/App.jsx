@@ -71,12 +71,12 @@ const DEFAULT_PROFILE = {
   name: "Dhiraj Kumar",
   role: "Full-Stack Engineer",
   focus: "Systems · Interfaces · Infrastructure",
-  headline: "Building software,",
-  headlineAccent: "solves real problem.",
-  intro: "Six years designing and shipping products end to end — from database schema to the pixel a user taps. Selected work, credentials, and how to reach me, below.",
+  headline: "Crafting digital experiences,",
+  headlineAccent: "rooted in purpose.",
+  intro: "Six years designing and shipping products end to end — merging technical precision with elegant design. Selected work, credentials, and how to reach me, below.",
   email: "dhidna9090@gmail.com",
-  linkedin: "https://www.linkedin.com/in/dhiraj-kumar-01b185350?utm_source=share_via&utm_content=profile&utm_medium=member_android",
-  github: "https://github.com/dhirajkumar-09/My-Portfolio",
+  linkedin: "https://www.linkedin.com/in/dhiraj-kumar-01b185350",
+  github: "https://github.com/dhirajkumar-09",
   stats: [
     { k: "Years experience", v: "06" },
     { k: "Projects shipped", v: "24" },
@@ -125,7 +125,7 @@ const NAV = [
   { id: "work", label: "Work" },
   { id: "certificates", label: "Certificates" },
   { id: "skills", label: "Toolkit" },
-  { id: "activity", label: "Activity" },
+  { id: "activity", label: "Timeline" },
   { id: "contact", label: "Contact" },
 ];
 
@@ -133,7 +133,7 @@ const emptyProject = () => ({ title: "New Project", subtitle: "Short subtitle", 
 const emptyCert = () => ({ seal: "NEW", title: "Certificate name", issuer: "Issuing organization", date: "2026", desc: "Brief description of the certification.", verifyUrl: "#", image: null });
 const emptyLog = () => ({ date: "New Date", title: "New Milestone", desc: "Describe what happened." });
 
-const compressImage = (file, maxWidth = 500, quality = 0.55) => {
+const compressImage = (file, maxWidth = 800, quality = 0.6) => {
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.onload = (event) => {
@@ -167,12 +167,11 @@ const GREETINGS = [
   "Hola", 
   "Bonjour", 
   "Ciao", 
-  "Konnichiwa", 
-  "Merhaba", 
   "Welcome",
   "DHIRAJ KUMAR"
 ];
 
+// Transformed Terminal into a sleek light-mode variant
 const AnimatedTerminal = () => {
   const [step, setStep] = useState(0);
   const [cmd1, setCmd1] = useState("");
@@ -247,141 +246,77 @@ const AnimatedTerminal = () => {
   }, [step]);
 
   return (
-    <div className="w-full rounded-xl overflow-hidden border border-[#30363d] bg-[#0d1117] shadow-2xl font-mono text-[12px] md:text-[14px] text-left hover-float">
-      {/* Top Window Bar */}
-      <div className="flex items-center px-4 py-3 bg-[#161b22] border-b border-[#30363d]">
+    <div className="w-full max-w-[450px] ml-auto rounded-2xl overflow-hidden border border-[var(--border)] bg-[var(--panel)] shadow-xl font-mono text-[12px] md:text-[13px] text-left hover-float">
+      {/* Top Window Bar - Light Theme */}
+      <div className="flex items-center px-4 py-3 bg-[var(--bg)] border-b border-[var(--border)]">
         <div className="flex gap-2">
-          <div className="w-3 h-3 rounded-full bg-[#FF5F56]"></div>
-          <div className="w-3 h-3 rounded-full bg-[#FFBD2E]"></div>
-          <div className="w-3 h-3 rounded-full bg-[#27C93F]"></div>
+          <div className="w-3 h-3 rounded-full bg-[#FF5F56] border border-black/10"></div>
+          <div className="w-3 h-3 rounded-full bg-[#FFBD2E] border border-black/10"></div>
+          <div className="w-3 h-3 rounded-full bg-[#27C93F] border border-black/10"></div>
         </div>
-
-        <div className="flex-1 text-center text-[#8b949e] text-xs">
-          dhiraj@bce:~
+        <div className="flex-1 text-center text-[var(--text-faint)] text-xs font-semibold">
+          dhiraj@portfolio:~
         </div>
       </div>
 
       {/* Terminal Body */}
-      <div className="p-5 md:p-6 space-y-4 text-[#c9d1d9] leading-relaxed">
-        {/* CMD 1 */}
+      <div className="p-5 md:p-6 space-y-4 text-[var(--text-dim)] leading-relaxed">
         <div>
-          <span className="text-[#3fb950]">dhiraj@bce</span>
-          <span className="text-[#58a6ff]">:~</span>$ {cmd1}
-
-          {step === 0 && (
-            <span className="w-2 h-4 bg-gray-400 ml-1 inline-block animate-pulse align-middle"></span>
-          )}
-
-          {step >= 1 && (
-            <div className="mt-1 text-[#8b949e]">
-              dhiraj-kumar
-            </div>
-          )}
+          <span className="text-[var(--gold)] font-semibold">dhiraj@local</span>
+          <span className="text-[var(--text-faint)]">:~</span>$ {cmd1}
+          {step === 0 && <span className="w-2 h-4 bg-[var(--text-dim)] ml-1 inline-block animate-pulse align-middle"></span>}
+          {step >= 1 && <div className="mt-1 text-[var(--text)] font-semibold">dhiraj-kumar</div>}
         </div>
 
-        {/* CMD 2 */}
         {step >= 1 && (
           <div>
-            <span className="text-[#3fb950]">dhiraj@bce</span>
-            <span className="text-[#58a6ff]">:~</span>$ {cmd2}
-
-            {step === 1 && (
-              <span className="w-2 h-4 bg-gray-400 ml-1 inline-block animate-pulse align-middle"></span>
-            )}
-
+            <span className="text-[var(--gold)] font-semibold">dhiraj@local</span>
+            <span className="text-[var(--text-faint)]">:~</span>$ {cmd2}
+            {step === 1 && <span className="w-2 h-4 bg-[var(--text-dim)] ml-1 inline-block animate-pulse align-middle"></span>}
             {step >= 2 && (
-              <div className="mt-1 text-[#e3b341]">
+              <div className="mt-1 text-[var(--text-dim)]">
                 {"{"}
-
                 <div className="pl-4">
-                  <span className="text-[#79c0ff]">"user"</span>:{" "}
-                  <span className="text-[#d2a8ff]">"Dhiraj"</span>,
+                  <span className="text-[var(--gold-bright)]">"user"</span>:{" "}
+                  <span className="text-[var(--text)]">"Dhiraj"</span>,
                 </div>
-
                 <div className="pl-4">
-                  <span className="text-[#79c0ff]">"role"</span>:{" "}
-                  <span className="text-[#d2a8ff]">
-                    "CSE (IoT) Student"
-                  </span>,
+                  <span className="text-[var(--gold-bright)]">"role"</span>:{" "}
+                  <span className="text-[var(--text)]">"Full-Stack Engineer"</span>,
                 </div>
-
                 <div className="pl-4">
-                  <span className="text-[#79c0ff]">"focus"</span>: [
-                  <span className="text-[#d2a8ff]">"DSA"</span>,{" "}
-                  <span className="text-[#d2a8ff]">"Full-Stack"</span>,{" "}
-                  <span className="text-[#d2a8ff]">"IoT"</span>,{" "}
-                  <span className="text-[#d2a8ff]">"AI"</span>],
+                  <span className="text-[var(--gold-bright)]">"focus"</span>: [
+                  <span className="text-[var(--text)]">"Systems"</span>,{" "}
+                  <span className="text-[var(--text)]">"Interfaces"</span>],
                 </div>
-
                 <div className="pl-4">
-                  <span className="text-[#79c0ff]">"stack"</span>: [
-                  <span className="text-[#d2a8ff]">"Python"</span>,{" "}
-                  <span className="text-[#d2a8ff]">"React"</span>,{" "}
-                  <span className="text-[#d2a8ff]">"Firebase"</span>,{" "}
-                  <span className="text-[#d2a8ff]">"JavaScript"</span>],
+                  <span className="text-[var(--gold-bright)]">"status"</span>:{" "}
+                  <span className="text-[var(--text)]">"Building digital experiences"</span>
                 </div>
-
-                <div className="pl-4">
-                  <span className="text-[#79c0ff]">"status"</span>:{" "}
-                  <span className="text-[#d2a8ff]">
-                    "Learning • Building • Solving"
-                  </span>
-                </div>
-
                 {"}"}
               </div>
             )}
           </div>
         )}
 
-        {/* CMD 3 */}
         {step >= 2 && (
           <div>
-            <span className="text-[#3fb950]">dhiraj@bce</span>
-            <span className="text-[#58a6ff]">:~</span>$ {cmd3}
-
-            {step === 2 && (
-              <span className="w-2 h-4 bg-gray-400 ml-1 inline-block animate-pulse align-middle"></span>
-            )}
-
-            {step >= 3 && (
-              <div className="mt-1 text-[#8b949e]">
-                ✓ Firebase connected
-              </div>
-            )}
-
-            {step >= 4 && (
-              <div className="text-[#8b949e]">
-                ✓ Portfolio dashboard rendered
-              </div>
-            )}
-
-            {step >= 5 && (
-              <div className="text-[#8b949e]">
-                ✓ EduForge project loaded
-              </div>
-            )}
-
-            {step >= 6 && (
-              <div className="text-[#8b949e]">
-                ✓ DSA progress synced
-              </div>
-            )}
-
-            {step >= 7 && (
-              <div className="text-[#8b949e]">
-                ✓ Portfolio deployed successfully
-              </div>
-            )}
+            <span className="text-[var(--gold)] font-semibold">dhiraj@local</span>
+            <span className="text-[var(--text-faint)]">:~</span>$ {cmd3}
+            {step === 2 && <span className="w-2 h-4 bg-[var(--text-dim)] ml-1 inline-block animate-pulse align-middle"></span>}
+            {step >= 3 && <div className="mt-1 text-green-700">✓ System diagnostics passed</div>}
+            {step >= 4 && <div className="text-green-700">✓ Portfolio dashboard rendered</div>}
+            {step >= 5 && <div className="text-green-700">✓ Projects loaded successfully</div>}
+            {step >= 6 && <div className="text-green-700">✓ Credentials verified</div>}
+            {step >= 7 && <div className="text-green-700 font-semibold mt-2">✓ Ready for connection.</div>}
           </div>
         )}
 
-        {/* Final Prompt */}
         {step >= 8 && (
           <div className="pt-2">
-            <span className="text-[#3fb950]">dhiraj@bce</span>
-            <span className="text-[#58a6ff]">:~</span>${" "}
-            <span className="w-2 h-4 bg-[#c9d1d9] ml-1 inline-block animate-pulse align-middle"></span>
+            <span className="text-[var(--gold)] font-semibold">dhiraj@local</span>
+            <span className="text-[var(--text-faint)]">:~</span>${" "}
+            <span className="w-2 h-4 bg-[var(--text)] ml-1 inline-block animate-pulse align-middle"></span>
           </div>
         )}
       </div>
@@ -414,19 +349,16 @@ const IntroScreen = React.memo(({ onComplete }) => {
 
   return (
     <div
-      className={`fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-[#05070A] transition-all duration-[1200ms] ease-[cubic-bezier(0.76,0,0.24,1)] ${
-        isExiting ? "-translate-y-full rounded-b-[150px] opacity-90 shadow-2xl" : "translate-y-0 rounded-b-none opacity-100"
+      className={`fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-[var(--bg)] transition-all duration-[1200ms] ease-[cubic-bezier(0.76,0,0.24,1)] ${
+        isExiting ? "-translate-y-full opacity-90 shadow-2xl" : "translate-y-0 opacity-100"
       }`}
     >
       <div className="flex items-center gap-4 md:gap-6 text-[var(--text)] font-display text-4xl md:text-5xl lg:text-7xl relative z-10 transition-transform duration-500">
-        {!isFinalName && <span className="w-2.5 h-2.5 md:w-4 md:h-4 rounded-full bg-[var(--gold-bright)] animate-pulse" />}
-        <h2 className={isFinalName ? "final-intro-text tracking-tight font-medium" : "animate-intro-text"}>
+        {!isFinalName && <span className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-[var(--gold)] animate-pulse" />}
+        <h2 className={isFinalName ? "final-intro-text tracking-tight font-medium" : "animate-intro-text font-light"}>
           {GREETINGS[index]}
         </h2>
       </div>
-      {isFinalName && (
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--gold-bright)_0%,_transparent_40%)] opacity-20 mix-blend-screen animate-pulse-slow"></div>
-      )}
     </div>
   );
 });
@@ -475,19 +407,17 @@ const CustomCursor = () => {
   return (
     <>
       <div 
-        className="fixed top-0 left-0 w-2.5 h-2.5 bg-[var(--gold-bright)] rounded-full pointer-events-none mix-blend-difference z-[9999]"
-        style={{ transform: `translate3d(${mousePos.x - 5}px, ${mousePos.y - 5}px, 0) scale(${isHovering ? 0 : 1})`, transition: 'transform 0.1s ease-out' }}
+        className="fixed top-0 left-0 w-2.5 h-2.5 bg-[var(--text)] rounded-full pointer-events-none z-[9999]"
+        style={{ transform: `translate3d(${mousePos.x - 5}px, ${mousePos.y - 5}px, 0) scale(${isHovering ? 0 : 1})`, transition: 'transform 0.15s ease-out' }}
       />
       <div 
-        className="fixed top-0 left-0 w-12 h-12 border border-[var(--gold-bright)]/50 rounded-full pointer-events-none z-[9998] flex items-center justify-center backdrop-blur-[2px]"
+        className="fixed top-0 left-0 w-12 h-12 border border-[var(--gold)] rounded-full pointer-events-none z-[9998] flex items-center justify-center backdrop-blur-[1px]"
         style={{ 
           transform: `translate3d(${delayedMousePos.x - 24}px, ${delayedMousePos.y - 24}px, 0) scale(${isHovering ? 1.4 : 1})`, 
-          backgroundColor: isHovering ? 'rgba(212,175,106,0.15)' : 'transparent',
-          transition: 'transform 0.05s linear, background-color 0.3s ease, border-color 0.3s ease',
-          borderColor: isHovering ? 'var(--gold-bright)' : 'rgba(212,175,106,0.4)'
+          backgroundColor: isHovering ? 'rgba(182, 141, 86, 0.08)' : 'transparent',
+          transition: 'transform 0.1s linear, background-color 0.3s ease, border-color 0.3s ease'
         }}
       >
-        <div className={`w-1.5 h-1.5 bg-[var(--gold-bright)] rounded-full transition-opacity duration-300 ${isHovering ? 'opacity-100' : 'opacity-0'}`} />
       </div>
     </>
   );
@@ -504,7 +434,6 @@ export default function Portfolio() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [editMode, setEditMode] = useState(false);
   
-  // Messaging Form State
   const [msgForm, setMsgForm] = useState({ name: "", email: "", message: "" });
   const [sendingMsg, setSendingMsg] = useState(false);
   
@@ -575,7 +504,6 @@ export default function Portfolio() {
       return;
     }
 
-    // FIXED: Ensured visitors log in anonymously so they can send messages successfully
     const unsubscribeAuth = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
@@ -584,15 +512,10 @@ export default function Portfolio() {
           setEditMode(false);
         }
       } else {
-        // Automatically sign in as a guest to allow messaging (if enabled)
         try {
           await signInAnonymously(auth);
         } catch (error) {
-          if (error.code === 'auth/admin-restricted-operation') {
-            console.warn("Note: Anonymous Auth is disabled in Firebase console. Messages will be sent unauthenticated.");
-          } else {
-            console.error("Anonymous sign-in failed:", error);
-          }
+          console.warn("Anonymous sign-in skipped or failed.");
         }
       }
     });
@@ -665,21 +588,20 @@ export default function Portfolio() {
     setSendingMsg(true);
     try {
       if (isFirebaseConfigured && db) {
-        // Save to Firebase Firestore Database
         await addDoc(collection(db, 'artifacts', APP_ID, 'public', 'data', 'messages'), {
           name: msgForm.name,
           email: msgForm.email,
           message: msgForm.message,
           timestamp: new Date().toISOString()
         });
-        showToast("Message sent securely to the database!");
+        showToast("Message sent successfully!");
       } else {
         showToast("Demo Mode: Message processed locally.");
       }
       setMsgForm({ name: "", email: "", message: "" });
     } catch (err) {
       console.error(err);
-      showToast("Error saving to database. Check Firebase rules.");
+      showToast("Error sending message.");
     } finally {
       setSendingMsg(false);
     }
@@ -708,7 +630,7 @@ export default function Portfolio() {
     if (!auth) return;
     try {
       await signOut(auth); setEditMode(false);
-      showToast("Logged out securely.");
+      showToast("Logged out successfully.");
     } catch (error) {}
   };
 
@@ -733,32 +655,18 @@ export default function Portfolio() {
   const handleProjectImageChange = async (i, e) => {
     const file = e.target.files && e.target.files[0];
     if (!file) return;
-    const compressedImage = await compressImage(file, 700, 0.6);
+    const compressedImage = await compressImage(file, 800, 0.7);
     updateProject(i, { image: compressedImage });
   };
 
+  // Simplified Mouse Move handler for softer, elegant hover
   const handleCardMouseMove = (e) => {
     const { currentTarget: target } = e;
     const rect = target.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    
     target.style.setProperty("--mouse-x", `${x}px`);
     target.style.setProperty("--mouse-y", `${y}px`);
-
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-    const rotateX = ((y - centerY) / centerY) * -10;
-    const rotateY = ((x - centerX) / centerX) * 10;
-    
-    target.style.setProperty("--rotate-x", `${rotateX}deg`);
-    target.style.setProperty("--rotate-y", `${rotateY}deg`);
-  };
-
-  const handleCardMouseLeave = (e) => {
-    const { currentTarget: target } = e;
-    target.style.setProperty("--rotate-x", `0deg`);
-    target.style.setProperty("--rotate-y", `0deg`);
   };
 
   const handleIntroComplete = useCallback(() => {
@@ -777,7 +685,7 @@ export default function Portfolio() {
         ...style,
         outline: "none",
         borderRadius: 4,
-        ...(editMode ? { background: "rgba(212,175,106,0.12)", boxShadow: "0 0 0 1px rgba(212,175,106,0.5)", cursor: "text", padding: "1px 4px", margin: "-1px -4px", transition: "all 0.2s" } : {}),
+        ...(editMode ? { background: "rgba(182,141,86,0.1)", boxShadow: "0 0 0 1px rgba(182,141,86,0.4)", cursor: "text", padding: "1px 4px", margin: "-1px -4px", transition: "all 0.2s" } : {}),
       }}
     >
       {value}
@@ -789,14 +697,14 @@ export default function Portfolio() {
     return (
       <div className="flex flex-wrap gap-2 items-center">
         {items.map((tag, i) => (
-          <span key={i} className="tag-pill group relative font-mono text-[11px] uppercase tracking-wide px-3 py-1.5 rounded-full inline-flex items-center gap-1.5 overflow-hidden">
+          <span key={i} className="tag-pill group relative font-mono text-[11px] uppercase tracking-wide px-4 py-1.5 rounded-full inline-flex items-center gap-1.5 overflow-hidden">
             <span className="relative z-10">{tag}</span>
             {editMode && (
-              <button onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="relative z-10 opacity-70 hover:opacity-100 hover:text-red-400 ml-1 transition-colors">
+              <button onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="relative z-10 opacity-70 hover:opacity-100 hover:text-red-500 ml-1 transition-colors">
                 <X size={12} />
               </button>
             )}
-            <div className="absolute inset-0 bg-white/5 translate-y-[100%] group-hover:translate-y-0 transition-transform duration-300 z-0"></div>
+            <div className="absolute inset-0 bg-black/5 translate-y-[100%] group-hover:translate-y-0 transition-transform duration-300 z-0"></div>
           </span>
         ))}
         {editMode && (
@@ -810,7 +718,7 @@ export default function Portfolio() {
               }
             }}
             placeholder="+ add, Enter"
-            className="font-mono text-[11px] uppercase tracking-wide px-3 py-1.5 rounded-full bg-transparent transition-colors focus:border-[var(--gold-bright)]"
+            className="font-mono text-[11px] uppercase tracking-wide px-3 py-1.5 rounded-full bg-transparent transition-colors focus:border-[var(--gold)]"
             style={{ border: "1px dashed var(--border)", color: "var(--text-dim)", width: 110, outline: "none" }}
           />
         )}
@@ -824,233 +732,186 @@ export default function Portfolio() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#05070A] text-[#E8C888] font-mono text-sm tracking-widest relative overflow-hidden">
-        <div className="absolute inset-0 z-0 opacity-20 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#D4AF6A]/20 via-[#05070A] to-[#05070A] animate-pulse-slow"></div>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#FDFBF7] text-[#2C2A25] font-mono text-sm tracking-widest relative overflow-hidden">
         <div className="z-10 flex flex-col items-center gap-6">
-          <div className="w-16 h-16 border-t-2 border-l-2 border-[#E8C888] rounded-full animate-spin"></div>
-          <span className="uppercase tracking-[0.2em] animate-pulse">Loading Portfolio...</span>
+          <div className="w-12 h-12 border-t-2 border-l-2 border-[#B68D56] rounded-full animate-spin"></div>
+          <span className="uppercase tracking-[0.2em] animate-pulse">Initializing...</span>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="font-body selection:bg-[#D4AF6A]/30 selection:text-white" style={{ background: "var(--bg)", color: "var(--text)", minHeight: "100vh", overflowX: "hidden" }}>
+    <div className="font-body selection:bg-[#B68D56]/20 selection:text-[var(--text)]" style={{ background: "var(--bg)", color: "var(--text)", minHeight: "100vh", overflowX: "hidden" }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
         :root{
-          --bg: #05070A; 
-          --panel: rgba(255,255,255,0.02); 
-          --panel-strong: rgba(255,255,255,0.04);
-          --border: rgba(255,255,255,0.08); 
-          --border-soft: rgba(255,255,255,0.04);
-          --gold: #D4AF6A; 
-          --gold-bright: #E8C888;
-          --text: #F3F4F6; 
-          --text-dim: #9CA3AF; 
-          --text-faint: #6B7280;
+          --bg: #FDFBF7; 
+          --panel: #FFFFFF; 
+          --panel-strong: #F5F2EB;
+          --border: #E8E2D6; 
+          --border-soft: #F0EBE1;
+          --gold: #B68D56; 
+          --gold-bright: #D4AF79;
+          --text: #2C2824; 
+          --text-dim: #635E56; 
+          --text-faint: #969188;
         }
         
         .font-display{ font-family: 'Fraunces', serif; }
         .font-body{ font-family: 'Inter', sans-serif; }
         .font-mono{ font-family: 'JetBrains Mono', monospace; }
-        .font-cursive{ font-family: 'Dancing Script', cursive; font-size: 1.15em; font-weight: 700; letter-spacing: 0; }
+        .font-cursive{ font-family: 'Fraunces', serif; font-style: italic; font-weight: 300; }
 
         section[id]{ scroll-margin-top: 120px; }
         html{ scroll-behavior: smooth; cursor: none; }
 
         .glow-field { 
           background: 
-            radial-gradient(800px circle at 85% 10%, rgba(212,175,106,0.09), transparent 60%), 
-            radial-gradient(1000px circle at 10% 90%, rgba(212,175,106,0.06), transparent 50%),
-            radial-gradient(600px circle at 50% 50%, rgba(212,175,106,0.04), transparent 60%);
-          filter: blur(40px);
+            radial-gradient(800px circle at 85% 10%, rgba(182, 141, 86, 0.05), transparent 60%), 
+            radial-gradient(1000px circle at 10% 90%, rgba(212, 175, 121, 0.04), transparent 50%);
+          filter: blur(50px);
           animation: ambient-shift 25s ease-in-out infinite alternate;
         }
+        
         .grain { 
-          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E"); 
-          opacity: 0.15; mix-blend-mode: overlay; pointer-events: none;
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E"); 
+          opacity: 0.12; mix-blend-mode: multiply; pointer-events: none;
         }
 
         @keyframes ambient-shift {
           0% { transform: scale(1) translate(0,0); }
-          50% { transform: scale(1.08) translate(-2%, 2%); }
-          100% { transform: scale(1) translate(2%, -2%); }
+          50% { transform: scale(1.05) translate(-1%, 1%); }
+          100% { transform: scale(1) translate(1%, -1%); }
         }
 
         @keyframes intro-text {
-          0% { opacity: 0; transform: translateY(20px) scale(0.9); filter: blur(5px); }
-          20% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
-          80% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
-          100% { opacity: 0; transform: translateY(-20px) scale(1.1); filter: blur(5px); }
+          0% { opacity: 0; transform: translateY(20px); filter: blur(5px); }
+          20% { opacity: 1; transform: translateY(0); filter: blur(0); }
+          80% { opacity: 1; transform: translateY(0); filter: blur(0); }
+          100% { opacity: 0; transform: translateY(-20px); filter: blur(5px); }
         }
         .animate-intro-text {
-          animation: intro-text 0.4s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+          animation: intro-text 0.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
         }
 
         .final-intro-text {
-          background: linear-gradient(135deg, var(--gold-bright), #fff, var(--gold));
-          background-size: 200% 200%;
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          animation: intro-final-pop 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards, gradient-flow 3s ease infinite;
+          animation: intro-final-pop 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
 
         @keyframes intro-final-pop {
-          0% { opacity: 0; transform: scale(0.8) translateY(30px); filter: blur(10px); }
-          100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
-        }
-        
-        @keyframes gradient-flow {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
+          0% { opacity: 0; transform: translateY(20px); filter: blur(8px); }
+          100% { opacity: 1; transform: translateY(0); filter: blur(0); }
         }
 
-        .text-gradient {
-          background: linear-gradient(135deg, var(--gold-bright), var(--gold));
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          animation: gradient-flow 4s ease infinite;
-          background-size: 200% 200%;
-        }
-
-        .spotlight-card {
+        .editorial-card {
           position: relative;
           background: var(--panel);
-          border: 1px solid var(--border-soft);
+          border: 1px solid var(--border);
           border-radius: 1.5rem;
           overflow: hidden;
-          transform: perspective(1500px) rotateX(var(--rotate-x, 0deg)) rotateY(var(--rotate-y, 0deg)) translateY(var(--translate-y, 0px)) scale(var(--scale-card, 1));
-          transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), background 0.4s ease, border-color 0.4s ease;
-          transform-style: preserve-3d;
-          will-change: transform;
+          transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s ease;
         }
         
-        .spotlight-card::before {
+        .editorial-card::before {
           content: "";
           position: absolute;
           inset: 0;
           opacity: 0;
           transition: opacity 0.4s ease;
           background: radial-gradient(
-            1000px circle at var(--mouse-x, 0) var(--mouse-y, 0),
-            rgba(255,255,255,0.09),
-            transparent 30%
+            800px circle at var(--mouse-x, 0) var(--mouse-y, 0),
+            rgba(182, 141, 86, 0.05),
+            transparent 40%
           );
           z-index: 0;
           pointer-events: none;
         }
         
-        .spotlight-card:hover { 
-          --translate-y: -8px;
-          --scale-card: 1.02;
-          background: var(--panel-strong); 
-          border-color: rgba(212,175,106,0.4);
-          box-shadow: 0 35px 70px -20px rgba(0,0,0,0.7), 0 0 40px rgba(212,175,106,0.12);
+        .editorial-card:hover { 
+          transform: translateY(-8px);
+          box-shadow: 0 25px 50px -12px rgba(44,40,36,0.06), 0 0 15px rgba(182,141,86,0.05);
         }
-        .spotlight-card:hover::before { opacity: 1; }
+        .editorial-card:hover::before { opacity: 1; }
         
-        .spotlight-content { position: relative; z-index: 1; transform: translateZ(40px); transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
-        .spotlight-card:hover .spotlight-content { transform: translateZ(60px); }
-        
-        .spotlight-border {
-          position: absolute; inset: 0; border-radius: 1.5rem; pointer-events: none;
-          padding: 1px;
-          background: radial-gradient(
-            500px circle at var(--mouse-x, 0) var(--mouse-y, 0),
-            rgba(212,175,106,0.95),
-            transparent 30%
-          );
-          -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-          -webkit-mask-composite: xor;
-          mask-composite: exclude;
-          opacity: 0;
-          transition: opacity 0.4s ease;
-        }
-        .spotlight-card:hover .spotlight-border { opacity: 1; }
+        .editorial-content { position: relative; z-index: 1; }
 
         .btn-gold{ 
-          background: linear-gradient(135deg, var(--gold-bright), var(--gold)); 
-          color: #05070A; 
+          background: var(--text); 
+          color: var(--bg); 
           transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
           cursor: none; border: none; 
           position: relative; overflow: hidden;
         }
         .btn-gold::after {
           content: ''; position: absolute; inset: 0;
-          background: linear-gradient(rgba(255,255,255,0), rgba(255,255,255,0.3), rgba(255,255,255,0));
+          background: linear-gradient(rgba(255,255,255,0), rgba(255,255,255,0.1), rgba(255,255,255,0));
           transform: translateY(-100%); transition: transform 0.6s;
         }
         .btn-gold:hover::after { transform: translateY(100%); }
-        .btn-gold:hover{ transform: translateY(-4px) scale(1.02); box-shadow: 0 20px 40px rgba(212,175,106,0.4); filter: brightness(1.1); }
+        .btn-gold:hover{ transform: translateY(-3px) scale(1.02); box-shadow: 0 15px 30px rgba(44,40,36,0.15); background: var(--gold); }
         
         .btn-outline{ 
           border: 1px solid var(--border); color: var(--text); 
           transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
-          cursor: none; background: none; 
+          cursor: none; background: transparent; 
         }
         .btn-outline:hover{ 
-          border-color: rgba(212,175,106,0.6); 
-          background: rgba(212,175,106,0.08); 
-          transform: translateY(-4px) scale(1.02); 
-          color: var(--gold-bright);
+          border-color: var(--gold); 
+          background: rgba(182,141,86,0.05); 
+          transform: translateY(-3px); 
+          color: var(--gold);
         }
 
-        .tag-pill{ border: 1px solid var(--border-soft); color: var(--text-dim); transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-        .tag-pill:hover{ border-color: rgba(212,175,106,0.5); color: var(--gold-bright); transform: translateY(-2px); }
+        .tag-pill{ border: 1px solid var(--border); color: var(--text-dim); transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        .tag-pill:hover{ border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
 
-        .reveal-up { opacity: 0; transform: translateY(80px) scale(0.95); filter: blur(5px); transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1); }
-        .reveal-up.is-visible { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+        .reveal-up { opacity: 0; transform: translateY(50px); transition: all 1.2s cubic-bezier(0.22, 1, 0.36, 1); }
+        .reveal-up.is-visible { opacity: 1; transform: translateY(0); }
         
-        .reveal-scale { opacity: 0; transform: scale(0.85) translateY(50px); filter: blur(8px); transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1); }
-        .reveal-scale.is-visible { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
-        
-        .reveal-rotate { opacity: 0; transform: perspective(1000px) rotateX(20deg) translateY(60px); filter: blur(5px); transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1); }
-        .reveal-rotate.is-visible { opacity: 1; transform: perspective(1000px) rotateX(0deg) translateY(0); filter: blur(0); }
+        .reveal-scale { opacity: 0; transform: scale(0.9) translateY(30px); transition: all 1.2s cubic-bezier(0.22, 1, 0.36, 1); }
+        .reveal-scale.is-visible { opacity: 1; transform: scale(1) translateY(0); }
 
-        .reveal-left { opacity: 0; transform: translateX(-60px); filter: blur(5px); transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1); }
-        .reveal-left.is-visible { opacity: 1; transform: translateX(0); filter: blur(0); }
+        .reveal-left { opacity: 0; transform: translateX(-40px); transition: all 1.2s cubic-bezier(0.22, 1, 0.36, 1); }
+        .reveal-left.is-visible { opacity: 1; transform: translateX(0); }
         
-        .reveal-right { opacity: 0; transform: translateX(60px); filter: blur(5px); transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1); }
-        .reveal-right.is-visible { opacity: 1; transform: translateX(0); filter: blur(0); }
+        .reveal-right { opacity: 0; transform: translateX(40px); transition: all 1.2s cubic-bezier(0.22, 1, 0.36, 1); }
+        .reveal-right.is-visible { opacity: 1; transform: translateX(0); }
 
         .hover-float { transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); animation: floating 6s ease-in-out infinite; }
-        .hover-float:hover { animation-play-state: paused; transform: translateY(-10px) scale(1.05); }
-        .hover-float:nth-child(2) { animation-delay: -2s; }
-        .hover-float:nth-child(3) { animation-delay: -4s; }
+        .hover-float:hover { animation-play-state: paused; transform: translateY(-8px); }
 
         @keyframes floating {
           0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-12px); }
+          50% { transform: translateY(-10px); }
         }
 
         .nav-link{ position:relative; color:var(--text-dim); transition:color .3s ease; cursor:none; background:none; border:none; }
         .nav-link:hover{ color:var(--text); }
         .nav-link::after{ 
-          content:""; position:absolute; left:0; bottom:-6px; height:1px; width:0%; 
-          background:var(--gold-bright); transition:width .4s cubic-bezier(0.16, 1, 0.3, 1); 
+          content:""; position:absolute; left:0; bottom:-4px; height:1px; width:0%; 
+          background:var(--gold); transition:width .4s cubic-bezier(0.16, 1, 0.3, 1); 
         }
         .nav-link:hover::after{ width:100%; }
 
-        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: var(--bg); }
         ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(212,175,106,0.4); }
+        ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
 
-        .proj-num{ -webkit-text-stroke: 1px var(--border); color: transparent; transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
-        .spotlight-card:hover .proj-num { -webkit-text-stroke: 1px var(--gold-bright); color: rgba(212,175,106,0.1); transform: scale(1.1) translateX(10px); }
+        .proj-num{ color: var(--border-soft); transition: color 0.5s ease; }
+        .editorial-card:hover .proj-num { color: rgba(182,141,86,0.15); }
       `}</style>
 
       <CustomCursor />
 
       {/* Scroll Progress Indicator */}
-      <div className="fixed top-0 left-0 h-[2px] bg-gradient-to-r from-[var(--gold)] to-[var(--gold-bright)] z-[100] transition-all duration-150 shadow-[0_0_15px_rgba(212,175,106,0.8)]" style={{ width: `${scrollProgress}%` }} />
+      <div className="fixed top-0 left-0 h-[3px] bg-[var(--gold)] z-[100] transition-all duration-150" style={{ width: `${scrollProgress}%` }} />
 
-      <div className={`fixed top-24 left-1/2 -translate-x-1/2 z-[100] px-5 py-2.5 rounded-full font-mono text-xs tracking-wider border border-[var(--gold)] transition-all duration-500 flex items-center gap-2 ${toastMessage ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8 pointer-events-none'}`} 
-           style={{ background: "rgba(10,14,20,0.9)", color: "var(--gold-bright)", backdropFilter: "blur(10px)", boxShadow: "0 10px 40px rgba(0,0,0,0.5)" }}>
-        <Sparkles size={14} /> {toastMessage}
+      <div className={`fixed top-24 left-1/2 -translate-x-1/2 z-[100] px-5 py-2.5 rounded-full font-mono text-xs tracking-wider border border-[var(--border)] transition-all duration-500 flex items-center gap-2 ${toastMessage ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8 pointer-events-none'}`} 
+           style={{ background: "var(--panel)", color: "var(--text)", boxShadow: "0 10px 30px rgba(44,40,36,0.1)" }}>
+        <Sparkles size={14} className="text-[var(--gold)]" /> {toastMessage}
       </div>
 
       <div className="fixed inset-0 pointer-events-none glow-field z-0" />
@@ -1065,26 +926,26 @@ export default function Portfolio() {
         <header
           className="nav-shell fixed top-0 w-full z-50 transition-all duration-500"
           style={{
-            background: scrolled ? "rgba(5,7,10,0.85)" : "transparent",
-            backdropFilter: scrolled ? "blur(20px)" : "none",
+            background: scrolled ? "rgba(253, 251, 247, 0.85)" : "transparent",
+            backdropFilter: scrolled ? "blur(12px)" : "none",
             borderBottom: scrolled ? "1px solid var(--border-soft)" : "1px solid transparent",
             paddingTop: scrolled ? "0" : "1rem"
           }}
         >
           <nav className="max-w-7xl mx-auto px-6 md:px-12 h-24 flex items-center justify-between">
-            <button onClick={goTo("top")} className="group flex items-center gap-3.5 cursor-none bg-transparent border-none">
-              <span className="w-10 h-10 rounded-full flex items-center justify-center font-display text-base overflow-hidden border border-[var(--border)] text-[var(--gold-bright)] group-hover:border-[var(--gold-bright)] transition-colors relative bg-[var(--panel)]">
+            <button onClick={goTo("top")} className="group flex items-center gap-4 cursor-none bg-transparent border-none">
+              <span className="w-10 h-10 rounded-full flex items-center justify-center font-display text-base overflow-hidden border border-[var(--border)] text-[var(--gold)] group-hover:bg-[var(--gold)] group-hover:text-[var(--bg)] transition-colors relative bg-[var(--panel)] shadow-sm">
                 {initials}
               </span>
               <div className="flex flex-col items-start">
-                <span className="font-mono text-xs tracking-[0.2em] uppercase text-[var(--text)] group-hover:text-[var(--gold-bright)] transition-colors">{profile.name}</span>
-                <span className="font-mono text-[9px] tracking-widest text-[var(--text-dim)] uppercase mt-0.5">Portfolio</span>
+                <span className="font-mono text-[11px] tracking-[0.2em] uppercase text-[var(--text)] transition-colors">{profile.name}</span>
+                <span className="font-mono text-[9px] tracking-widest text-[var(--text-faint)] uppercase mt-0.5">Portfolio</span>
               </div>
             </button>
             
-            <div className="hidden md:flex gap-12">
+            <div className="hidden md:flex gap-10">
               {NAV.map((n) => (
-                <button key={n.id} onClick={goTo(n.id)} className="nav-link font-mono text-xs tracking-widest uppercase py-2">{n.label}</button>
+                <button key={n.id} onClick={goTo(n.id)} className="nav-link font-mono text-[10px] tracking-widest uppercase py-2">{n.label}</button>
               ))}
             </div>
             
@@ -1092,25 +953,24 @@ export default function Portfolio() {
               {isAdminUser && (
                 <button
                   onClick={() => { if (editMode) saveAllData(true); else setEditMode(true); }}
-                  className="btn-outline hidden sm:inline-flex items-center gap-2 font-mono text-[11px] tracking-widest uppercase px-5 py-3 rounded-full"
-                  style={editMode ? { background: "rgba(212,175,106,0.15)", borderColor: "var(--gold-bright)", color: "var(--gold-bright)" } : {}}
+                  className="btn-outline hidden sm:inline-flex items-center gap-2 font-mono text-[10px] tracking-widest uppercase px-5 py-3 rounded-full"
+                  style={editMode ? { background: "rgba(182,141,86,0.1)", borderColor: "var(--gold)", color: "var(--gold)" } : {}}
                 >
                   {editMode ? <Check size={14} /> : <Pencil size={14} />}
                   {editMode ? "Save & Exit" : "Edit Site"}
                 </button>
               )}
-              <button onClick={goTo("contact")} className="btn-outline hidden sm:inline-flex font-mono text-[11px] tracking-widest uppercase px-6 py-3 rounded-full hover:bg-white/5">
+              <button onClick={goTo("contact")} className="btn-gold hidden sm:inline-flex font-mono text-[10px] tracking-widest uppercase px-6 py-3 rounded-full shadow-sm">
                 Let's talk
               </button>
             </div>
           </nav>
         </header>
 
-        {/* Edit Mode Notice */}
         {editMode && isAdminUser && (
           <div className="max-w-7xl mx-auto px-6 md:px-12 pt-32">
-            <div className="font-mono text-[11px] tracking-wide px-4 py-3 rounded-xl flex items-center gap-3 backdrop-blur-md" style={{ background: "rgba(212,175,106,0.1)", border: "1px solid rgba(212,175,106,0.3)", color: "var(--gold-bright)" }}>
-              <div className="w-2 h-2 rounded-full bg-[var(--gold-bright)] animate-pulse"></div>
+            <div className="font-mono text-[10px] tracking-wide px-4 py-3 rounded-xl flex items-center gap-3 bg-[var(--panel)] shadow-md" style={{ border: "1px solid var(--gold)", color: "var(--gold)" }}>
+              <div className="w-2 h-2 rounded-full bg-[var(--gold)] animate-pulse"></div>
               Live Edit Mode active. Changes are public upon saving.
             </div>
           </div>
@@ -1118,47 +978,44 @@ export default function Portfolio() {
 
         {/* Hero Section */}
         <main id="top" className="max-w-7xl mx-auto px-6 md:px-12">
-          <section className="min-h-[95vh] pt-32 pb-16 flex flex-col justify-center relative">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] max-w-[800px] max-h-[800px] bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[var(--gold-bright)]/10 to-transparent blur-3xl rounded-full pointer-events-none"></div>
-
-            <div className="w-full grid grid-cols-1 lg:grid-cols-[1fr_0.9fr] gap-12 lg:gap-16 items-center relative z-10">
+          <section className="min-h-[90vh] pt-32 pb-16 flex flex-col justify-center relative">
+            <div className="w-full grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-12 lg:gap-16 items-center relative z-10">
               
               {/* Left Column: Text Content */}
               <div className="flex flex-col items-start text-left">
                 <div className="reveal-up">
-                  <p className="font-mono text-[11px] tracking-[0.3em] uppercase mb-8 flex items-center gap-3 text-[var(--gold-bright)]">
-                    <span className="w-8 h-[1px] bg-[var(--gold-bright)] opacity-50"></span>
+                  <p className="font-mono text-[10px] tracking-[0.25em] uppercase mb-8 flex items-center gap-3 text-[var(--gold)] font-medium">
+                    <span className="w-8 h-[1px] bg-[var(--gold)]"></span>
                     <Editable value={profile.role} onChange={(v) => setProfile((p) => ({ ...p, role: v }))} /> 
-                    <span className="opacity-50">/</span> 
+                    <span className="opacity-40">/</span> 
                     <Editable value={profile.focus} onChange={(v) => setProfile((p) => ({ ...p, focus: v }))} />
                   </p>
                 </div>
 
-                <h1 className="font-display leading-[1.05] reveal-up delay-100" style={{ fontSize: "clamp(46px, 6vw, 85px)", fontWeight: 400, letterSpacing: "-0.02em" }}>
-                  <Editable value={profile.headline} onChange={(v) => setProfile((p) => ({ ...p, headline: v }))} className="block mb-1" />
-                  <Editable value={profile.headlineAccent} onChange={(v) => setProfile((p) => ({ ...p, headlineAccent: v }))} className="text-gradient font-cursive block pb-2" />
+                <h1 className="font-display leading-[1.1] reveal-up delay-100 text-[var(--text)]" style={{ fontSize: "clamp(42px, 6.5vw, 90px)", fontWeight: 400, letterSpacing: "-0.02em" }}>
+                  <Editable value={profile.headline} onChange={(v) => setProfile((p) => ({ ...p, headline: v }))} className="block mb-2" />
+                  <Editable value={profile.headlineAccent} onChange={(v) => setProfile((p) => ({ ...p, headlineAccent: v }))} className="text-[var(--gold)] font-cursive block pb-2" />
                 </h1>
 
-                <p className="mt-8 max-w-lg text-[16px] md:text-[18px] leading-[1.8] font-light reveal-up delay-200" style={{ color: "var(--text-dim)" }}>
+                <p className="mt-8 max-w-md text-[15px] md:text-[17px] leading-[1.8] font-light reveal-up delay-200 text-[var(--text-dim)]">
                   <Editable tag="span" value={profile.intro} onChange={(v) => setProfile((p) => ({ ...p, intro: v }))} />
                 </p>
 
                 <div className="flex gap-4 md:gap-6 mt-12 flex-wrap reveal-up delay-300">
-                  <button onClick={goTo("work")} className="btn-gold font-mono text-[11px] tracking-widest uppercase px-8 py-4 rounded-full font-semibold flex items-center gap-3">
-                    View the work <ArrowUpRight size={15} />
+                  <button onClick={goTo("work")} className="btn-gold font-mono text-[10px] tracking-widest uppercase px-8 py-4 rounded-full font-semibold flex items-center gap-3">
+                    View the work <ArrowUpRight size={14} />
                   </button>
-                  <button onClick={goTo("contact")} className="btn-outline font-mono text-[11px] tracking-widest uppercase px-8 py-4 rounded-full flex items-center gap-3 bg-white/5">
+                  <button onClick={goTo("contact")} className="btn-outline font-mono text-[10px] tracking-widest uppercase px-8 py-4 rounded-full flex items-center gap-3 bg-[var(--panel)]">
                     Let's Collaborate
                   </button>
                 </div>
               </div>
 
-              {/* Right Column: Animated Terminal */}
+              {/* Right Column: Animated Visual */}
               <div className="reveal-left delay-400 w-full relative z-10 hidden md:block">
                  <AnimatedTerminal />
               </div>
               
-              {/* Mobile Only Terminal */}
               <div className="reveal-up delay-400 w-full relative z-10 md:hidden mt-8">
                  <AnimatedTerminal />
               </div>
@@ -1166,18 +1023,18 @@ export default function Portfolio() {
             </div>
 
             {/* Bottom Stats Row */}
-            <div className="flex gap-12 lg:gap-24 mt-24 flex-wrap justify-start lg:justify-center w-full z-10 reveal-up delay-500 border-t border-[var(--border-soft)] pt-12">
+            <div className="flex gap-10 lg:gap-20 mt-24 flex-wrap justify-start lg:justify-start w-full z-10 reveal-up delay-500 border-t border-[var(--border)] pt-12">
               {profile.stats.map((s, i) => (
-                <div key={i} className="flex items-center gap-12 lg:gap-24 group relative hover-float">
-                  <div className="relative z-10 cursor-none flex flex-col md:flex-row md:items-center gap-4">
-                    <div className="font-display text-[42px] md:text-[52px] leading-none transition-colors duration-300 group-hover:text-[var(--text)]" style={{ color: "var(--gold-bright)" }}>
+                <div key={i} className="flex items-center gap-10 lg:gap-20 group relative hover-float">
+                  <div className="relative z-10 cursor-none flex flex-col gap-2">
+                    <div className="font-display text-[38px] md:text-[46px] leading-none transition-colors duration-300 text-[var(--text)]">
                       <Editable value={s.v} onChange={(v) => setProfile((p) => ({ ...p, stats: p.stats.map((st, idx) => (idx === i ? { ...st, v } : st)) }))} />
                     </div>
-                    <div className="font-mono text-[10px] md:text-[11px] uppercase tracking-[0.2em] opacity-60 max-w-[100px] leading-relaxed">
+                    <div className="font-mono text-[9px] md:text-[10px] uppercase tracking-[0.2em] opacity-80 text-[var(--gold)] leading-relaxed max-w-[100px]">
                       <Editable value={s.k} onChange={(v) => setProfile((p) => ({ ...p, stats: p.stats.map((st, idx) => (idx === i ? { ...st, k: v } : st)) }))} />
                     </div>
                   </div>
-                  {i < profile.stats.length - 1 && <div className="hidden sm:block w-[1px] h-12 bg-gradient-to-b from-transparent via-[var(--border)] to-transparent" />}
+                  {i < profile.stats.length - 1 && <div className="hidden sm:block w-[1px] h-12 bg-[var(--border)]" />}
                 </div>
               ))}
             </div>
@@ -1185,44 +1042,42 @@ export default function Portfolio() {
 
           {/* Work Section */}
           <section id="work" className="py-32 relative">
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-[1px] bg-gradient-to-r from-transparent via-[var(--border-soft)] to-transparent"></div>
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-[1px] bg-[var(--border)] opacity-60"></div>
             
             <SectionHead eyebrow="Selected Work" title="Featured Projects" count={`${projects.length} artifacts`} />
             
-            <div className="grid grid-cols-1 gap-12 md:gap-20 mt-20">
+            <div className="grid grid-cols-1 gap-16 md:gap-24 mt-20">
               {[...projects].reverse().map((p, originalIndex) => {
                 const i = projects.length - 1 - originalIndex; 
                 return (
                   <div 
                     key={i} 
-                    className="spotlight-card group reveal-rotate"
+                    className="editorial-card group reveal-up"
                     style={{ transitionDelay: `${originalIndex * 150}ms` }}
                     onMouseMove={handleCardMouseMove}
-                    onMouseLeave={handleCardMouseLeave}
                   >
-                    <div className="spotlight-border"></div>
-                    <div className="spotlight-content p-8 md:p-12">
+                    <div className="editorial-content p-8 md:p-14">
                       
                       {editMode && (
                         <div className="absolute top-6 right-6 flex gap-2 z-20">
-                          <span className="w-10 h-10 rounded-full flex items-center justify-center bg-red-500/10 border border-red-500/20 text-red-400 cursor-none hover:bg-red-500/20 hover:scale-110 transition-all" onClick={() => setProjects((prev) => prev.filter((_, idx) => idx !== i))}>
+                          <span className="w-10 h-10 rounded-full flex items-center justify-center bg-red-50 border border-red-100 text-red-500 cursor-none hover:bg-red-100 transition-all" onClick={() => setProjects((prev) => prev.filter((_, idx) => idx !== i))}>
                             <Trash2 size={16} />
                           </span>
                         </div>
                       )}
 
-                      <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-12 lg:gap-16 items-center">
+                      <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.3fr] gap-12 lg:gap-20 items-center">
                         <div className="order-2 lg:order-1 flex flex-col h-full justify-center">
-                          <div className="font-display proj-num text-[80px] leading-none mb-6 opacity-30 select-none">
+                          <div className="font-display proj-num text-[70px] leading-none mb-6 select-none opacity-20">
                             {String(originalIndex + 1).padStart(2, "0")}
                           </div>
                           
-                          <h3 className="font-display text-3xl md:text-4xl font-light mb-4 text-[var(--text)] group-hover:text-[var(--gold-bright)] transition-colors">
+                          <h3 className="font-display text-3xl md:text-4xl font-light mb-4 text-[var(--text)]">
                             <Editable value={p.title} onChange={(v) => updateProject(i, { title: v })} />
                           </h3>
                           
-                          <div className="font-mono text-[11px] uppercase tracking-widest text-[var(--text-faint)] mb-8 flex items-center gap-4">
-                            <span className="w-6 h-[1px] bg-[var(--border)]"></span>
+                          <div className="font-mono text-[10px] uppercase tracking-widest text-[var(--gold)] mb-8 flex items-center gap-4">
+                            <span className="w-6 h-[1px] bg-[var(--gold)] opacity-50"></span>
                             <Editable value={p.subtitle} onChange={(v) => updateProject(i, { subtitle: v })} />
                           </div>
                           
@@ -1237,19 +1092,19 @@ export default function Portfolio() {
                           <div className="flex flex-wrap gap-4 mt-auto">
                             {editMode ? (
                               <div className="flex flex-col gap-3 w-full">
-                                <InputRow icon={<ExternalLink size={14}/>} value={p.live} onChange={(v) => updateProject(i, { live: v })} placeholder="Live URL" color="var(--gold-bright)" />
+                                <InputRow icon={<ExternalLink size={14}/>} value={p.live} onChange={(v) => updateProject(i, { live: v })} placeholder="Live URL" color="var(--gold)" />
                                 <InputRow icon={<Github size={14}/>} value={p.source} onChange={(v) => updateProject(i, { source: v })} placeholder="Source URL" color="var(--text-dim)" />
                               </div>
                             ) : (
                               <>
                                 {p.live !== "#" && (
-                                  <a href={p.live} target="_blank" rel="noopener noreferrer" className="font-mono text-[11px] uppercase tracking-widest flex items-center gap-2 text-[var(--gold-bright)] hover:opacity-70 transition-opacity cursor-none">
+                                  <a href={p.live} target="_blank" rel="noopener noreferrer" className="font-mono text-[10px] uppercase tracking-widest flex items-center gap-2 text-[var(--text)] hover:text-[var(--gold)] transition-colors cursor-none">
                                     <ExternalLink size={14} /> Live Site
                                   </a>
                                 )}
                                 {p.source !== "#" && (
-                                  <a href={p.source} target="_blank" rel="noopener noreferrer" className="font-mono text-[11px] uppercase tracking-widest flex items-center gap-2 text-[var(--text-dim)] hover:text-[var(--text)] transition-colors cursor-none">
-                                    <Github size={14} /> Source
+                                  <a href={p.source} target="_blank" rel="noopener noreferrer" className="font-mono text-[10px] uppercase tracking-widest flex items-center gap-2 text-[var(--text-dim)] hover:text-[var(--text)] transition-colors cursor-none">
+                                    <Github size={14} /> Source Code
                                   </a>
                                 )}
                               </>
@@ -1258,27 +1113,25 @@ export default function Portfolio() {
                         </div>
 
                         {/* FULL PREVIEW CONTAINER */}
-                        <div className="order-1 lg:order-2 relative aspect-[16/10] lg:aspect-auto lg:h-[420px] w-full rounded-2xl overflow-hidden border border-[var(--border-soft)] bg-[#030508] group/img shrink-0 shadow-2xl flex items-center justify-center p-3">
+                        <div className="order-1 lg:order-2 relative aspect-[16/10] w-full rounded-2xl overflow-hidden border border-[var(--border)] bg-[var(--bg)] group/img shrink-0 shadow-lg flex items-center justify-center">
                           {p.image ? (
-                            <img src={p.image} alt={p.title} className="w-full h-full object-contain opacity-90 group-hover/img:opacity-100 group-hover/img:scale-102 transition-all duration-700 ease-out" />
+                            <img src={p.image} alt={p.title} className="w-full h-full object-cover group-hover/img:scale-105 transition-all duration-700 ease-out" />
                           ) : (
-                            <div className="w-full h-full flex flex-col items-center justify-center text-[var(--border)]">
-                              <Code2 size={64} strokeWidth={1} />
-                              <span className="font-mono text-xs uppercase tracking-widest mt-4 opacity-50">Project Visual</span>
+                            <div className="w-full h-full flex flex-col items-center justify-center text-[var(--border)] bg-[var(--panel-strong)]">
+                              <ImageIcon size={64} strokeWidth={1} />
+                              <span className="font-mono text-xs uppercase tracking-widest mt-4 opacity-70">Project Visual</span>
                             </div>
                           )}
                           
-                          <div className="absolute inset-0 bg-gradient-to-t from-[#05070A] via-transparent to-transparent opacity-40 pointer-events-none"></div>
-
                           {editMode && (
-                            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/70 backdrop-blur-sm opacity-0 hover:opacity-100 transition-opacity p-6 z-20">
-                              <label className="btn-outline px-6 py-3 rounded-full flex items-center gap-3 cursor-none">
+                            <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/70 backdrop-blur-sm opacity-0 hover:opacity-100 transition-opacity p-6 z-20">
+                              <label className="btn-outline bg-white px-6 py-3 rounded-full flex items-center gap-3 cursor-none">
                                 <ImageIcon size={16} /> 
-                                <span className="font-mono text-xs tracking-widest uppercase">Upload Image</span>
+                                <span className="font-mono text-[10px] tracking-widest uppercase">Upload Image</span>
                                 <input type="file" accept="image/*" className="hidden" onChange={(e) => handleProjectImageChange(i, e)} />
                               </label>
                               {p.image && (
-                                <button onClick={() => updateProject(i, { image: null })} className="mt-4 font-mono text-[10px] uppercase text-red-400 tracking-widest hover:text-red-300">
+                                <button onClick={() => updateProject(i, { image: null })} className="mt-4 font-mono text-[10px] uppercase text-red-500 tracking-widest">
                                   Remove Image
                                 </button>
                               )}
@@ -1292,13 +1145,12 @@ export default function Portfolio() {
               })}
               
               {editMode && (
-                <div className="spotlight-card border-dashed border-2 hover:bg-white/[0.02] cursor-none min-h-[300px] flex flex-col items-center justify-center text-[var(--text-dim)] hover:text-[var(--gold-bright)] hover:border-[var(--gold-bright)] transition-all" onClick={() => setProjects((prev) => [...prev, emptyProject()])} onMouseMove={handleCardMouseMove} onMouseLeave={handleCardMouseLeave}>
-                  <div className="spotlight-border"></div>
-                  <div className="spotlight-content flex flex-col items-center gap-4">
-                    <div className="w-16 h-16 rounded-full border border-current flex items-center justify-center">
+                <div className="editorial-card border-dashed border-2 bg-transparent hover:bg-white/50 cursor-none min-h-[250px] flex flex-col items-center justify-center text-[var(--text-dim)] hover:text-[var(--gold)] transition-all" onClick={() => setProjects((prev) => [...prev, emptyProject()])}>
+                  <div className="editorial-content flex flex-col items-center gap-4">
+                    <div className="w-16 h-16 rounded-full border border-current flex items-center justify-center bg-white">
                       <Plus size={24} />
                     </div>
-                    <span className="font-mono text-sm uppercase tracking-[0.2em]">Add New Project</span>
+                    <span className="font-mono text-xs uppercase tracking-widest">Add New Project</span>
                   </div>
                 </div>
               )}
@@ -1307,39 +1159,38 @@ export default function Portfolio() {
 
           {/* Certificates Section */}
           <section id="certificates" className="py-32 relative">
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-[1px] bg-gradient-to-r from-transparent via-[var(--border-soft)] to-transparent"></div>
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-[1px] bg-[var(--border)] opacity-60"></div>
             
             <SectionHead eyebrow="Credentials" title="Certifications" count={`${certificates.length} verified`} />
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-16">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-16">
               {[...certificates].reverse().map((c, originalIndex) => {
                 const i = certificates.length - 1 - originalIndex;
                 return (
-                  <div key={i} className="spotlight-card group reveal-scale flex flex-col h-full min-h-[300px]" style={{ transitionDelay: `${originalIndex * 100}ms` }} onMouseMove={handleCardMouseMove} onMouseLeave={handleCardMouseLeave}>
-                    <div className="spotlight-border"></div>
-                    <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-[var(--gold-bright)] to-transparent opacity-50"></div>
+                  <div key={i} className="editorial-card group reveal-up flex flex-col h-full min-h-[300px]" style={{ transitionDelay: `${originalIndex * 100}ms` }} onMouseMove={handleCardMouseMove}>
+                    <div className="absolute top-0 left-0 w-full h-[3px] bg-[var(--gold)] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     
-                    <div className="spotlight-content p-8 flex flex-col h-full">
+                    <div className="editorial-content p-8 flex flex-col h-full">
                       {editMode && (
                         <div className="absolute top-4 right-4 z-20">
-                          <span className="w-8 h-8 rounded-full flex items-center justify-center bg-red-500/10 text-red-400 cursor-none hover:bg-red-500/20 transition-all" onClick={() => setCertificates((prev) => prev.filter((_, idx) => idx !== i))}>
+                          <span className="w-8 h-8 rounded-full flex items-center justify-center bg-red-50 text-red-500 cursor-none hover:bg-red-100 transition-all" onClick={() => setCertificates((prev) => prev.filter((_, idx) => idx !== i))}>
                             <Trash2 size={14} />
                           </span>
                         </div>
                       )}
 
                       <div className="flex items-center justify-between mb-8">
-                        <span className="font-mono text-[10px] tracking-[0.2em] uppercase px-3 py-1.5 rounded-full border border-[var(--gold-bright)]/30 text-[var(--gold-bright)] bg-[var(--gold-bright)]/5">
+                        <span className="font-mono text-[9px] tracking-[0.2em] uppercase px-3 py-1.5 rounded-full border border-[var(--gold)] text-[var(--gold)] bg-[var(--gold)]/5">
                           <Editable value={c.seal} onChange={(v) => updateCert(i, { seal: v })} />
                         </span>
-                        <BadgeCheck size={24} className="text-[var(--border)] group-hover:text-[var(--gold-bright)] transition-colors duration-500" strokeWidth={1.2} />
+                        <BadgeCheck size={24} className="text-[var(--border)] group-hover:text-[var(--gold)] transition-colors duration-500" strokeWidth={1.2} />
                       </div>
                       
-                      <h4 className="font-display text-xl leading-snug font-light mb-3 group-hover:text-[var(--gold-bright)] transition-colors">
+                      <h4 className="font-display text-xl leading-snug font-light mb-3 text-[var(--text)]">
                         <Editable value={c.title} onChange={(v) => updateCert(i, { title: v })} />
                       </h4>
                       
-                      <div className="font-mono text-[11px] uppercase tracking-wider text-[var(--text-dim)] mb-5 flex items-center gap-2">
+                      <div className="font-mono text-[10px] uppercase tracking-wider text-[var(--text-dim)] mb-5 flex items-center gap-2">
                         <Editable value={c.issuer} onChange={(v) => updateCert(i, { issuer: v })} />
                       </div>
                       
@@ -1348,33 +1199,33 @@ export default function Portfolio() {
                       </p>
 
                       {c.image && (
-                        <div className="mb-6 rounded-xl overflow-hidden border border-[var(--border-soft)] group/img relative h-40 bg-[#030508] w-full shrink-0 flex items-center justify-center p-1">
-                          <img src={c.image} alt={c.title} className="w-full h-full object-contain opacity-90 group-hover/img:opacity-100 transition-opacity" />
+                        <div className="mb-6 rounded-xl overflow-hidden border border-[var(--border-soft)] group/img relative h-40 bg-[var(--bg)] w-full shrink-0 flex items-center justify-center p-1">
+                          <img src={c.image} alt={c.title} className="w-full h-full object-contain mix-blend-multiply opacity-90 group-hover/img:opacity-100 transition-opacity" />
                         </div>
                       )}
 
                       {editMode && (
                         <div className="space-y-3 mb-6">
-                          <label className="border border-dashed border-[var(--border)] rounded-xl p-4 flex flex-col items-center justify-center gap-2 cursor-none hover:border-[var(--gold-bright)] hover:bg-[var(--gold-bright)]/5 transition-colors">
-                            <ImageIcon size={18} color="var(--text-dim)" />
-                            <span className="font-mono text-[10px] uppercase tracking-widest text-[var(--text-dim)]">Attach Image</span>
+                          <label className="border border-dashed border-[var(--border)] rounded-xl p-4 flex flex-col items-center justify-center gap-2 cursor-none hover:border-[var(--gold)] hover:bg-[var(--gold)]/5 transition-colors">
+                            <ImageIcon size={16} color="var(--text-dim)" />
+                            <span className="font-mono text-[9px] uppercase tracking-widest text-[var(--text-dim)]">Attach Image</span>
                             <input type="file" accept="image/*" className="hidden" onChange={(e) => handleCertImageChange(i, e)} />
                           </label>
-                          <InputRow icon={<ShieldCheck size={14}/>} value={c.verifyUrl} onChange={(v) => updateCert(i, { verifyUrl: v })} placeholder="Verification URL" color="var(--gold-bright)" />
+                          <InputRow icon={<ShieldCheck size={14}/>} value={c.verifyUrl} onChange={(v) => updateCert(i, { verifyUrl: v })} placeholder="Verification URL" color="var(--gold)" />
                         </div>
                       )}
 
-                      <div className="flex justify-between items-center mt-auto pt-6 border-t border-[var(--border-soft)]">
-                        <span className="font-mono text-[11px] tracking-widest text-[var(--text-faint)]">
+                      <div className="flex justify-between items-center mt-auto pt-5 border-t border-[var(--border-soft)]">
+                        <span className="font-mono text-[10px] tracking-widest text-[var(--text-faint)]">
                           <Editable value={c.date} onChange={(v) => updateCert(i, { date: v })} />
                         </span>
                         
                         {!editMode && c.verifyUrl && c.verifyUrl !== "#" ? (
-                          <a href={c.verifyUrl} target="_blank" rel="noopener noreferrer" className="font-mono text-[10px] uppercase tracking-widest text-[var(--gold-bright)] hover:underline flex items-center gap-1.5 cursor-none">
+                          <a href={c.verifyUrl} target="_blank" rel="noopener noreferrer" className="font-mono text-[10px] uppercase tracking-widest text-[var(--gold)] hover:underline flex items-center gap-1.5 cursor-none">
                             <ShieldCheck size={13} /> Verify <ArrowUpRight size={11} />
                           </a>
                         ) : (
-                          <span className="font-mono text-[10px] uppercase tracking-widest text-[var(--text-dim)]">Verified</span>
+                          <span className="font-mono text-[9px] uppercase tracking-widest text-[var(--text-dim)]">Verified</span>
                         )}
                       </div>
                     </div>
@@ -1383,11 +1234,12 @@ export default function Portfolio() {
               })}
               
               {editMode && (
-                <div className="spotlight-card border-dashed border-2 hover:bg-white/[0.02] cursor-none min-h-[300px] flex flex-col items-center justify-center text-[var(--text-dim)] hover:text-[var(--gold-bright)] hover:border-[var(--gold-bright)] transition-all" onClick={() => setCertificates((prev) => [...prev, emptyCert()])} onMouseMove={handleCardMouseMove} onMouseLeave={handleCardMouseLeave}>
-                  <div className="spotlight-border"></div>
-                  <div className="spotlight-content flex flex-col items-center gap-4">
-                    <Plus size={24} />
-                    <span className="font-mono text-[11px] uppercase tracking-[0.2em]">Add Credential</span>
+                <div className="editorial-card border-dashed border-2 bg-transparent hover:bg-white/50 cursor-none min-h-[250px] flex flex-col items-center justify-center text-[var(--text-dim)] hover:text-[var(--gold)] transition-all" onClick={() => setCertificates((prev) => [...prev, emptyCert()])}>
+                  <div className="editorial-content flex flex-col items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-white border border-current flex items-center justify-center">
+                      <Plus size={18} />
+                    </div>
+                    <span className="font-mono text-[10px] uppercase tracking-widest">Add Credential</span>
                   </div>
                 </div>
               )}
@@ -1396,34 +1248,33 @@ export default function Portfolio() {
 
           {/* Activity Section */}
           <section id="activity" className="py-32 relative">
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-[1px] bg-gradient-to-r from-transparent via-[var(--border-soft)] to-transparent"></div>
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-[1px] bg-[var(--border)] opacity-60"></div>
             
             <SectionHead eyebrow="Timeline" title="Activity & Milestones" count={`${activityLogs.length} updates`} />
             
-            <div className="mt-20 relative before:absolute before:inset-0 before:ml-4 md:before:ml-6 before:-translate-x-px before:h-full before:w-[2px] before:bg-gradient-to-b before:from-[var(--gold-bright)] before:via-[var(--border)] before:to-transparent">
+            <div className="mt-20 relative before:absolute before:inset-0 before:ml-4 md:before:ml-6 before:-translate-x-px before:h-full before:w-[2px] before:bg-[var(--border)]">
               <div className="space-y-12">
                 {[...activityLogs].reverse().map((log, originalIndex) => {
                   const i = activityLogs.length - 1 - originalIndex;
                   return (
                     <div key={i} className="relative pl-12 md:pl-20 reveal-right group" style={{ transitionDelay: `${originalIndex * 100}ms` }}>
-                      <div className="absolute left-[7px] md:left-[15px] top-1.5 w-4 h-4 rounded-full bg-[var(--bg)] border-2 border-[var(--gold-bright)] shadow-[0_0_10px_rgba(212,175,106,0.5)] group-hover:bg-[var(--gold-bright)] group-hover:scale-125 transition-all duration-300"></div>
+                      <div className="absolute left-[9px] md:left-[17px] top-6 w-3 h-3 rounded-full bg-[var(--panel)] border-2 border-[var(--gold)] shadow-[0_0_10px_rgba(182,141,86,0.3)] group-hover:bg-[var(--gold)] group-hover:scale-125 transition-all duration-300"></div>
                       
                       {editMode && (
                         <div className="absolute top-0 right-0 z-20">
-                          <span className="w-8 h-8 rounded-full flex items-center justify-center bg-red-500/10 text-red-400 cursor-none hover:bg-red-500/20 transition-all" onClick={() => setActivityLogs((prev) => prev.filter((_, idx) => idx !== i))}>
+                          <span className="w-8 h-8 rounded-full flex items-center justify-center bg-red-50 text-red-500 cursor-none hover:bg-red-100 transition-all" onClick={() => setActivityLogs((prev) => prev.filter((_, idx) => idx !== i))}>
                             <Trash2 size={14} />
                           </span>
                         </div>
                       )}
 
-                      <div className="spotlight-card p-6 md:p-8" onMouseMove={handleCardMouseMove} onMouseLeave={handleCardMouseLeave}>
-                        <div className="spotlight-border"></div>
-                        <div className="spotlight-content">
-                          <div className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-widest text-[var(--gold-bright)] mb-3">
-                            <Calendar size={14} />
+                      <div className="editorial-card p-6 md:p-8" onMouseMove={handleCardMouseMove}>
+                        <div className="editorial-content">
+                          <div className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-widest text-[var(--gold)] mb-2">
+                            <Calendar size={13} />
                             <Editable value={log.date} onChange={(v) => updateLog(i, { date: v })} placeholder="e.g. Aug 2026" />
                           </div>
-                          <h4 className="font-display text-xl md:text-2xl mb-3 text-[var(--text)] group-hover:text-[var(--gold-bright)] transition-colors">
+                          <h4 className="font-display text-xl md:text-2xl mb-3 text-[var(--text)]">
                             <Editable value={log.title} onChange={(v) => updateLog(i, { title: v })} placeholder="Milestone Title" />
                           </h4>
                           <p className="text-[14px] leading-[1.8] text-[var(--text-dim)] font-light">
@@ -1438,12 +1289,11 @@ export default function Portfolio() {
 
               {editMode && (
                 <div className="relative pl-12 md:pl-20 mt-12">
-                  <div className="absolute left-[7px] md:left-[15px] top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-[var(--bg)] border-2 border-[var(--border-soft)]"></div>
-                  <div className="spotlight-card border-dashed border-2 hover:bg-white/[0.02] cursor-none py-6 flex flex-col items-center justify-center text-[var(--text-dim)] hover:text-[var(--gold-bright)] hover:border-[var(--gold-bright)] transition-all" onClick={() => setActivityLogs((prev) => [...prev, emptyLog()])} onMouseMove={handleCardMouseMove} onMouseLeave={handleCardMouseLeave}>
-                    <div className="spotlight-border"></div>
-                    <div className="spotlight-content flex items-center gap-3">
-                      <Plus size={18} />
-                      <span className="font-mono text-[11px] uppercase tracking-[0.2em]">Add Log Entry</span>
+                  <div className="absolute left-[9px] md:left-[17px] top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-[var(--bg)] border-2 border-[var(--border)]"></div>
+                  <div className="editorial-card border-dashed border-2 bg-transparent hover:bg-white/50 cursor-none py-6 flex flex-col items-center justify-center text-[var(--text-dim)] hover:text-[var(--gold)] transition-all" onClick={() => setActivityLogs((prev) => [...prev, emptyLog()])}>
+                    <div className="editorial-content flex items-center gap-3">
+                      <Plus size={16} />
+                      <span className="font-mono text-[10px] uppercase tracking-widest">Add Log Entry</span>
                     </div>
                   </div>
                 </div>
@@ -1452,18 +1302,18 @@ export default function Portfolio() {
           </section>
 
           <section id="skills" className="py-32 relative">
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-[1px] bg-gradient-to-r from-transparent via-[var(--border-soft)] to-transparent"></div>
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-[1px] bg-[var(--border)] opacity-60"></div>
             
             <SectionHead eyebrow="Toolkit" title="Capabilities & Stack" />
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 mt-16 reveal-up">
               {skillGroups.map((group, gi) => (
-                <div key={gi} className="relative pl-6 border-l border-[var(--border-soft)] hover:border-[var(--gold-bright)] transition-colors duration-500 reveal-scale" style={{ transitionDelay: `${gi * 150}ms` }}>
-                  <div className="absolute top-0 -left-[5px] w-[9px] h-[9px] rounded-full bg-[var(--bg)] border-2 border-[var(--border-soft)]"></div>
-                  <div className="absolute top-0 -left-[5px] w-[9px] h-[9px] rounded-full bg-[var(--gold-bright)] shadow-[0_0_10px_var(--gold-bright)] opacity-0 hover:opacity-100 transition-opacity duration-500"></div>
+                <div key={gi} className="relative pl-6 border-l border-[var(--border)] hover:border-[var(--gold)] transition-colors duration-500 reveal-scale" style={{ transitionDelay: `${gi * 150}ms` }}>
+                  <div className="absolute top-0 -left-[5px] w-[9px] h-[9px] rounded-full bg-[var(--bg)] border-2 border-[var(--border)]"></div>
+                  <div className="absolute top-0 -left-[5px] w-[9px] h-[9px] rounded-full bg-[var(--gold)] opacity-0 hover:opacity-100 transition-opacity duration-500"></div>
                   
-                  <h4 className="font-mono text-[11px] uppercase tracking-[0.2em] mb-6 flex items-center gap-3 text-[var(--gold-bright)]">
-                    <Sparkles size={14} className="opacity-70" />
+                  <h4 className="font-mono text-[10px] uppercase tracking-[0.2em] mb-6 flex items-center gap-3 text-[var(--text)] font-semibold">
+                    <Sparkles size={14} className="text-[var(--gold)]" />
                     <Editable value={group.label} onChange={(v) => setSkillGroups((prev) => prev.map((g, idx) => (idx === gi ? { ...g, label: v } : g)))} />
                   </h4>
                   <div className="pt-2">
@@ -1476,38 +1326,37 @@ export default function Portfolio() {
 
           {/* Contact Section */}
           <section id="contact" className="py-32 relative">
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-[1px] bg-gradient-to-r from-transparent via-[var(--border-soft)] to-transparent"></div>
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-[1px] bg-[var(--border)] opacity-60"></div>
             
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <div className="spotlight-card rounded-[2.5rem] p-8 md:p-12 reveal-left" onMouseMove={handleCardMouseMove} onMouseLeave={handleCardMouseLeave}>
-                <div className="spotlight-border"></div>
-                <div className="spotlight-content">
-                  <div className="w-14 h-14 border border-[var(--border-soft)] rounded-full flex items-center justify-center mb-6 bg-[var(--panel)]">
-                    <Mail size={22} className="text-[var(--gold-bright)]" />
+              <div className="editorial-card rounded-[2rem] p-10 md:p-14 reveal-left" onMouseMove={handleCardMouseMove}>
+                <div className="editorial-content">
+                  <div className="w-12 h-12 border border-[var(--border)] rounded-full flex items-center justify-center mb-8 bg-[var(--bg)] shadow-sm">
+                    <Mail size={20} className="text-[var(--gold)]" />
                   </div>
                   
-                  <p className="font-mono text-[11px] tracking-[0.3em] uppercase mb-4 text-[var(--gold-bright)]">Initiate Contact</p>
+                  <p className="font-mono text-[10px] tracking-[0.3em] uppercase mb-4 text-[var(--gold)]">Initiate Contact</p>
                   
-                  <h2 className="font-display text-3xl md:text-4xl leading-tight mb-6 font-light">
-                    Let's build something <span className="text-gradient italic">extraordinary.</span>
+                  <h2 className="font-display text-3xl md:text-4xl leading-tight mb-6 font-light text-[var(--text)]">
+                    Let's build something <span className="text-[var(--gold)] font-cursive">extraordinary.</span>
                   </h2>
                   
-                  <p className="text-[15px] leading-relaxed text-[var(--text-dim)] font-light mb-8">
+                  <p className="text-[15px] leading-relaxed text-[var(--text-dim)] font-light mb-10">
                     Whether you have an exciting project in mind, a technical challenge to discuss, or just want to connect — my inbox is always open.
                   </p>
 
-                  <div className="space-y-4 mb-8">
-                    <a href={`mailto:${profile.email}`} className="font-mono text-xs text-[var(--gold-bright)] hover:underline flex items-center gap-3 cursor-none">
-                      <Mail size={15} /> <Editable value={profile.email} onChange={(v) => setProfile((p) => ({ ...p, email: v }))} />
+                  <div className="space-y-4 mb-10">
+                    <a href={`mailto:${profile.email}`} className="font-mono text-xs text-[var(--text)] hover:text-[var(--gold)] flex items-center gap-3 cursor-none transition-colors font-medium">
+                      <Editable value={profile.email} onChange={(v) => setProfile((p) => ({ ...p, email: v }))} />
                     </a>
                   </div>
 
-                  <div className="flex gap-6 items-center pt-6 border-t border-[var(--border-soft)]">
-                    <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className="text-[var(--text-dim)] hover:text-[var(--gold-bright)] transition-colors cursor-none hover:scale-110 transform duration-300">
-                      <LinkedinIcon size={22} />
+                  <div className="flex gap-6 items-center pt-8 border-t border-[var(--border-soft)]">
+                    <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className="text-[var(--text-dim)] hover:text-[var(--gold)] transition-colors cursor-none hover:scale-110 transform duration-300">
+                      <LinkedinIcon size={20} />
                     </a>
-                    <a href={profile.github} target="_blank" rel="noopener noreferrer" className="text-[var(--text-dim)] hover:text-[var(--gold-bright)] transition-colors cursor-none hover:scale-110 transform duration-300">
-                      <Github size={22} />
+                    <a href={profile.github} target="_blank" rel="noopener noreferrer" className="text-[var(--text-dim)] hover:text-[var(--gold)] transition-colors cursor-none hover:scale-110 transform duration-300">
+                      <Github size={20} />
                     </a>
                   </div>
 
@@ -1520,55 +1369,54 @@ export default function Portfolio() {
                 </div>
               </div>
 
-              <div className="spotlight-card rounded-[2.5rem] p-8 md:p-12 reveal-right" onMouseMove={handleCardMouseMove} onMouseLeave={handleCardMouseLeave}>
-                <div className="spotlight-border"></div>
-                <div className="spotlight-content">
-                  <div className="flex items-center gap-3 mb-6">
-                    <MessageSquare size={20} className="text-[var(--gold-bright)]" />
-                    <h3 className="font-display text-2xl font-light">Send a Direct Message</h3>
+              <div className="editorial-card rounded-[2rem] p-10 md:p-14 reveal-right" onMouseMove={handleCardMouseMove}>
+                <div className="editorial-content">
+                  <div className="flex items-center gap-3 mb-8">
+                    <MessageSquare size={18} className="text-[var(--gold)]" />
+                    <h3 className="font-display text-2xl font-light text-[var(--text)]">Send a Direct Message</h3>
                   </div>
 
-                  <form onSubmit={handleSendMessage} className="space-y-5">
+                  <form onSubmit={handleSendMessage} className="space-y-6">
                     <div>
-                      <label className="block font-mono text-[10px] uppercase tracking-wider text-[var(--text-dim)] mb-2">Your Name</label>
+                      <label className="block font-mono text-[9px] uppercase tracking-widest text-[var(--text-dim)] mb-2 font-semibold">Your Name</label>
                       <input
                         type="text"
                         required
                         value={msgForm.name}
                         onChange={(e) => setMsgForm({ ...msgForm, name: e.target.value })}
-                        placeholder="John Doe"
-                        className="w-full bg-[var(--bg)] border border-[var(--border)] rounded-xl px-4 py-3 font-mono text-xs text-[var(--text)] outline-none focus:border-[var(--gold-bright)] transition-colors"
+                        placeholder="Jane Doe"
+                        className="w-full bg-[var(--bg)] border border-[var(--border)] rounded-xl px-4 py-3.5 font-mono text-xs text-[var(--text)] outline-none focus:border-[var(--gold)] focus:bg-white transition-colors"
                       />
                     </div>
 
                     <div>
-                      <label className="block font-mono text-[10px] uppercase tracking-wider text-[var(--text-dim)] mb-2">Your Email</label>
+                      <label className="block font-mono text-[9px] uppercase tracking-widest text-[var(--text-dim)] mb-2 font-semibold">Your Email</label>
                       <input
                         type="email"
                         required
                         value={msgForm.email}
                         onChange={(e) => setMsgForm({ ...msgForm, email: e.target.value })}
-                        placeholder="john@example.com"
-                        className="w-full bg-[var(--bg)] border border-[var(--border)] rounded-xl px-4 py-3 font-mono text-xs text-[var(--text)] outline-none focus:border-[var(--gold-bright)] transition-colors"
+                        placeholder="jane@example.com"
+                        className="w-full bg-[var(--bg)] border border-[var(--border)] rounded-xl px-4 py-3.5 font-mono text-xs text-[var(--text)] outline-none focus:border-[var(--gold)] focus:bg-white transition-colors"
                       />
                     </div>
 
                     <div>
-                      <label className="block font-mono text-[10px] uppercase tracking-wider text-[var(--text-dim)] mb-2">Message</label>
+                      <label className="block font-mono text-[9px] uppercase tracking-widest text-[var(--text-dim)] mb-2 font-semibold">Message</label>
                       <textarea
                         required
                         rows={4}
                         value={msgForm.message}
                         onChange={(e) => setMsgForm({ ...msgForm, message: e.target.value })}
-                        placeholder="Hello Dhiraj, I'd love to discuss an opportunity..."
-                        className="w-full bg-[var(--bg)] border border-[var(--border)] rounded-xl px-4 py-3 font-mono text-xs text-[var(--text)] outline-none focus:border-[var(--gold-bright)] transition-colors resize-none"
+                        placeholder="Hello, I'd love to discuss an opportunity..."
+                        className="w-full bg-[var(--bg)] border border-[var(--border)] rounded-xl px-4 py-3.5 font-mono text-xs text-[var(--text)] outline-none focus:border-[var(--gold)] focus:bg-white transition-colors resize-none"
                       />
                     </div>
 
                     <button
                       type="submit"
                       disabled={sendingMsg}
-                      className="btn-gold w-full font-mono text-xs uppercase tracking-widest py-4 rounded-xl font-semibold flex items-center justify-center gap-2"
+                      className="btn-gold w-full font-mono text-[10px] uppercase tracking-widest py-4 rounded-xl font-semibold flex items-center justify-center gap-2"
                     >
                       {sendingMsg ? "Sending..." : <>Send Message <Send size={14} /></>}
                     </button>
@@ -1577,24 +1425,24 @@ export default function Portfolio() {
               </div>
             </div>
 
-            <div className="flex flex-col md:flex-row justify-between items-center gap-6 mt-24 font-mono text-[10px] uppercase tracking-widest text-[var(--text-faint)] reveal-up delay-200">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-6 mt-24 font-mono text-[9px] uppercase tracking-widest text-[var(--text-faint)] reveal-up delay-200">
               <span className="flex items-center gap-2">
-                © {new Date().getFullYear()} {profile.name} <span className="w-1 h-1 rounded-full bg-[var(--gold-bright)] animate-pulse"></span> Crafted with Precision
+                © {new Date().getFullYear()} {profile.name} <span className="w-1 h-1 rounded-full bg-[var(--gold)]"></span> Crafted with Care
               </span>
               
               <div className="flex gap-8 items-center">
                 {user ? (
                   <button onClick={handleLogout} className="flex items-center gap-2 hover:text-[var(--text)] transition-colors cursor-none">
-                    <LogOut size={14} /> Sign Out
+                    <LogOut size={13} /> Sign Out
                   </button>
                 ) : (
-                  <button onClick={handleGoogleLogin} className="flex items-center gap-2 hover:text-[var(--gold-bright)] transition-colors cursor-none group">
-                    <LogIn size={14} className="group-hover:scale-110 transition-transform" /> Admin
+                  <button onClick={handleGoogleLogin} className="flex items-center gap-2 hover:text-[var(--gold)] transition-colors cursor-none group">
+                    <LogIn size={13} className="group-hover:translate-x-1 transition-transform" /> Admin
                   </button>
                 )}
                 
-                <button onClick={goTo("top")} className="flex items-center gap-2 hover:text-[var(--gold-bright)] transition-colors cursor-none group">
-                  Top <ArrowUp size={14} className="group-hover:-translate-y-1 transition-transform" />
+                <button onClick={goTo("top")} className="flex items-center gap-2 hover:text-[var(--gold)] transition-colors cursor-none group">
+                  Top <ArrowUp size={13} className="group-hover:-translate-y-1 transition-transform" />
                 </button>
               </div>
             </div>
@@ -1609,14 +1457,14 @@ function SectionHead({ eyebrow, title, count }) {
   return (
     <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 reveal-left">
       <div>
-        <p className="font-mono text-[11px] uppercase tracking-[0.3em] mb-4 flex items-center gap-4 text-[var(--gold-bright)]">
-          <span className="w-12 h-[1px] bg-gradient-to-r from-[var(--gold-bright)] to-transparent opacity-70"></span>
+        <p className="font-mono text-[10px] uppercase tracking-[0.3em] mb-4 flex items-center gap-4 text-[var(--gold)] font-medium">
+          <span className="w-12 h-[1px] bg-[var(--gold)] opacity-60"></span>
           {eyebrow}
         </p>
-        <h2 className="font-display font-light" style={{ fontSize: "clamp(32px, 4vw, 52px)" }}>{title}</h2>
+        <h2 className="font-display font-light text-[var(--text)]" style={{ fontSize: "clamp(34px, 4vw, 54px)" }}>{title}</h2>
       </div>
       {count && (
-        <div className="font-mono text-[11px] uppercase tracking-widest text-[var(--text-dim)] border border-[var(--border-soft)] px-4 py-2 rounded-full bg-[var(--panel)] hover:border-[var(--gold-bright)] hover:text-[var(--gold-bright)] transition-all duration-300">
+        <div className="font-mono text-[9px] font-semibold uppercase tracking-widest text-[var(--text-dim)] border border-[var(--border)] px-4 py-2 rounded-full bg-[var(--panel)]">
           {count}
         </div>
       )}
@@ -1626,13 +1474,13 @@ function SectionHead({ eyebrow, title, count }) {
 
 function InputRow({ icon, value, onChange, placeholder, color }) {
   return (
-    <div className="flex items-center gap-3 bg-[var(--bg)] border border-[var(--border-soft)] rounded-lg px-4 py-2.5 focus-within:border-[var(--gold-bright)] transition-colors">
+    <div className="flex items-center gap-3 bg-[var(--bg)] border border-[var(--border-soft)] rounded-lg px-4 py-3 focus-within:border-[var(--gold)] transition-colors">
       <div style={{ color }}>{icon}</div>
       <input
         value={value || ""}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="font-mono text-[11px] bg-transparent w-full outline-none text-[var(--text)] placeholder-[var(--text-faint)] tracking-wider"
+        className="font-mono text-[10px] bg-transparent w-full outline-none text-[var(--text)] placeholder-[var(--text-faint)] tracking-wider"
       />
     </div>
   );
