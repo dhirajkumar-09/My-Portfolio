@@ -1,237 +1,234 @@
-import React, { useState, useEffect } from "react";
-import { Copy, Check, RotateCcw } from "lucide-react";
+import React, { useState } from "react";
+import { Terminal as TerminalIcon, Cpu, Activity, Copy, Check, Play } from "lucide-react";
 
 export default function InteractiveTerminal() {
-  const [step, setStep] = useState(0);
-  const [cmd1, setCmd1] = useState("");
-  const [cmd2, setCmd2] = useState("");
-  const [cmd3, setCmd3] = useState("");
+  const [activeTab, setActiveTab] = useState("terminal");
   const [copied, setCopied] = useState(false);
+  const [activeCommand, setActiveCommand] = useState("whoami");
 
-  useEffect(() => {
-    let t1 = "whoami";
-    let i1 = 0;
-    let int1;
-
-    const startDelay = setTimeout(() => {
-      int1 = setInterval(() => {
-        setCmd1(t1.slice(0, i1 + 1));
-        i1++;
-
-        if (i1 === t1.length) {
-          clearInterval(int1);
-          setTimeout(() => setStep(1), 500);
-        }
-      }, 100);
-    }, 800);
-
-    return () => {
-      clearTimeout(startDelay);
-      clearInterval(int1);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (step >= 1 && !cmd2) {
-      let t2 = "cat profile.json";
-      let i2 = 0;
-
-      let int2 = setInterval(() => {
-        setCmd2(t2.slice(0, i2 + 1));
-        i2++;
-
-        if (i2 === t2.length) {
-          clearInterval(int2);
-          setTimeout(() => setStep(2), 500);
-        }
-      }, 80);
-
-      return () => clearInterval(int2);
-    }
-  }, [step]);
-
-  useEffect(() => {
-    if (step >= 2 && !cmd3) {
-      let t3 = "./deploy --stack full-stack";
-      let i3 = 0;
-
-      let int3 = setInterval(() => {
-        setCmd3(t3.slice(0, i3 + 1));
-        i3++;
-
-        if (i3 === t3.length) {
-          clearInterval(int3);
-          setTimeout(() => setStep(3), 600);
-          setTimeout(() => setStep(4), 1200);
-          setTimeout(() => setStep(5), 1800);
-          setTimeout(() => setStep(6), 2400);
-          setTimeout(() => setStep(7), 3000);
-        }
-      }, 70);
-
-      return () => clearInterval(int3);
-    }
-  }, [step]);
-
-  const copyTerminalContent = () => {
-    const text = `dhiraj@engineer:~$ whoami\nDhiraj Kumar (Full-Stack & IoT Engineer)\ndhiraj@engineer:~$ cat profile.json\n{\n  "name": "Dhiraj Kumar",\n  "stack": ["React", "Node.js", "Python", "Go", "IoT"],\n  "status": "Available for opportunities"\n}`;
-    navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2500);
+  const commands = {
+    whoami: {
+      output: `Dhiraj Kumar — Full-Stack Engineer & IoT Specialist
+Focus: Distributed Cloud Architectures, Low-Latency Real-Time APIs & Edge Hardware.
+Status: Ready to engineer scalable systems for world-class teams.`,
+    },
+    skills: {
+      output: `[Frontend]  React 19, TypeScript, Tailwind CSS, Next.js
+[Backend]   Node.js, Express, Go, Python, REST & WebSockets
+[Database]  PostgreSQL, Firebase Firestore, TimescaleDB, Redis
+[Systems]   Docker, AWS Lambda, ESP32, MQTT, C++ / Embedded`,
+    },
+    "tech-stack": {
+      output: `{
+  "frameworks": ["React", "Node.js", "Express", "TailwindCSS"],
+  "cloud": ["Firebase", "AWS Lambda", "Docker"],
+  "iot_hardware": ["ESP32", "Arduino", "MQTT Mesh", "Sensors"],
+  "methodology": ["CI/CD", "Clean Architecture", "TDD"]
+}`,
+    },
+    status: {
+      output: `⚡ ALL SYSTEMS OPERATIONAL
+● API Health: 100% OK
+● Deployment Status: Verified Production Build
+● Availability: Open to High-Impact Engineering Roles`,
+    },
   };
 
-  const rerunTerminal = () => {
-    setStep(0);
-    setCmd1("");
-    setCmd2("");
-    setCmd3("");
-    setTimeout(() => {
-      let t1 = "whoami";
-      let i1 = 0;
-      let int1 = setInterval(() => {
-        setCmd1(t1.slice(0, i1 + 1));
-        i1++;
-        if (i1 === t1.length) {
-          clearInterval(int1);
-          setTimeout(() => setStep(1), 500);
-        }
-      }, 100);
-    }, 100);
+  const copyContent = () => {
+    const text = `Dhiraj Kumar — Full-Stack & IoT Engineer\nEmail: dhidna9090@gmail.com\nGitHub: https://github.com/dhirajkumar-09/My-Portfolio`;
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
-    <div className="w-full rounded-2xl overflow-hidden bg-[#06090F]/95 backdrop-blur-2xl shadow-[0_30px_80px_rgba(0,0,0,0.7),0_0_0_1px_rgba(200,160,70,0.1)] font-mono text-xs sm:text-[13px] text-left" style={{ border: '1px solid rgba(200,160,70,0.15)' }}>
+    <div className="w-full rounded-2xl overflow-hidden border border-white/10 bg-[#070B16] shadow-2xl shadow-black/80 font-mono text-xs text-left">
       {/* Top Window Bar */}
-      <div className="flex items-center justify-between px-4 py-3.5 bg-[#0A0E19] select-none" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+      <div className="flex items-center justify-between px-4 py-3 bg-[#0B1020] border-b border-white/[0.08] select-none">
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-[#FF5F57] hover:brightness-110 transition-all cursor-pointer shadow-[0_0_8px_rgba(255,95,87,0.4)]" />
-          <div className="w-3 h-3 rounded-full bg-[#FFBD2E] hover:brightness-110 transition-all cursor-pointer shadow-[0_0_8px_rgba(255,189,46,0.4)]" />
-          <div className="w-3 h-3 rounded-full bg-[#28CA41] hover:brightness-110 transition-all cursor-pointer shadow-[0_0_8px_rgba(40,202,65,0.4)]" />
-          <span className="ml-3 text-[#475569] text-[11px] font-mono hidden sm:inline tracking-wider">
-            dhiraj@workstation  ~
+          <span className="w-3 h-3 rounded-full bg-[#EF4444]" />
+          <span className="w-3 h-3 rounded-full bg-[#F59E0B]" />
+          <span className="w-3 h-3 rounded-full bg-[#10B981]" />
+          <span className="ml-2 text-[#94A3B8] text-[11px] font-medium hidden sm:inline">
+            dhiraj@engineer: ~/portfolio
           </span>
-          <span className="text-[#C9A84C]/40 text-[10px] hidden sm:inline">⚡</span>
         </div>
 
-        <div className="flex items-center gap-1.5">
+        {/* Tab Switcher */}
+        <div className="flex items-center gap-1 bg-white/[0.04] p-1 rounded-lg border border-white/[0.06]">
           <button
-            onClick={rerunTerminal}
-            title="Replay commands"
-            className="p-1.5 rounded-md hover:bg-white/10 text-[#64748B] hover:text-[#F3D082] transition-colors"
+            onClick={() => setActiveTab("terminal")}
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md transition-all cursor-pointer text-[11px] ${
+              activeTab === "terminal"
+                ? "bg-[#00F2FE]/15 text-[#00F2FE] font-semibold border border-[#00F2FE]/30"
+                : "text-[#94A3B8] hover:text-white"
+            }`}
           >
-            <RotateCcw size={13} />
+            <TerminalIcon size={12} />
+            <span>Terminal</span>
           </button>
+
           <button
-            onClick={copyTerminalContent}
-            title="Copy snippet"
-            className="p-1.5 rounded-md hover:bg-white/10 text-[#64748B] hover:text-[#F3D082] transition-colors"
+            onClick={() => setActiveTab("architecture")}
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md transition-all cursor-pointer text-[11px] ${
+              activeTab === "architecture"
+                ? "bg-[#00F2FE]/15 text-[#00F2FE] font-semibold border border-[#00F2FE]/30"
+                : "text-[#94A3B8] hover:text-white"
+            }`}
           >
-            {copied ? <Check size={13} className="text-[#10B981]" /> : <Copy size={13} />}
+            <Cpu size={12} />
+            <span>Architecture</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab("metrics")}
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md transition-all cursor-pointer text-[11px] ${
+              activeTab === "metrics"
+                ? "bg-[#00F2FE]/15 text-[#00F2FE] font-semibold border border-[#00F2FE]/30"
+                : "text-[#94A3B8] hover:text-white"
+            }`}
+          >
+            <Activity size={12} />
+            <span>Metrics</span>
           </button>
         </div>
+
+        {/* Copy button */}
+        <button
+          onClick={copyContent}
+          title="Copy profile info"
+          className="p-1.5 rounded-md hover:bg-white/10 text-[#94A3B8] hover:text-[#00F2FE] transition-colors"
+        >
+          {copied ? <Check size={14} className="text-[#10B981]" /> : <Copy size={14} />}
+        </button>
       </div>
 
-      {/* Terminal Content Body */}
-      <div className="p-5 md:p-6 space-y-3.5 text-[#CBD5E1] leading-relaxed max-h-[460px] overflow-y-auto" style={{ background: 'rgba(4, 7, 12, 0.95)' }}>
-        {/* CMD 1 */}
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="text-[#10B981] font-semibold">dhiraj@engineer</span>
-            <span className="text-[#38BDF8]">:~</span>
-            <span className="text-[#94A3B8]">$</span>
-            <span className="text-white">{cmd1}</span>
-            {step === 0 && (
-              <span className="w-2 h-4 bg-[#F3D082] inline-block animate-pulse align-middle" />
-            )}
+      {/* Tab 1: Terminal */}
+      {activeTab === "terminal" && (
+        <div className="p-5 md:p-6 space-y-4 min-h-[300px] flex flex-col justify-between">
+          <div className="space-y-3">
+            {/* Command prompt line */}
+            <div className="flex items-center gap-2 text-xs flex-wrap">
+              <span className="text-[#10B981] font-semibold">dhiraj@portfolio</span>
+              <span className="text-[#00F2FE]">:~</span>
+              <span className="text-[#EAB308]">$</span>
+              <span className="text-white font-bold">{activeCommand}</span>
+              <span className="w-2 h-4 bg-[#00F2FE] inline-block animate-pulse" />
+            </div>
+
+            {/* Command Output */}
+            <div className="p-3.5 rounded-xl bg-black/40 border border-white/5 text-[#CBD5E1] whitespace-pre-wrap leading-relaxed text-xs">
+              {commands[activeCommand]?.output}
+            </div>
           </div>
 
-          {step >= 1 && (
-            <div className="mt-1.5 pl-3 border-l-2 border-[#10B981]/40 text-[#94A3B8]">
-              Dhiraj Kumar — Full-Stack Engineer &amp; IoT Specialist
+          {/* Quick command buttons */}
+          <div className="pt-3 border-t border-white/[0.06]">
+            <span className="text-[10px] uppercase tracking-wider text-[#64748B] block mb-2">
+              Execute Command:
+            </span>
+            <div className="flex flex-wrap gap-2">
+              {Object.keys(commands).map((cmd) => (
+                <button
+                  key={cmd}
+                  onClick={() => setActiveCommand(cmd)}
+                  className={`px-3 py-1.5 rounded-lg border text-[11px] flex items-center gap-1.5 transition-all cursor-pointer ${
+                    activeCommand === cmd
+                      ? "bg-[#00F2FE]/15 border-[#00F2FE]/40 text-[#00F2FE] font-bold"
+                      : "bg-white/[0.03] border-white/10 text-[#94A3B8] hover:text-white hover:border-white/20"
+                  }`}
+                >
+                  <Play size={10} className={activeCommand === cmd ? "text-[#00F2FE]" : "text-[#64748B]"} />
+                  <span>{cmd}</span>
+                </button>
+              ))}
             </div>
-          )}
+          </div>
         </div>
+      )}
 
-        {/* CMD 2 */}
-        {step >= 1 && (
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-[#10B981] font-semibold">dhiraj@engineer</span>
-              <span className="text-[#38BDF8]">:~</span>
-              <span className="text-[#94A3B8]">$</span>
-              <span className="text-white">{cmd2}</span>
-              {step === 1 && (
-                <span className="w-2 h-4 bg-[#F3D082] inline-block animate-pulse align-middle" />
-              )}
-            </div>
+      {/* Tab 2: Architecture */}
+      {activeTab === "architecture" && (
+        <div className="p-5 md:p-6 space-y-4 min-h-[300px]">
+          <div className="flex items-center justify-between border-b border-white/5 pb-2 text-[11px] text-[#94A3B8]">
+            <span>System Pipeline Architecture</span>
+            <span className="text-[#10B981] flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-pulse" />
+              Live Grid
+            </span>
+          </div>
 
-            {step >= 2 && (
-              <div className="mt-1.5 p-3 rounded-lg bg-black/40 border border-white/5 text-[#E2E8F0] space-y-1">
-                <div>
-                  <span className="text-[#38BDF8]">"engineer"</span>: <span className="text-[#F3D082]">"Dhiraj Kumar"</span>,
-                </div>
-                <div>
-                  <span className="text-[#38BDF8]">"specialization"</span>: <span className="text-[#F3D082]">["Full-Stack Web", "IoT Systems", "Cloud APIs"]</span>,
-                </div>
-                <div>
-                  <span className="text-[#38BDF8]">"core_stack"</span>: <span className="text-[#F3D082]">["React", "Node.js", "Python", "Go", "Docker", "AWS"]</span>,
-                </div>
-                <div>
-                  <span className="text-[#38BDF8]">"status"</span>: <span className="text-[#10B981]">"Ready to innovate &amp; ship"</span>
-                </div>
+          <div className="space-y-3 pt-2">
+            <div className="p-3 rounded-xl bg-white/[0.02] border border-[#00F2FE]/20 flex items-center justify-between">
+              <div>
+                <span className="text-white font-semibold block text-xs">Client Presentation Tier</span>
+                <span className="text-[#64748B] text-[10px]">React 19 · Tailwind CSS · 3D GPU Layer</span>
               </div>
-            )}
-          </div>
-        )}
-
-        {/* CMD 3 */}
-        {step >= 2 && (
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-[#10B981] font-semibold">dhiraj@engineer</span>
-              <span className="text-[#38BDF8]">:~</span>
-              <span className="text-[#94A3B8]">$</span>
-              <span className="text-white">{cmd3}</span>
-              {step === 2 && (
-                <span className="w-2 h-4 bg-[#F3D082] inline-block animate-pulse align-middle" />
-              )}
+              <span className="px-2 py-0.5 rounded text-[10px] bg-[#00F2FE]/10 text-[#00F2FE] font-mono">Edge CDN</span>
             </div>
 
-            <div className="mt-2 space-y-1 text-xs">
-              {step >= 3 && (
-                <div className="text-[#94A3B8] flex items-center gap-2">
-                  <span className="text-[#10B981]">✔</span> Cloud data pipeline connected
-                </div>
-              )}
-              {step >= 4 && (
-                <div className="text-[#94A3B8] flex items-center gap-2">
-                  <span className="text-[#10B981]">✔</span> Real-time telemetry streams active
-                </div>
-              )}
-              {step >= 5 && (
-                <div className="text-[#94A3B8] flex items-center gap-2">
-                  <span className="text-[#10B981]">✔</span> Microservices health check passed
-                </div>
-              )}
-              {step >= 6 && (
-                <div className="text-[#10B981] font-medium flex items-center gap-2">
-                  <span>🚀</span> Production ready &amp; listening on port 443
-                </div>
-              )}
+            <div className="flex justify-center text-[#00F2FE]">
+              ↓ ↕ <span className="text-[10px] text-[#64748B] ml-2 font-mono">WebSockets &amp; JSON APIs</span>
+            </div>
+
+            <div className="p-3 rounded-xl bg-white/[0.02] border border-[#EAB308]/20 flex items-center justify-between">
+              <div>
+                <span className="text-white font-semibold block text-xs">Cloud &amp; Distributed Backend</span>
+                <span className="text-[#64748B] text-[10px]">Node.js · Go Microservices · Firebase Auth/Sync</span>
+              </div>
+              <span className="px-2 py-0.5 rounded text-[10px] bg-[#EAB308]/10 text-[#EAB308] font-mono">&lt; 35ms Latency</span>
+            </div>
+
+            <div className="flex justify-center text-[#EAB308]">
+              ↓ ↕ <span className="text-[10px] text-[#64748B] ml-2 font-mono">MQTT Telemetry &amp; TLS</span>
+            </div>
+
+            <div className="p-3 rounded-xl bg-white/[0.02] border border-[#10B981]/20 flex items-center justify-between">
+              <div>
+                <span className="text-white font-semibold block text-xs">IoT Edge &amp; Storage Tier</span>
+                <span className="text-[#64748B] text-[10px]">ESP32 Mesh Nodes · PostgreSQL · TimescaleDB</span>
+              </div>
+              <span className="px-2 py-0.5 rounded text-[10px] bg-[#10B981]/10 text-[#10B981] font-mono">Encrypted</span>
             </div>
           </div>
-        )}
+        </div>
+      )}
 
-        {/* Final Active Cursor */}
-        {step >= 7 && (
-          <div className="pt-2 flex items-center gap-2">
-            <span className="text-[#10B981] font-semibold">dhiraj@engineer</span>
-            <span className="text-[#38BDF8]">:~</span>
-            <span className="text-[#94A3B8]">$</span>
-            <span className="w-2 h-4 bg-[#E2E8F0] inline-block animate-pulse align-middle" />
+      {/* Tab 3: Metrics */}
+      {activeTab === "metrics" && (
+        <div className="p-5 md:p-6 space-y-4 min-h-[300px]">
+          <div className="grid grid-cols-2 gap-3">
+            <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5">
+              <span className="text-[10px] text-[#64748B] block uppercase tracking-wider">System Availability</span>
+              <span className="text-xl font-bold text-[#10B981]">99.98%</span>
+              <span className="text-[10px] text-[#94A3B8] block mt-1">High Availability SLA</span>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5">
+              <span className="text-[10px] text-[#64748B] block uppercase tracking-wider">API Response Time</span>
+              <span className="text-xl font-bold text-[#00F2FE]">~24ms</span>
+              <span className="text-[10px] text-[#94A3B8] block mt-1">Global Edge Routing</span>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5">
+              <span className="text-[10px] text-[#64748B] block uppercase tracking-wider">DSA Solved</span>
+              <span className="text-xl font-bold text-[#EAB308]">300+</span>
+              <span className="text-[10px] text-[#94A3B8] block mt-1">Algorithmic Mastery</span>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5">
+              <span className="text-[10px] text-[#64748B] block uppercase tracking-wider">Projects Shipped</span>
+              <span className="text-xl font-bold text-white">18+</span>
+              <span className="text-[10px] text-[#94A3B8] block mt-1">Full-Stack &amp; Embedded</span>
+            </div>
           </div>
-        )}
-      </div>
+
+          <div className="p-3 rounded-xl bg-black/40 border border-white/5 text-[11px] text-[#94A3B8] flex items-center justify-between">
+            <span>Environment Status:</span>
+            <span className="text-[#10B981] font-semibold">● Production Ready (React 19 + Vite 8)</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

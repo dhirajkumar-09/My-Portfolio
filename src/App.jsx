@@ -8,7 +8,6 @@ import {
 } from "./data/portfolioData";
 
 import CustomCursor from "./components/CustomCursor";
-import IntroScreen from "./components/IntroScreen";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import Projects from "./components/Projects";
@@ -28,7 +27,7 @@ import {
   onAuthStateChanged,
   signInAnonymously,
 } from "firebase/auth";
-import { Sparkles, Check } from "lucide-react";
+import { Check } from "lucide-react";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCBMHoaPc0aGZ4MV18zkDZd5c4-tWSRXl0",
@@ -98,13 +97,6 @@ export default function App() {
 
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [showIntro, setShowIntro] = useState(() => {
-    try {
-      return !sessionStorage.getItem("portfolio_intro_seen");
-    } catch {
-      return true;
-    }
-  });
   const [toastMessage, setToastMessage] = useState("");
   const [sendingMsg, setSendingMsg] = useState(false);
 
@@ -314,62 +306,44 @@ export default function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#030508] text-[#F0C96E] font-mono text-xs tracking-widest relative overflow-hidden">
-        <div className="glow-field" />
-        <div className="relative w-16 h-16 mb-6">
-          <div className="absolute inset-0 border-2 border-[#C9A84C]/20 rounded-full" />
-          <div className="absolute inset-0 border-2 border-transparent border-t-[#F0C96E] border-r-[#C9A84C] rounded-full animate-spin" />
-          <div className="absolute inset-2 border border-[#22D3EE]/30 rounded-full animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }} />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-2 h-2 rounded-full bg-[#F0C96E] animate-pulse" />
-          </div>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#05070D] text-[#00F2FE] font-mono text-xs tracking-widest relative overflow-hidden">
+        <div className="relative w-10 h-10 mb-4 flex items-center justify-center">
+          <div className="absolute inset-0 border-2 border-[#00F2FE]/20 rounded-full" />
+          <div className="absolute inset-0 border-2 border-transparent border-t-[#00F2FE] border-r-[#EAB308] rounded-full animate-spin" />
+          <div className="w-2 h-2 rounded-full bg-[#00F2FE] animate-pulse" />
         </div>
-        <span className="uppercase tracking-[0.3em] text-[#475569] animate-pulse text-[10px]">
-          Initializing Portfolio System...
+        <span className="uppercase tracking-[0.25em] text-[#94A3B8] text-[11px]">
+          Loading System...
         </span>
-        <div className="mt-3 flex gap-1">
-          {[0,1,2].map(i => (
-            <span key={i} className="w-1.5 h-1.5 rounded-full bg-[#C9A84C]/60 animate-bounce" style={{ animationDelay: `${i * 150}ms` }} />
-          ))}
-        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#030508] text-[#EFF6FF] font-body relative overflow-x-hidden selection:bg-[#C9A84C]/25 selection:text-white">
-      {/* Dynamic Cursor for Desktop */}
+    <div className="min-h-screen bg-[#05070D] text-[#F8FAFC] font-body relative overflow-x-hidden selection:bg-[#00F2FE]/20 selection:text-white">
+      {/* Dynamic Cursor Spotlight for Desktop (Zero Lag, No Fake Pointer) */}
       <CustomCursor />
 
-      {/* Deep space background — star field + nebula glows */}
-      <div className="glow-field" />
-      {/* Floating ambient orbs — CSS keyframes, zero JS overhead */}
-      <div className="orb orb-1" />
-      <div className="orb orb-2" />
-      <div className="orb orb-3" />
-      {/* Film grain texture */}
-      <div className="grain-overlay" />
+      {/* Cyber Grid & Ambient Background */}
+      <div className="ambient-canvas" />
 
-      {/* Premium rainbow scroll progress bar */}
+      {/* High-Tech Top Scroll Progress Tracker */}
       <div
-        className="scroll-progress"
+        className="scroll-tracker"
         style={{ width: `${scrollProgress}%` }}
       />
 
-      {/* Floating Toast Notification — premium glass pill */}
+      {/* Floating Toast Notification */}
       <div
-        className={`fixed top-20 left-1/2 -translate-x-1/2 z-[100] px-5 py-2.5 rounded-full font-mono text-xs tracking-wider border border-[#C9A84C]/50 bg-[#070B12]/90 backdrop-blur-2xl text-[#F0C96E] shadow-[0_8px_32px_rgba(0,0,0,0.5),0_0_20px_rgba(200,160,70,0.15)] transition-all duration-400 flex items-center gap-2.5 ${
+        className={`fixed top-20 left-1/2 -translate-x-1/2 z-[100] px-5 py-2.5 rounded-full font-mono text-xs tracking-wider border border-[#00F2FE]/40 bg-[#090E1B]/95 backdrop-blur-2xl text-[#F8FAFC] shadow-2xl transition-all duration-300 flex items-center gap-2.5 ${
           toastMessage
             ? "opacity-100 translate-y-0"
             : "opacity-0 -translate-y-8 pointer-events-none"
         }`}
       >
-        <Sparkles size={13} className="text-[#F0C96E]" />
+        <Check size={14} className="text-[#00F2FE]" />
         <span>{toastMessage}</span>
       </div>
-
-      {/* Snappy, dismissible greeting intro */}
-      {showIntro && <IntroScreen onComplete={() => setShowIntro(false)} />}
 
       {/* Sticky Navigation Header */}
       <Navbar

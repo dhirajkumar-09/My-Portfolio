@@ -3,77 +3,71 @@
 @tailwind utilities;
 
 /* =========================================================
-   PREMIUM PORTFOLIO — DESIGN SYSTEM v3.0
-   CSS-only 3D animations, optimized for low-RAM devices
-   No heavy libraries, no WebGL, pure CSS power
+   MODERN HIGH-TECH OBSIDIAN DESIGN SYSTEM
+   - Deep obsidian slate base (#05070D)
+   - Electric Cyan (#00F2FE) + Champagne Gold (#EAB308) accents
+   - Fluid, zero-jitter 3D cards (GPU-accelerated)
+   - 100% responsive for all mobile and laptop screens
+   - Ultra-lightweight: 0 RAM lag, no heavy libraries
    ========================================================= */
 
 :root {
-  /* Core Palette */
-  --bg:           #030508;
-  --surface:      #070B12;
-  --card:         #0A0F1A;
-  --card-hover:   #0F1525;
-  --card-deep:    #060A13;
-
-  /* Borders */
-  --border:       rgba(255, 255, 255, 0.07);
-  --border-soft:  rgba(255, 255, 255, 0.03);
-  --border-gold:  rgba(212, 175, 106, 0.3);
-  --border-glow:  rgba(212, 175, 106, 0.6);
-
-  /* Gold Brand */
-  --gold:         #C9A84C;
-  --gold-bright:  #F0C96E;
-  --gold-vivid:   #FFD97D;
-  --gold-glow:    rgba(200, 160, 70, 0.15);
-  --gold-glow-sm: rgba(200, 160, 70, 0.08);
-
-  /* Accent Colors */
-  --cyan:         #22D3EE;
-  --cyan-dim:     #0E7490;
-  --emerald:      #10B981;
-  --violet:       #8B5CF6;
-  --pink:         #EC4899;
-
-  /* Text */
-  --text:         #EFF6FF;
-  --text-dim:     #94A3B8;
-  --text-faint:   #475569;
-
-  /* 3D Perspective */
-  --perspective:  1200px;
+  --bg-deep:      #05070D;
+  --bg-surface:   #090E1B;
+  --bg-card:      #0E1528;
+  --bg-card-hover:#131C35;
+  --border-subtle:rgba(255, 255, 255, 0.08);
+  --border-glow:  rgba(0, 242, 254, 0.4);
+  --cyan:         #00F2FE;
+  --cyan-glow:    rgba(0, 242, 254, 0.15);
+  --gold:         #EAB308;
+  --gold-bright:  #FDE047;
+  --gold-glow:    rgba(234, 179, 8, 0.15);
+  --text-main:    #F8FAFC;
+  --text-muted:   #94A3B8;
+  --text-dim:     #64748B;
 }
 
-/* =========================================================
-   CUSTOM SCROLLBAR
-   ========================================================= */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--bg); }
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-deep);
+}
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, var(--gold) 0%, rgba(200, 160, 70, 0.2) 100%);
-  border-radius: 9999px;
+  background: linear-gradient(180deg, var(--cyan) 0%, var(--gold) 100%);
+  border-radius: 999px;
 }
-::-webkit-scrollbar-thumb:hover { background: var(--gold-bright); }
+::-webkit-scrollbar-thumb:hover {
+  background: var(--cyan);
+}
 
-/* =========================================================
-   BASE BODY
-   ========================================================= */
+/* Base Body */
 body {
-  font-family: 'Inter', system-ui, sans-serif;
-  background-color: var(--bg);
-  color: var(--text);
+  font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+  background-color: var(--bg-deep);
+  color: var(--text-main);
   overflow-x: hidden;
   margin: 0;
   padding: 0;
+  -webkit-font-smoothing: antialiased;
 }
 
-section[id] { scroll-margin-top: 90px; }
+/* Prevent unwanted mobile horizontal scroll */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+section[id] {
+  scroll-margin-top: 85px;
+}
 
 /* =========================================================
-   ANIMATED STAR FIELD BACKGROUND  (CSS-only, 0 RAM cost)
+   HIGH-TECH BACKGROUND & GRID
    ========================================================= */
-.glow-field {
+.ambient-canvas {
   position: fixed;
   inset: 0;
   pointer-events: none;
@@ -81,842 +75,201 @@ section[id] { scroll-margin-top: 90px; }
   overflow: hidden;
 }
 
-/* Deep space radial gradients */
-.glow-field::before {
+/* Subtle cyber tech grid */
+.ambient-canvas::before {
   content: '';
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(ellipse 80% 50% at 20% 10%,  rgba(200,160,70,0.09)  0%, transparent 60%),
-    radial-gradient(ellipse 60% 60% at 80% 80%,  rgba(34,211,238,0.05)  0%, transparent 55%),
-    radial-gradient(ellipse 100% 40% at 50% 100%, rgba(139,92,246,0.04) 0%, transparent 50%),
-    radial-gradient(ellipse 40% 60% at 90% 20%,  rgba(200,160,70,0.04)  0%, transparent 40%);
-  animation: nebula-drift 25s ease-in-out infinite alternate;
-  filter: blur(40px);
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 20%, black 20%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 20%, black 20%, transparent 80%);
 }
 
-@keyframes nebula-drift {
-  0%   { transform: scale(1)    translate(0,    0);    opacity: 1;   }
-  33%  { transform: scale(1.05) translate(-2%,  1.5%); opacity: 0.85;}
-  66%  { transform: scale(0.97) translate(1.5%, -1%);  opacity: 0.95;}
-  100% { transform: scale(1.03) translate(-1%,  2%);   opacity: 0.9; }
-}
-
-/* CSS Star particles — pure CSS, zero JS overhead */
-.glow-field::after {
+/* Nebula radial gradients */
+.ambient-canvas::after {
   content: '';
   position: absolute;
   inset: 0;
-  background-image:
-    radial-gradient(1px 1px at 10%  8%,  rgba(255,255,255,0.6) 0%, transparent 100%),
-    radial-gradient(1px 1px at 25%  20%, rgba(255,255,255,0.3) 0%, transparent 100%),
-    radial-gradient(1px 1px at 40%  5%,  rgba(255,255,255,0.5) 0%, transparent 100%),
-    radial-gradient(1px 1px at 55%  15%, rgba(255,255,255,0.4) 0%, transparent 100%),
-    radial-gradient(1px 1px at 70%  3%,  rgba(255,255,255,0.6) 0%, transparent 100%),
-    radial-gradient(1px 1px at 85%  12%, rgba(255,255,255,0.3) 0%, transparent 100%),
-    radial-gradient(1px 1px at 95%  25%, rgba(255,255,255,0.5) 0%, transparent 100%),
-    radial-gradient(1px 1px at 5%   35%, rgba(255,255,255,0.4) 0%, transparent 100%),
-    radial-gradient(1px 1px at 30%  40%, rgba(200,160,70,0.6)  0%, transparent 100%),
-    radial-gradient(1px 1px at 60%  30%, rgba(255,255,255,0.3) 0%, transparent 100%),
-    radial-gradient(1px 1px at 78%  45%, rgba(255,255,255,0.5) 0%, transparent 100%),
-    radial-gradient(1px 1px at 15%  55%, rgba(255,255,255,0.4) 0%, transparent 100%),
-    radial-gradient(1px 1px at 45%  60%, rgba(255,255,255,0.3) 0%, transparent 100%),
-    radial-gradient(1px 1px at 88%  65%, rgba(200,160,70,0.5)  0%, transparent 100%),
-    radial-gradient(1px 1px at 20%  75%, rgba(255,255,255,0.4) 0%, transparent 100%),
-    radial-gradient(1px 1px at 65%  80%, rgba(255,255,255,0.6) 0%, transparent 100%),
-    radial-gradient(1px 1px at 92%  88%, rgba(255,255,255,0.3) 0%, transparent 100%),
-    radial-gradient(1px 1px at 38%  90%, rgba(34,211,238,0.5)  0%, transparent 100%),
-    radial-gradient(1px 1px at 72%  95%, rgba(255,255,255,0.4) 0%, transparent 100%),
-    radial-gradient(1px 1px at 8%   95%, rgba(255,255,255,0.5) 0%, transparent 100%),
-    /* Golden accent stars */
-    radial-gradient(2px 2px at 50%  50%, rgba(200,160,70,0.8)  0%, transparent 100%),
-    radial-gradient(2px 2px at 80%  20%, rgba(200,160,70,0.6)  0%, transparent 100%),
-    radial-gradient(2px 2px at 15%  80%, rgba(34,211,238,0.4)  0%, transparent 100%);
-  animation: star-twinkle 8s ease-in-out infinite alternate;
+  background: 
+    radial-gradient(circle 500px at 15% 15%, rgba(0, 242, 254, 0.08), transparent 60%),
+    radial-gradient(circle 600px at 85% 20%, rgba(234, 179, 8, 0.07), transparent 60%),
+    radial-gradient(circle 700px at 50% 85%, rgba(59, 130, 246, 0.06), transparent 70%);
+  filter: blur(60px);
 }
 
-@keyframes star-twinkle {
-  0%   { opacity: 0.6; }
-  50%  { opacity: 1;   }
-  100% { opacity: 0.7; }
-}
-
-/* =========================================================
-   FILM GRAIN TEXTURE OVERLAY
-   ========================================================= */
-.grain-overlay {
+/* Top Scroll Progress Bar */
+.scroll-tracker {
   position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.18'/%3E%3C/svg%3E");
-  opacity: 0.06;
-  mix-blend-mode: overlay;
-  z-index: 1;
-}
-
-/* =========================================================
-   3D FLOATING ORBS  (CSS keyframes, no JS, very light)
-   ========================================================= */
-.orb {
-  position: fixed;
-  border-radius: 50%;
-  pointer-events: none;
-  filter: blur(80px);
-  z-index: 0;
-}
-
-.orb-1 {
-  width: 500px; height: 500px;
-  top: -150px; left: -100px;
-  background: radial-gradient(circle, rgba(200,160,70,0.08) 0%, transparent 70%);
-  animation: orb-float-1 20s ease-in-out infinite;
-}
-
-.orb-2 {
-  width: 400px; height: 400px;
-  bottom: -100px; right: -80px;
-  background: radial-gradient(circle, rgba(34,211,238,0.06) 0%, transparent 70%);
-  animation: orb-float-2 25s ease-in-out infinite;
-}
-
-.orb-3 {
-  width: 300px; height: 300px;
-  top: 40%; left: 50%;
-  background: radial-gradient(circle, rgba(139,92,246,0.05) 0%, transparent 70%);
-  animation: orb-float-3 18s ease-in-out infinite;
-}
-
-@keyframes orb-float-1 {
-  0%, 100% { transform: translate(0, 0)    scale(1);    }
-  33%       { transform: translate(60px, 80px)  scale(1.1); }
-  66%       { transform: translate(-40px, 40px) scale(0.9); }
-}
-@keyframes orb-float-2 {
-  0%, 100% { transform: translate(0, 0)    scale(1);    }
-  33%       { transform: translate(-80px, -60px) scale(1.15);}
-  66%       { transform: translate(50px, -30px)  scale(0.95);}
-}
-@keyframes orb-float-3 {
-  0%, 100% { transform: translate(-50%, -50%) scale(1);    }
-  50%       { transform: translate(-50%, -50%) scale(1.3); opacity: 0.5; }
-}
-
-/* =========================================================
-   SCROLL PROGRESS BAR  (top bar)
-   ========================================================= */
-.scroll-progress {
-  position: fixed;
-  top: 0; left: 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--gold), var(--gold-vivid), var(--cyan), var(--violet));
-  background-size: 200% 100%;
-  animation: progress-shimmer 3s linear infinite;
+  top: 0;
+  left: 0;
+  height: 2.5px;
+  background: linear-gradient(90deg, #00F2FE 0%, #38BDF8 50%, #EAB308 100%);
   z-index: 100;
-  box-shadow: 0 0 16px rgba(200,160,70,0.8), 0 0 40px rgba(200,160,70,0.3);
+  box-shadow: 0 0 10px rgba(0, 242, 254, 0.6);
   transition: width 0.05s linear;
 }
 
-@keyframes progress-shimmer {
-  0%   { background-position: 0%   50%; }
-  100% { background-position: 200% 50%; }
-}
-
 /* =========================================================
-   PREMIUM GLASSMORPHISM CARD  (spotlight 3D tilt)
+   FLUID 3D TILT CARDS (NO JITTER, PURE GPU ACCELERATED)
    ========================================================= */
-.spotlight-card {
+.tech-card-3d {
   position: relative;
-  background: linear-gradient(135deg, var(--card) 0%, var(--card-deep) 100%);
-  border: 1px solid var(--border);
-  border-radius: 1.5rem;
-  overflow: hidden;
-  transition:
-    transform      0.5s cubic-bezier(0.16, 1, 0.3, 1),
-    border-color   0.35s ease,
-    box-shadow     0.35s ease;
+  background: linear-gradient(145deg, var(--bg-card) 0%, #0A1020 100%);
+  border: 1px solid var(--border-subtle);
+  border-radius: 1.25rem;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.3s ease,
+              box-shadow 0.3s ease;
   transform-style: preserve-3d;
   will-change: transform;
-  /* Inner glow on edges */
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.06),
-    inset 0 -1px 0 rgba(0,0,0,0.2),
-    0 4px 6px -1px rgba(0,0,0,0.4);
 }
 
-/* Spotlight radial gradient follows mouse */
-.spotlight-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  background: radial-gradient(
-    600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
-    rgba(200, 160, 70, 0.07),
-    transparent 40%
-  );
-  pointer-events: none;
-  z-index: 1;
+.tech-card-3d:hover {
+  transform: translateY(-5px);
+  border-color: rgba(0, 242, 254, 0.35);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7),
+              0 0 30px rgba(0, 242, 254, 0.1),
+              inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
-/* Top-edge prismatic light line */
-.spotlight-card::after {
+/* Subtle top sheen reflection */
+.tech-card-3d::before {
   content: '';
   position: absolute;
-  top: 0; left: 15%; right: 15%;
+  top: 0;
+  left: 10%;
+  right: 10%;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(200,160,70,0.5), transparent);
-  opacity: 0;
-  transition: opacity 0.35s ease;
-  z-index: 2;
-}
-
-.spotlight-card:hover {
-  border-color: var(--border-gold);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.08),
-    inset 0 -1px 0 rgba(0,0,0,0.3),
-    0 30px 60px -15px rgba(0,0,0,0.7),
-    0 0 40px rgba(200,160,70,0.1),
-    0 0 0 1px rgba(200,160,70,0.12);
-}
-
-.spotlight-card:hover::before { opacity: 1; }
-.spotlight-card:hover::after  { opacity: 1; }
-
-.spotlight-content { position: relative; z-index: 3; }
-
-/* =========================================================
-   3D HERO CARD — PERSPECTIVE TILT  (pure CSS + tiny JS hook)
-   ========================================================= */
-.card-3d {
-  perspective: var(--perspective);
-  transform-style: preserve-3d;
-}
-
-.card-3d-inner {
-  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-  transform-style: preserve-3d;
-  will-change: transform;
-}
-
-/* CSS-only 3D floating animation for terminal */
-.terminal-3d {
-  animation: terminal-float 6s ease-in-out infinite;
-  transform-origin: center center;
-}
-
-@keyframes terminal-float {
-  0%, 100% { transform: perspective(1000px) rotateX(2deg) rotateY(-2deg) translateY(0px);  }
-  25%       { transform: perspective(1000px) rotateX(-1deg) rotateY(2deg) translateY(-8px); }
-  50%       { transform: perspective(1000px) rotateX(1deg) rotateY(-1deg) translateY(-4px); }
-  75%       { transform: perspective(1000px) rotateX(-2deg) rotateY(1deg) translateY(-10px);}
-}
-
-/* =========================================================
-   TEXT EFFECTS
-   ========================================================= */
-.text-shimmer {
-  background: linear-gradient(
-    110deg,
-    #FFFFFF 0%,
-    var(--gold-vivid) 30%,
-    var(--gold-bright) 50%,
-    var(--gold-vivid) 70%,
-    #FFFFFF 100%
-  );
-  background-size: 250% auto;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: text-shimmer-move 5s linear infinite;
-}
-
-@keyframes text-shimmer-move {
-  0%   { background-position: 0%   center; }
-  100% { background-position: 250% center; }
-}
-
-.text-gradient-gold {
-  background: linear-gradient(135deg, var(--gold-vivid) 0%, var(--gold) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.text-gradient-cyan {
-  background: linear-gradient(135deg, var(--cyan) 0%, #0EA5E9 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Glitch effect on hover for headings */
-.text-glitch {
-  position: relative;
-}
-.text-glitch:hover::before,
-.text-glitch:hover::after {
-  content: attr(data-text);
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-}
-.text-glitch:hover::before {
-  left: 2px; text-shadow: -1px 0 var(--cyan);
-  animation: glitch-1 0.3s infinite;
-  clip-path: polygon(0 0, 100% 0, 100% 33%, 0 33%);
-}
-.text-glitch:hover::after {
-  left: -2px; text-shadow: 1px 0 var(--gold-vivid);
-  animation: glitch-2 0.3s infinite;
-  clip-path: polygon(0 66%, 100% 66%, 100% 100%, 0 100%);
-}
-
-@keyframes glitch-1 {
-  0%,100%{ transform: translate(0); }
-  25%    { transform: translate(-2px, 1px); }
-  75%    { transform: translate(2px, -1px); }
-}
-@keyframes glitch-2 {
-  0%,100%{ transform: translate(0); }
-  25%    { transform: translate(2px, -1px); }
-  75%    { transform: translate(-2px, 1px); }
-}
-
-/* =========================================================
-   PREMIUM BUTTONS
-   ========================================================= */
-.btn-gold {
-  background: linear-gradient(135deg, var(--gold-vivid) 0%, var(--gold) 100%);
-  color: #030508;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  box-shadow:
-    0 0 0 1px rgba(200,160,70,0.4),
-    0 4px 15px rgba(200,160,70,0.3),
-    inset 0 1px 0 rgba(255,255,255,0.3);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  position: relative;
-  overflow: hidden;
-}
-
-.btn-gold::before {
-  content: '';
-  position: absolute;
-  top: 0; left: -100%;
-  width: 100%; height: 100%;
-  background: linear-gradient(90deg,
-    transparent 0%,
-    rgba(255,255,255,0.4) 50%,
-    transparent 100%
-  );
-  transition: left 0.6s ease;
-}
-
-.btn-gold:hover {
-  transform: translateY(-3px);
-  box-shadow:
-    0 0 0 1px rgba(200,160,70,0.6),
-    0 8px 30px rgba(200,160,70,0.5),
-    0 0 60px rgba(200,160,70,0.2),
-    inset 0 1px 0 rgba(255,255,255,0.4);
-  filter: brightness(1.1);
-}
-
-.btn-gold:hover::before { left: 100%; }
-.btn-gold:active { transform: translateY(-1px); }
-
-.btn-ghost {
-  background: rgba(255,255,255,0.03);
-  border: 1px solid var(--border);
-  color: var(--text);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  position: relative;
-  overflow: hidden;
-}
-
-.btn-ghost::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg,
-    rgba(200,160,70,0.08) 0%,
-    transparent 60%
-  );
+  background: linear-gradient(90deg, transparent, rgba(0, 242, 254, 0.5), transparent);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
 
-.btn-ghost:hover {
-  background: rgba(255,255,255,0.06);
-  border-color: var(--border-gold);
-  color: var(--gold-bright);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0,0,0,0.4), 0 0 20px rgba(200,160,70,0.1);
-}
-
-.btn-ghost:hover::before { opacity: 1; }
-
-/* Magnetic Button Glow Pulse */
-.btn-glow-pulse {
-  animation: btn-pulse 3s ease-in-out infinite;
-}
-
-@keyframes btn-pulse {
-  0%, 100% { box-shadow: 0 0 0 1px rgba(200,160,70,0.4), 0 4px 15px rgba(200,160,70,0.3); }
-  50%       { box-shadow: 0 0 0 1px rgba(200,160,70,0.6), 0 4px 25px rgba(200,160,70,0.5), 0 0 50px rgba(200,160,70,0.15); }
-}
-
-/* =========================================================
-   GLASS PILLS & BADGES
-   ========================================================= */
-.glass-pill {
-  background: rgba(255,255,255,0.03);
-  border: 1px solid var(--border-soft);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  transition: all 0.25s ease;
-}
-
-.glass-pill:hover {
-  border-color: var(--border-gold);
-  background: rgba(200,160,70,0.06);
-  color: var(--gold-bright);
-  box-shadow: 0 0 15px rgba(200,160,70,0.1);
-}
-
-/* =========================================================
-   STATUS INDICATOR  (pulsing dot)
-   ========================================================= */
-.status-dot {
-  position: relative;
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  background: var(--emerald);
-}
-
-.status-dot::before {
-  content: '';
-  position: absolute;
-  inset: -4px;
-  border-radius: 50%;
-  background: var(--emerald);
-  opacity: 0.3;
-  animation: status-pulse 2s ease-in-out infinite;
-}
-
-@keyframes status-pulse {
-  0%, 100% { transform: scale(1); opacity: 0.3; }
-  50%       { transform: scale(1.8); opacity: 0; }
-}
-
-/* =========================================================
-   3D SKILL CARD CUBE EFFECT  (CSS perspective)
-   ========================================================= */
-.skill-card-3d {
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  transform-style: preserve-3d;
-}
-
-.skill-card-3d:hover {
-  transform: perspective(800px) rotateX(-5deg) rotateY(5deg) translateZ(20px);
-}
-
-/* =========================================================
-   FLOATING PARTICLES  (pure CSS, animated, 0 JS)
-   ========================================================= */
-.particles-container {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.particle {
-  position: absolute;
-  border-radius: 50%;
-  animation: particle-rise linear infinite;
-  opacity: 0;
-}
-
-.particle-gold {
-  background: radial-gradient(circle, var(--gold-vivid) 0%, transparent 70%);
-  box-shadow: 0 0 6px var(--gold);
-}
-
-.particle-cyan {
-  background: radial-gradient(circle, var(--cyan) 0%, transparent 70%);
-  box-shadow: 0 0 6px var(--cyan);
-}
-
-@keyframes particle-rise {
-  0%   { transform: translateY(100%) scale(0); opacity: 0;   }
-  10%  { opacity: 1; }
-  90%  { opacity: 0.6; }
-  100% { transform: translateY(-100px) scale(1); opacity: 0; }
-}
-
-/* Particle positions (set by inline style for variety) */
-.p1  { width: 3px; height: 3px; left: 10%; animation-duration: 8s;  animation-delay: 0s;   }
-.p2  { width: 2px; height: 2px; left: 25%; animation-duration: 12s; animation-delay: 2s;   }
-.p3  { width: 4px; height: 4px; left: 40%; animation-duration: 9s;  animation-delay: 4s;   }
-.p4  { width: 2px; height: 2px; left: 60%; animation-duration: 15s; animation-delay: 1s;   }
-.p5  { width: 3px; height: 3px; left: 75%; animation-duration: 10s; animation-delay: 3s;   }
-.p6  { width: 2px; height: 2px; left: 90%; animation-duration: 11s; animation-delay: 5s;   }
-.p7  { width: 4px; height: 4px; left: 55%; animation-duration: 7s;  animation-delay: 6s;   }
-.p8  { width: 2px; height: 2px; left: 15%; animation-duration: 13s; animation-delay: 2.5s; }
-
-/* =========================================================
-   SECTION REVEAL ANIMATIONS
-   ========================================================= */
-.reveal-init {
-  opacity: 0;
-  transform: translateY(40px) scale(0.98);
-  transition:
-    opacity   0.9s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.reveal-init.is-visible {
+.tech-card-3d:hover::before {
   opacity: 1;
-  transform: translateY(0) scale(1);
-}
-
-.reveal-left {
-  opacity: 0;
-  transform: translateX(-50px);
-  transition:
-    opacity   0.9s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.reveal-left.is-visible { opacity: 1; transform: translateX(0); }
-
-.reveal-right {
-  opacity: 0;
-  transform: translateX(50px);
-  transition:
-    opacity   0.9s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.reveal-right.is-visible { opacity: 1; transform: translateX(0); }
-
-/* =========================================================
-   HERO SECTION — 3D TITLE ANIMATION
-   ========================================================= */
-.hero-title-3d {
-  transform-style: preserve-3d;
-  animation: hero-title-entrance 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-@keyframes hero-title-entrance {
-  0% {
-    opacity: 0;
-    transform: perspective(600px) rotateX(30deg) translateY(40px);
-    filter: blur(8px);
-  }
-  100% {
-    opacity: 1;
-    transform: perspective(600px) rotateX(0deg) translateY(0px);
-    filter: blur(0px);
-  }
 }
 
 /* =========================================================
-   SECTION DIVIDERS  (animated lines)
+   TEXT GRADIENTS & HEADINGS
    ========================================================= */
-.section-line {
+.text-cyan-gold {
+  background: linear-gradient(135deg, #00F2FE 0%, #EAB308 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gold-gradient {
+  background: linear-gradient(135deg, #FDE047 0%, #EAB308 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-cyan-gradient {
+  background: linear-gradient(135deg, #E0F2FE 0%, #00F2FE 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* =========================================================
+   BUTTONS (CLEAN HIGH-TECH FEEL)
+   ========================================================= */
+.btn-primary-tech {
+  background: linear-gradient(135deg, #00F2FE 0%, #0284C7 100%);
+  color: #05070D;
+  font-weight: 700;
+  border-radius: 999px;
+  box-shadow: 0 4px 20px rgba(0, 242, 254, 0.3);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary-tech:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 242, 254, 0.45);
+  filter: brightness(1.08);
+}
+
+.btn-gold-tech {
+  background: linear-gradient(135deg, #FDE047 0%, #EAB308 100%);
+  color: #05070D;
+  font-weight: 700;
+  border-radius: 999px;
+  box-shadow: 0 4px 20px rgba(234, 179, 8, 0.3);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-gold-tech:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(234, 179, 8, 0.45);
+  filter: brightness(1.08);
+}
+
+.btn-ghost-tech {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+  color: #F8FAFC;
+  border-radius: 999px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-ghost-tech:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(0, 242, 254, 0.4);
+  color: #00F2FE;
+  transform: translateY(-2px);
+}
+
+/* =========================================================
+   STATUS LIGHT
+   ========================================================= */
+.status-beacon {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10B981;
+}
+
+.status-beacon::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  background: #10B981;
+  opacity: 0.4;
+  animation: beacon-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes beacon-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.4; }
+  50% { transform: scale(1.8); opacity: 0; }
+}
+
+/* Section Line Divider */
+.tech-divider {
   height: 1px;
-  background: linear-gradient(90deg,
-    transparent 0%,
-    rgba(200,160,70,0.2) 20%,
-    rgba(200,160,70,0.6) 50%,
-    rgba(200,160,70,0.2) 80%,
-    transparent 100%
-  );
-  position: relative;
-  overflow: hidden;
+  background: linear-gradient(90deg, transparent 0%, rgba(0, 242, 254, 0.25) 30%, rgba(234, 179, 8, 0.25) 70%, transparent 100%);
+  margin: 0 auto;
 }
 
-.section-line::after {
-  content: '';
-  position: absolute;
-  top: 0; left: -100%;
-  width: 100%; height: 100%;
-  background: linear-gradient(90deg,
-    transparent 0%,
-    rgba(255,255,255,0.8) 50%,
-    transparent 100%
-  );
-  animation: line-scan 4s ease-in-out infinite;
+/* Glass Pill Badge */
+.tech-pill {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
 }
 
-@keyframes line-scan {
-  0%   { left: -100%; }
-  100% { left: 200%;  }
+.tech-pill:hover {
+  border-color: rgba(0, 242, 254, 0.4);
+  background: rgba(0, 242, 254, 0.06);
+  color: #00F2FE;
 }
-
-/* =========================================================
-   NUMBER COUNTER RING  (CSS-only, decorative)
-   ========================================================= */
-.stat-card {
-  position: relative;
-}
-
-.stat-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: conic-gradient(
-    var(--gold) 0deg,
-    transparent 0deg
-  );
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  z-index: -1;
-}
-
-.stat-card:hover::before {
-  opacity: 0.05;
-}
-
-/* =========================================================
-   NAVBAR GLASSMORPHISM PREMIUM
-   ========================================================= */
-.navbar-glass {
-  background: rgba(3, 5, 8, 0.75);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-  box-shadow:
-    0 1px 0 rgba(200,160,70,0.08),
-    0 8px 32px rgba(0,0,0,0.4);
-}
-
-/* =========================================================
-   TERMINAL PREMIUM STYLING
-   ========================================================= */
-.terminal-wrapper {
-  position: relative;
-}
-
-.terminal-wrapper::before {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  border-radius: 1.25rem;
-  background: linear-gradient(135deg,
-    rgba(200,160,70,0.3) 0%,
-    rgba(34,211,238,0.1) 50%,
-    rgba(139,92,246,0.2) 100%
-  );
-  z-index: -1;
-  animation: terminal-border-glow 4s ease-in-out infinite;
-}
-
-@keyframes terminal-border-glow {
-  0%, 100% { opacity: 0.5; }
-  50%       { opacity: 1;   }
-}
-
-/* =========================================================
-   TIMELINE PREMIUM
-   ========================================================= */
-.timeline-dot-glow {
-  box-shadow:
-    0 0 0 3px rgba(200,160,70,0.15),
-    0 0 15px rgba(200,160,70,0.5),
-    0 0 30px rgba(200,160,70,0.2);
-}
-
-/* =========================================================
-   CONTACT FORM PREMIUM INPUTS
-   ========================================================= */
-.premium-input {
-  background: rgba(7, 11, 18, 0.8);
-  border: 1px solid rgba(255,255,255,0.08);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  position: relative;
-}
-
-.premium-input:focus {
-  border-color: var(--gold);
-  background: rgba(7, 11, 18, 0.95);
-  box-shadow:
-    0 0 0 3px rgba(200,160,70,0.1),
-    0 0 20px rgba(200,160,70,0.08),
-    inset 0 1px 0 rgba(200,160,70,0.05);
-  outline: none;
-}
-
-/* =========================================================
-   LOGO / INITIALS BADGE  (3D hover)
-   ========================================================= */
-.logo-badge {
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.logo-badge:hover {
-  transform: perspective(300px) rotateY(-15deg) rotateX(10deg) translateZ(10px);
-  box-shadow: 10px 5px 20px rgba(200,160,70,0.3);
-}
-
-/* =========================================================
-   PROJECT CARD IMAGE ZOOM  (3D depth)
-   ========================================================= */
-.project-image-wrapper {
-  overflow: hidden;
-  border-radius: 1rem;
-  transform-style: preserve-3d;
-}
-
-.project-image-wrapper img {
-  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s ease;
-  will-change: transform;
-}
-
-.project-image-wrapper:hover img {
-  transform: scale(1.08) translateZ(10px);
-  filter: brightness(1.05) saturate(1.1);
-}
-
-/* =========================================================
-   CERTIFICATE CARD — HOLOGRAPHIC SHEEN
-   ========================================================= */
-.cert-holographic {
-  position: relative;
-  overflow: hidden;
-}
-
-.cert-holographic::before {
-  content: '';
-  position: absolute;
-  inset: -50%;
-  background: conic-gradient(
-    from 0deg at 50% 50%,
-    transparent 0deg,
-    rgba(200,160,70,0.05) 60deg,
-    rgba(34,211,238,0.03) 120deg,
-    rgba(139,92,246,0.04) 180deg,
-    transparent 240deg
-  );
-  animation: holographic-spin 8s linear infinite;
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
-
-.cert-holographic:hover::before { opacity: 1; }
-
-@keyframes holographic-spin {
-  0%   { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* =========================================================
-   REDUCED MOTION — ACCESSIBILITY
-   ========================================================= */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-/* =========================================================
-   SECTION HEADER EYEBROW  (animated underline)
-   ========================================================= */
-.section-eyebrow {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.section-eyebrow-line {
-  display: block;
-  height: 1px;
-  width: 24px;
-  background: linear-gradient(90deg, var(--gold), var(--gold-vivid));
-  position: relative;
-  overflow: hidden;
-}
-
-.section-eyebrow-line::after {
-  content: '';
-  position: absolute;
-  top: 0; left: -100%;
-  width: 200%; height: 100%;
-  background: linear-gradient(90deg, transparent, #fff, transparent);
-  animation: eyebrow-scan 2s ease-in-out infinite;
-}
-
-@keyframes eyebrow-scan {
-  0%   { left: -100%; }
-  100% { left: 100%;  }
-}
-
-/* =========================================================
-   CUSTOM CURSOR UPGRADE
-   ========================================================= */
-.cursor-main {
-  mix-blend-mode: screen;
-  background: radial-gradient(circle, var(--gold-vivid) 0%, var(--gold) 60%, transparent 100%);
-  box-shadow: 0 0 12px var(--gold-vivid), 0 0 25px rgba(200,160,70,0.5);
-}
-
-.cursor-ring {
-  border: 1.5px solid rgba(200,160,70,0.6);
-  backdrop-filter: blur(2px);
-}
-
-/* =========================================================
-   FOOTER PREMIUM
-   ========================================================= */
-.footer-divider {
-  height: 1px;
-  background: linear-gradient(90deg,
-    transparent 0%,
-    rgba(200,160,70,0.15) 30%,
-    rgba(34,211,238,0.1) 50%,
-    rgba(200,160,70,0.15) 70%,
-    transparent 100%
-  );
-}
-
-/* =========================================================
-   UTILITY ANIMATIONS
-   ========================================================= */
-@keyframes fade-in-up {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0);    }
-}
-
-@keyframes fade-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-@keyframes scale-in {
-  from { opacity: 0; transform: scale(0.9); }
-  to   { opacity: 1; transform: scale(1);   }
-}
-
-.animate-fade-in-up { animation: fade-in-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
-.animate-fade-in    { animation: fade-in    0.5s ease both; }
-.animate-scale-in   { animation: scale-in   0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
-
-/* Stagger helpers */
-.delay-100 { animation-delay: 100ms; }
-.delay-200 { animation-delay: 200ms; }
-.delay-300 { animation-delay: 300ms; }
-.delay-400 { animation-delay: 400ms; }
-.delay-500 { animation-delay: 500ms; }
-.delay-600 { animation-delay: 600ms; }
-.delay-700 { animation-delay: 700ms; }
-.delay-800 { animation-delay: 800ms; }
