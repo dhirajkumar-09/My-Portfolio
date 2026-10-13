@@ -9,12 +9,7 @@ const GithubIcon = ({ size = 15 }) => (
   </svg>
 );
 
-export default function Projects({
-  projects,
-  setProjects,
-  editMode,
-  onImageUpload,
-}) {
+export default function Projects({ projects, setProjects, editMode, onImageUpload }) {
   const [selectedFilter, setSelectedFilter] = useState("All");
 
   const categories = ["All", "Full-Stack", "IoT & Systems", "Cloud & DevOps"];
@@ -30,38 +25,38 @@ export default function Projects({
 
   const handleCardMouseMove = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    e.currentTarget.style.setProperty("--mouse-x", `${x}px`);
-    e.currentTarget.style.setProperty("--mouse-y", `${y}px`);
+    e.currentTarget.style.setProperty("--mouse-x", `${e.clientX - rect.left}px`);
+    e.currentTarget.style.setProperty("--mouse-y", `${e.clientY - rect.top}px`);
   };
 
   return (
     <section id="work" className="py-28 relative">
-      <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+      {/* Section divider */}
+      <div className="section-line mb-0 absolute top-0 left-0 right-0" />
 
       {/* Section Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-14">
         <div>
-          <div className="font-mono text-xs uppercase tracking-[0.25em] text-[#F3D082] mb-3 flex items-center gap-3">
-            <span className="w-6 h-[1px] bg-[#F3D082]" />
+          <div className="section-eyebrow font-mono text-xs uppercase tracking-[0.25em] text-[#C9A84C] mb-4">
+            <span className="section-eyebrow-line" />
             <span>Featured Engineering</span>
           </div>
-          <h2 className="font-display font-bold text-3xl sm:text-4xl md:text-5xl text-white">
-            Selected Projects
+          <h2 className="font-display font-bold text-3xl sm:text-4xl md:text-5xl text-white tracking-tight">
+            Selected{" "}
+            <span className="text-gradient-gold">Projects</span>
           </h2>
         </div>
 
-        {/* Filter Tabs */}
-        <div className="flex flex-wrap items-center gap-2 bg-white/[0.03] p-1.5 rounded-full border border-white/10">
+        {/* Filter Tabs — premium glass */}
+        <div className="flex flex-wrap items-center gap-1.5 bg-white/[0.02] p-1.5 rounded-full border border-white/[0.06] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
           {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setSelectedFilter(cat)}
-              className={`font-mono text-xs tracking-wider px-4 py-1.5 rounded-full transition-all cursor-pointer ${
+              className={`font-mono text-xs tracking-wider px-4 py-1.5 rounded-full transition-all duration-200 cursor-pointer ${
                 selectedFilter === cat
-                  ? "bg-[#D4AF6A] text-[#05070A] font-semibold shadow-md shadow-[#D4AF6A]/20"
-                  : "text-[#94A3B8] hover:text-white"
+                  ? "bg-[#C9A84C] text-[#030508] font-bold shadow-[0_2px_12px_rgba(200,160,70,0.4)]"
+                  : "text-[#94A3B8] hover:text-white hover:bg-white/[0.04]"
               }`}
             >
               {cat}
@@ -71,9 +66,8 @@ export default function Projects({
       </div>
 
       {/* Projects List */}
-      <div className="grid grid-cols-1 gap-12 md:gap-16">
+      <div className="grid grid-cols-1 gap-10 md:gap-14">
         {filteredProjects.map((p, originalIndex) => {
-          // Find original index in master list for updating
           const realIndex = projects.findIndex((item) => item.title === p.title);
           const i = realIndex !== -1 ? realIndex : originalIndex;
 
@@ -81,9 +75,14 @@ export default function Projects({
             <div
               key={i}
               onMouseMove={handleCardMouseMove}
-              className="spotlight-card group p-6 sm:p-10 md:p-12 relative"
+              className="spotlight-card group p-7 sm:p-10 md:p-12 relative overflow-hidden"
             >
-              {/* Admin Delete Action */}
+              {/* Project number watermark */}
+              <div className="absolute top-6 right-8 font-display font-black text-[100px] leading-none text-white/[0.02] pointer-events-none select-none z-0">
+                {String(originalIndex + 1).padStart(2, "0")}
+              </div>
+
+              {/* Admin Delete */}
               {editMode && (
                 <div className="absolute top-6 right-6 z-30">
                   <button
@@ -96,15 +95,15 @@ export default function Projects({
                 </div>
               )}
 
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-                {/* Left Col: Details */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center relative z-10">
+                {/* Left: Project Details */}
                 <div className="lg:col-span-7 flex flex-col justify-center">
-                  <div className="flex items-center gap-4 mb-3">
-                    <span className="font-mono text-sm tracking-widest text-[#F3D082] font-semibold">
+                  <div className="flex items-center gap-4 mb-4">
+                    <span className="font-mono text-2xl font-black text-[#C9A84C]/30 tabular-nums select-none">
                       {String(originalIndex + 1).padStart(2, "0")}
                     </span>
-                    <span className="w-8 h-[1px] bg-white/20" />
-                    <span className="font-mono text-[11px] uppercase tracking-wider text-[#94A3B8]">
+                    <div className="flex-1 h-px bg-white/08" />
+                    <span className="font-mono text-[10px] uppercase tracking-widest text-[#475569] px-3 py-1 rounded-full border border-white/06 bg-white/[0.02]">
                       <Editable
                         value={p.category || "Full-Stack"}
                         onChange={(v) => updateProject(i, { category: v })}
@@ -113,7 +112,7 @@ export default function Projects({
                     </span>
                   </div>
 
-                  <h3 className="font-display font-bold text-2xl sm:text-3xl md:text-4xl text-white group-hover:text-[#F3D082] transition-colors mb-2">
+                  <h3 className="font-display font-bold text-2xl sm:text-3xl md:text-4xl text-white group-hover:text-[#F0C96E] transition-colors duration-300 mb-2 leading-tight">
                     <Editable
                       value={p.title}
                       onChange={(v) => updateProject(i, { title: v })}
@@ -121,7 +120,7 @@ export default function Projects({
                     />
                   </h3>
 
-                  <div className="font-mono text-xs uppercase tracking-wider text-[#94A3B8] mb-6">
+                  <div className="font-mono text-xs uppercase tracking-wider text-[#475569] mb-6">
                     <Editable
                       value={p.subtitle}
                       onChange={(v) => updateProject(i, { subtitle: v })}
@@ -139,19 +138,19 @@ export default function Projects({
                     />
                   </p>
 
-                  {/* Highlights Bullet List (if any) */}
+                  {/* Highlights */}
                   {p.highlights && p.highlights.length > 0 && (
-                    <div className="space-y-2 mb-6">
+                    <div className="space-y-2.5 mb-7 p-4 rounded-xl bg-white/[0.02] border border-white/[0.04]">
                       {p.highlights.map((h, hIdx) => (
-                        <div key={hIdx} className="flex items-center gap-2 text-xs text-[#CBD5E1]">
-                          <CheckCircle2 size={14} className="text-[#10B981] shrink-0" />
+                        <div key={hIdx} className="flex items-start gap-2.5 text-xs text-[#CBD5E1]">
+                          <CheckCircle2 size={14} className="text-[#10B981] shrink-0 mt-0.5" />
                           <span>{h}</span>
                         </div>
                       ))}
                     </div>
                   )}
 
-                  {/* Tech Stack Pills */}
+                  {/* Tech Stack */}
                   <div className="mb-8">
                     <TagEditor
                       items={p.stack || []}
@@ -160,7 +159,7 @@ export default function Projects({
                     />
                   </div>
 
-                  {/* Links / Action Bar */}
+                  {/* Links */}
                   <div className="flex flex-wrap items-center gap-4 mt-auto">
                     {editMode ? (
                       <div className="flex flex-col gap-2 w-full">
@@ -169,14 +168,14 @@ export default function Projects({
                           value={p.live || ""}
                           onChange={(e) => updateProject(i, { live: e.target.value })}
                           placeholder="Live URL (e.g. https://...)"
-                          className="font-mono text-xs bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white outline-none focus:border-[#D4AF6A]"
+                          className="premium-input font-mono text-xs rounded-xl px-4 py-2.5 text-white w-full"
                         />
                         <input
                           type="text"
                           value={p.source || ""}
                           onChange={(e) => updateProject(i, { source: e.target.value })}
                           placeholder="Source GitHub URL"
-                          className="font-mono text-xs bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white outline-none focus:border-[#D4AF6A]"
+                          className="premium-input font-mono text-xs rounded-xl px-4 py-2.5 text-white w-full"
                         />
                       </div>
                     ) : (
@@ -186,19 +185,18 @@ export default function Projects({
                             href={p.live}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="btn-gold font-mono text-xs uppercase tracking-wider px-5 py-2.5 rounded-full flex items-center gap-2"
+                            className="btn-gold font-mono text-xs uppercase tracking-wider px-6 py-2.5 rounded-full flex items-center gap-2"
                           >
                             <span>Live Demo</span>
                             <ExternalLink size={13} />
                           </a>
                         )}
-
                         {p.source && p.source !== "#" && (
                           <a
                             href={p.source}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="btn-ghost font-mono text-xs uppercase tracking-wider px-5 py-2.5 rounded-full flex items-center gap-2"
+                            className="btn-ghost font-mono text-xs uppercase tracking-wider px-6 py-2.5 rounded-full flex items-center gap-2"
                           >
                             <GithubIcon size={14} />
                             <span>Source Code</span>
@@ -209,58 +207,63 @@ export default function Projects({
                   </div>
                 </div>
 
-                {/* Right Col: Image / Visual Card Preview */}
-                <div className="lg:col-span-5 relative aspect-[16/10] sm:aspect-[16/9] lg:aspect-auto lg:h-[360px] rounded-2xl overflow-hidden border border-white/10 bg-[#070A10] flex items-center justify-center p-3 shadow-2xl group/preview">
+                {/* Right: Image Panel with 3D depth */}
+                <div className="lg:col-span-5 relative aspect-[16/10] sm:aspect-[16/9] lg:aspect-auto lg:h-[380px] rounded-2xl overflow-hidden border border-white/[0.08] bg-[#060A13] flex items-center justify-center shadow-[0_20px_60px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.04)] project-image-wrapper group/preview">
                   {p.image ? (
                     <img
                       src={p.image}
                       alt={p.title}
-                      className="w-full h-full object-cover rounded-xl opacity-90 group-hover/preview:opacity-100 group-hover/preview:scale-105 transition-all duration-700 ease-out"
+                      className="w-full h-full object-cover opacity-85 group-hover/preview:opacity-100 transition-all duration-700 ease-out"
                     />
                   ) : (
-                    <div className="w-full h-full rounded-xl bg-gradient-to-br from-white/[0.04] to-transparent border border-white/5 p-6 flex flex-col justify-between select-none">
-                      <div className="flex items-center justify-between border-b border-white/5 pb-3">
+                    <div className="w-full h-full p-6 flex flex-col justify-between select-none bg-gradient-to-br from-white/[0.03] to-transparent">
+                      {/* Mock browser bar */}
+                      <div className="flex items-center justify-between pb-3 border-b border-white/[0.06]">
                         <div className="flex items-center gap-2">
-                          <span className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
-                          <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
-                          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
+                          <span className="w-2.5 h-2.5 rounded-full bg-red-500/70" />
+                          <span className="w-2.5 h-2.5 rounded-full bg-amber-500/70" />
+                          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/70" />
                         </div>
-                        <span className="font-mono text-[10px] text-[#64748B] uppercase tracking-wider">
-                          {p.category || "Architecture"}
+                        <div className="flex-1 mx-4 h-5 rounded-md bg-white/[0.04] border border-white/[0.06] flex items-center px-2">
+                          <div className="w-2 h-2 rounded-full bg-[#10B981]/60 mr-1.5" />
+                          <div className="h-1.5 w-16 rounded bg-white/10" />
+                        </div>
+                        <span className="font-mono text-[9px] text-[#475569] uppercase tracking-wider">
+                          {p.category || "Preview"}
                         </span>
                       </div>
 
-                      <div className="my-auto text-center space-y-2">
-                        <div className="w-12 h-12 mx-auto rounded-xl bg-[#D4AF6A]/10 border border-[#D4AF6A]/20 flex items-center justify-center text-[#F3D082]">
-                          <Layers size={24} />
+                      <div className="my-auto text-center space-y-3">
+                        <div className="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-br from-[#C9A84C]/15 to-[#C9A84C]/05 border border-[#C9A84C]/20 flex items-center justify-center text-[#F0C96E] group-hover/preview:scale-110 transition-transform duration-500">
+                          <Layers size={26} />
                         </div>
-                        <h4 className="font-display font-semibold text-lg text-white">
-                          {p.title}
-                        </h4>
-                        <p className="font-mono text-xs text-[#94A3B8]">
-                          {p.stack?.[0]} • {p.stack?.[1]}
+                        <h4 className="font-display font-semibold text-lg text-white">{p.title}</h4>
+                        <p className="font-mono text-xs text-[#475569]">
+                          {p.stack?.[0]} · {p.stack?.[1]}
                         </p>
                       </div>
 
-                      <div className="flex justify-between items-center text-[10px] font-mono text-[#64748B] pt-2 border-t border-white/5">
-                        <span>Status: Verified</span>
-                        <span className="text-[#10B981]">● Production Ready</span>
+                      {/* Status row */}
+                      <div className="flex justify-between items-center text-[10px] font-mono text-[#475569] pt-2 border-t border-white/[0.04]">
+                        <span>Architecture Verified</span>
+                        <span className="flex items-center gap-1 text-[#10B981]">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-pulse" />
+                          Production Ready
+                        </span>
                       </div>
                     </div>
                   )}
 
-                  {/* Image Upload Overlay for Edit Mode */}
+                  {/* Hover gradient overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover/preview:opacity-100 transition-opacity duration-500 pointer-events-none" />
+
+                  {/* Edit mode upload overlay */}
                   {editMode && (
-                    <div className="absolute inset-0 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center gap-3 p-6 z-20">
+                    <div className="absolute inset-0 bg-black/85 backdrop-blur-sm flex flex-col items-center justify-center gap-4 p-6 z-20">
                       <label className="btn-ghost px-5 py-2.5 rounded-full flex items-center gap-2 cursor-pointer text-xs font-mono uppercase tracking-wider">
                         <ImageIcon size={15} />
                         <span>Upload Visual</span>
-                        <input
-                          type="file"
-                          accept="image/*"
-                          className="hidden"
-                          onChange={(e) => onImageUpload(i, e)}
-                        />
+                        <input type="file" accept="image/*" className="hidden" onChange={(e) => onImageUpload(i, e)} />
                       </label>
                       {p.image && (
                         <button
@@ -279,18 +282,16 @@ export default function Projects({
           );
         })}
 
-        {/* Add Project Button (in Edit Mode) */}
+        {/* Add Project Button */}
         {editMode && (
           <button
             onClick={() => setProjects((prev) => [...prev, emptyProject()])}
-            className="w-full py-12 rounded-2xl border-2 border-dashed border-white/10 hover:border-[#D4AF6A]/50 bg-white/[0.02] hover:bg-[#D4AF6A]/5 flex flex-col items-center justify-center gap-3 text-[#94A3B8] hover:text-[#F3D082] transition-all cursor-pointer"
+            className="w-full py-14 rounded-2xl border-2 border-dashed border-white/[0.08] hover:border-[#C9A84C]/40 bg-white/[0.01] hover:bg-[#C9A84C]/[0.03] flex flex-col items-center justify-center gap-3 text-[#94A3B8] hover:text-[#F0C96E] transition-all cursor-pointer"
           >
             <div className="w-12 h-12 rounded-full border border-current flex items-center justify-center">
               <Plus size={20} />
             </div>
-            <span className="font-mono text-xs uppercase tracking-widest font-semibold">
-              Add New Project
-            </span>
+            <span className="font-mono text-xs uppercase tracking-widest font-semibold">Add New Project</span>
           </button>
         )}
       </div>

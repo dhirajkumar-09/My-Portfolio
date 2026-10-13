@@ -314,39 +314,57 @@ export default function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#05070A] text-[#F3D082] font-mono text-xs tracking-widest relative overflow-hidden">
-        <div className="w-12 h-12 border-2 border-[#D4AF6A] border-t-transparent rounded-full animate-spin mb-4" />
-        <span className="uppercase tracking-[0.25em] text-[#94A3B8] animate-pulse">
-          Loading Portfolio Architecture...
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#030508] text-[#F0C96E] font-mono text-xs tracking-widest relative overflow-hidden">
+        <div className="glow-field" />
+        <div className="relative w-16 h-16 mb-6">
+          <div className="absolute inset-0 border-2 border-[#C9A84C]/20 rounded-full" />
+          <div className="absolute inset-0 border-2 border-transparent border-t-[#F0C96E] border-r-[#C9A84C] rounded-full animate-spin" />
+          <div className="absolute inset-2 border border-[#22D3EE]/30 rounded-full animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }} />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-2 h-2 rounded-full bg-[#F0C96E] animate-pulse" />
+          </div>
+        </div>
+        <span className="uppercase tracking-[0.3em] text-[#475569] animate-pulse text-[10px]">
+          Initializing Portfolio System...
         </span>
+        <div className="mt-3 flex gap-1">
+          {[0,1,2].map(i => (
+            <span key={i} className="w-1.5 h-1.5 rounded-full bg-[#C9A84C]/60 animate-bounce" style={{ animationDelay: `${i * 150}ms` }} />
+          ))}
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#05070A] text-[#F0F6FC] font-body relative overflow-x-hidden selection:bg-[#D4AF6A]/30 selection:text-white">
+    <div className="min-h-screen bg-[#030508] text-[#EFF6FF] font-body relative overflow-x-hidden selection:bg-[#C9A84C]/25 selection:text-white">
       {/* Dynamic Cursor for Desktop */}
       <CustomCursor />
 
-      {/* Ambient background glows */}
+      {/* Deep space background — star field + nebula glows */}
       <div className="glow-field" />
+      {/* Floating ambient orbs — CSS keyframes, zero JS overhead */}
+      <div className="orb orb-1" />
+      <div className="orb orb-2" />
+      <div className="orb orb-3" />
+      {/* Film grain texture */}
       <div className="grain-overlay" />
 
-      {/* Top Reading Scroll Progress Bar */}
+      {/* Premium rainbow scroll progress bar */}
       <div
-        className="fixed top-0 left-0 h-[2.5px] bg-gradient-to-r from-[#D4AF6A] via-[#F3D082] to-[#38BDF8] z-[100] transition-all duration-75 shadow-[0_0_12px_rgba(243,208,130,0.8)]"
+        className="scroll-progress"
         style={{ width: `${scrollProgress}%` }}
       />
 
-      {/* Floating Toast Notification */}
+      {/* Floating Toast Notification — premium glass pill */}
       <div
-        className={`fixed top-20 left-1/2 -translate-x-1/2 z-[100] px-5 py-2.5 rounded-full font-mono text-xs tracking-wider border border-[#D4AF6A]/40 bg-[#090D14]/90 backdrop-blur-xl text-[#F3D082] shadow-2xl transition-all duration-300 flex items-center gap-2.5 ${
+        className={`fixed top-20 left-1/2 -translate-x-1/2 z-[100] px-5 py-2.5 rounded-full font-mono text-xs tracking-wider border border-[#C9A84C]/50 bg-[#070B12]/90 backdrop-blur-2xl text-[#F0C96E] shadow-[0_8px_32px_rgba(0,0,0,0.5),0_0_20px_rgba(200,160,70,0.15)] transition-all duration-400 flex items-center gap-2.5 ${
           toastMessage
             ? "opacity-100 translate-y-0"
-            : "opacity-0 -translate-y-6 pointer-events-none"
+            : "opacity-0 -translate-y-8 pointer-events-none"
         }`}
       >
-        <Sparkles size={14} className="text-[#F3D082]" />
+        <Sparkles size={13} className="text-[#F0C96E]" />
         <span>{toastMessage}</span>
       </div>
 
@@ -370,17 +388,17 @@ export default function App() {
         }}
       />
 
-      {/* Admin Floating Editing Control Bar */}
+      {/* Admin Floating Editing Control Bar — premium */}
       {editMode && isAdminUser && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[#0B0F17]/95 border border-[#D4AF6A] px-6 py-3 rounded-2xl shadow-2xl backdrop-blur-xl flex items-center gap-4 animate-bounce-subtle">
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[#070B12]/95 border border-[#C9A84C]/60 px-6 py-3 rounded-2xl shadow-[0_0_40px_rgba(200,160,70,0.2),0_20px_60px_rgba(0,0,0,0.6)] backdrop-blur-2xl flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] animate-pulse" />
-            <span className="font-mono text-xs uppercase tracking-wider text-[#F3D082] font-semibold">
+            <span className="status-dot" />
+            <span className="font-mono text-xs uppercase tracking-wider text-[#F0C96E] font-semibold">
               Live CMS Active
             </span>
           </div>
 
-          <div className="h-4 w-[1px] bg-white/10" />
+          <div className="h-4 w-px bg-white/10" />
 
           <button
             onClick={() => saveAllData(false)}
@@ -392,7 +410,7 @@ export default function App() {
 
           <button
             onClick={() => setEditMode(false)}
-            className="font-mono text-xs uppercase tracking-wider text-[#94A3B8] hover:text-white transition-colors cursor-pointer"
+            className="font-mono text-xs uppercase tracking-wider text-[#475569] hover:text-[#94A3B8] transition-colors cursor-pointer"
           >
             Exit
           </button>

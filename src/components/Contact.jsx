@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Mail, Send, Copy, Check, MessageSquare, ArrowUpRight } from "lucide-react";
+import { Mail, Send, Copy, Check, MessageSquare, ArrowUpRight, Sparkles } from "lucide-react";
 import { Editable } from "./Editable";
 
 const GithubIcon = ({ size = 20 }) => (
@@ -14,16 +14,10 @@ const LinkedinIcon = ({ size = 20 }) => (
   </svg>
 );
 
-export default function Contact({
-  profile,
-  setProfile,
-  editMode,
-  onSubmitMessage,
-  sendingMsg,
-  showToast,
-}) {
+export default function Contact({ profile, setProfile, editMode, onSubmitMessage, sendingMsg, showToast }) {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [copiedEmail, setCopiedEmail] = useState(false);
+  const [focusedField, setFocusedField] = useState(null);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(profile.email);
@@ -34,129 +28,144 @@ export default function Contact({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmitMessage(form, () => {
-      setForm({ name: "", email: "", message: "" });
-    });
+    onSubmitMessage(form, () => setForm({ name: "", email: "", message: "" }));
   };
 
   const handleMouseMove = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    e.currentTarget.style.setProperty("--mouse-x", `${x}px`);
-    e.currentTarget.style.setProperty("--mouse-y", `${y}px`);
+    e.currentTarget.style.setProperty("--mouse-x", `${e.clientX - rect.left}px`);
+    e.currentTarget.style.setProperty("--mouse-y", `${e.clientY - rect.top}px`);
   };
 
   return (
     <section id="contact" className="py-28 relative">
-      <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+      <div className="section-line absolute top-0 left-0 right-0" />
 
-      {/* Grid: Details on Left, Message Form on Right */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-        {/* Left Column: Direct Info */}
+      {/* Section Header */}
+      <div className="text-center mb-16">
+        <div className="section-eyebrow font-mono text-xs uppercase tracking-[0.25em] text-[#C9A84C] mb-4 justify-center">
+          <span className="section-eyebrow-line" />
+          <span>Initiate Contact</span>
+          <span className="section-eyebrow-line" style={{ transform: 'scaleX(-1)' }} />
+        </div>
+        <h2 className="font-display font-bold text-3xl sm:text-5xl md:text-6xl text-white tracking-tight mb-4">
+          Let's build something{" "}
+          <span className="text-shimmer">extraordinary.</span>
+        </h2>
+        <p className="text-sm sm:text-base text-[#94A3B8] max-w-xl mx-auto leading-relaxed">
+          Whether you have a technical opportunity, a prospective project, or want to explore ideas — I'm always eager to connect.
+        </p>
+      </div>
+
+      {/* Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Left: Direct Info */}
         <div
           onMouseMove={handleMouseMove}
-          className="lg:col-span-5 spotlight-card p-8 sm:p-10 rounded-3xl"
+          className="lg:col-span-5 spotlight-card p-8 sm:p-10 rounded-3xl relative overflow-hidden"
         >
-          <div className="w-12 h-12 rounded-2xl bg-[#D4AF6A]/10 border border-[#D4AF6A]/20 flex items-center justify-center text-[#F3D082] mb-6">
-            <Mail size={22} />
-          </div>
+          {/* Decorative corner accent */}
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#C9A84C]/08 to-transparent rounded-bl-[80px] pointer-events-none" />
 
-          <div className="font-mono text-xs uppercase tracking-[0.25em] text-[#F3D082] mb-3">
-            Initiate Contact
-          </div>
+          <div className="spotlight-content">
+            <div className="w-13 h-13 w-12 h-12 rounded-2xl bg-gradient-to-br from-[#C9A84C]/20 to-[#C9A84C]/05 border border-[#C9A84C]/25 flex items-center justify-center text-[#F0C96E] mb-7 shadow-[0_0_25px_rgba(200,160,70,0.15)]">
+              <Mail size={22} />
+            </div>
 
-          <h2 className="font-display font-bold text-3xl sm:text-4xl text-white mb-4 leading-tight">
-            Let's build something <span className="text-shimmer">extraordinary.</span>
-          </h2>
+            <p className="text-sm text-[#94A3B8] leading-relaxed mb-8">
+              Whether you have a technical opportunity, a prospective project, or want to explore ideas in full-stack web and IoT systems, I'm always eager to connect.
+            </p>
 
-          <p className="text-sm sm:text-base text-[#94A3B8] leading-relaxed mb-8">
-            Whether you have a technical opportunity, a prospective project, or want to explore ideas in full-stack web and IoT systems, I'm always eager to connect.
-          </p>
+            {/* Copyable Email Box */}
+            <div className="mb-8 p-4 rounded-2xl bg-white/[0.02] border border-white/[0.07] flex items-center justify-between gap-3 group/email hover:border-[#C9A84C]/30 transition-all">
+              <div className="flex items-center gap-3 overflow-hidden">
+                <div className="w-8 h-8 rounded-lg bg-[#C9A84C]/10 flex items-center justify-center flex-shrink-0">
+                  <Mail size={14} className="text-[#F0C96E]" />
+                </div>
+                <span className="font-mono text-xs text-white truncate">
+                  <Editable
+                    value={profile.email}
+                    onChange={(v) => setProfile((p) => ({ ...p, email: v }))}
+                    editMode={editMode}
+                  />
+                </span>
+              </div>
 
-          {/* Copyable Email Box */}
-          <div className="mb-8 p-4 rounded-2xl bg-white/[0.02] border border-white/10 flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3 overflow-hidden">
-              <Mail size={16} className="text-[#F3D082] shrink-0" />
-              <span className="font-mono text-xs text-white truncate">
-                <Editable
-                  value={profile.email}
-                  onChange={(v) => setProfile((p) => ({ ...p, email: v }))}
-                  editMode={editMode}
+              <button
+                onClick={handleCopy}
+                className="p-2 rounded-lg bg-white/[0.04] hover:bg-[#C9A84C]/15 text-[#94A3B8] hover:text-[#F0C96E] transition-all shrink-0 cursor-pointer border border-white/[0.06] hover:border-[#C9A84C]/30"
+                title="Copy email to clipboard"
+              >
+                {copiedEmail ? <Check size={14} className="text-[#10B981]" /> : <Copy size={14} />}
+              </button>
+            </div>
+
+            {/* Social Links */}
+            <div className="pt-6 border-t border-white/[0.04] flex items-center gap-3 flex-wrap">
+              <a
+                href={profile.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-ghost px-4 py-2.5 rounded-full border border-white/[0.08] flex items-center gap-2 font-mono text-xs transition-all"
+              >
+                <GithubIcon size={15} />
+                <span>GitHub</span>
+                <ArrowUpRight size={11} />
+              </a>
+
+              <a
+                href={profile.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-ghost px-4 py-2.5 rounded-full border border-white/[0.08] flex items-center gap-2 font-mono text-xs transition-all"
+              >
+                <LinkedinIcon size={15} />
+                <span>LinkedIn</span>
+                <ArrowUpRight size={11} />
+              </a>
+            </div>
+
+            {/* Edit Mode URL Inputs */}
+            {editMode && (
+              <div className="mt-6 pt-6 border-t border-white/[0.06] space-y-3">
+                <input
+                  type="text"
+                  value={profile.linkedin || ""}
+                  onChange={(e) => setProfile((p) => ({ ...p, linkedin: e.target.value }))}
+                  placeholder="LinkedIn URL"
+                  className="premium-input w-full font-mono text-xs rounded-xl px-4 py-2.5 text-white"
                 />
-              </span>
-            </div>
-
-            <button
-              onClick={handleCopy}
-              className="p-2 rounded-lg bg-white/5 hover:bg-[#D4AF6A]/10 text-[#94A3B8] hover:text-[#F3D082] transition-colors shrink-0 cursor-pointer"
-              title="Copy email to clipboard"
-            >
-              {copiedEmail ? <Check size={14} className="text-[#10B981]" /> : <Copy size={14} />}
-            </button>
+                <input
+                  type="text"
+                  value={profile.github || ""}
+                  onChange={(e) => setProfile((p) => ({ ...p, github: e.target.value }))}
+                  placeholder="GitHub URL"
+                  className="premium-input w-full font-mono text-xs rounded-xl px-4 py-2.5 text-white"
+                />
+              </div>
+            )}
           </div>
-
-          {/* Social Links */}
-          <div className="pt-6 border-t border-white/[0.06] flex items-center gap-4">
-            <a
-              href={profile.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-4 py-2.5 rounded-full border border-white/10 bg-white/5 hover:border-[#D4AF6A]/40 text-[#94A3B8] hover:text-[#F3D082] flex items-center gap-2 font-mono text-xs transition-all"
-            >
-              <GithubIcon size={16} />
-              <span>GitHub</span>
-              <ArrowUpRight size={12} />
-            </a>
-
-            <a
-              href={profile.linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-4 py-2.5 rounded-full border border-white/10 bg-white/5 hover:border-[#D4AF6A]/40 text-[#94A3B8] hover:text-[#F3D082] flex items-center gap-2 font-mono text-xs transition-all"
-            >
-              <LinkedinIcon size={16} />
-              <span>LinkedIn</span>
-              <ArrowUpRight size={12} />
-            </a>
-          </div>
-
-          {/* Edit Mode URL Inputs */}
-          {editMode && (
-            <div className="mt-6 pt-6 border-t border-white/10 space-y-3">
-              <input
-                type="text"
-                value={profile.linkedin || ""}
-                onChange={(e) => setProfile((p) => ({ ...p, linkedin: e.target.value }))}
-                placeholder="LinkedIn URL"
-                className="w-full font-mono text-xs bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white outline-none focus:border-[#D4AF6A]"
-              />
-              <input
-                type="text"
-                value={profile.github || ""}
-                onChange={(e) => setProfile((p) => ({ ...p, github: e.target.value }))}
-                placeholder="GitHub URL"
-                className="w-full font-mono text-xs bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white outline-none focus:border-[#D4AF6A]"
-              />
-            </div>
-          )}
         </div>
 
-        {/* Right Column: Direct Message Form */}
+        {/* Right: Message Form */}
         <div
           onMouseMove={handleMouseMove}
           className="lg:col-span-7 spotlight-card p-8 sm:p-10 rounded-3xl"
         >
-          <div className="flex items-center gap-3 mb-6">
-            <MessageSquare size={20} className="text-[#F3D082]" />
-            <h3 className="font-display font-bold text-2xl text-white">
-              Send a Direct Message
-            </h3>
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-10 h-10 rounded-xl bg-[#22D3EE]/10 border border-[#22D3EE]/20 flex items-center justify-center">
+              <MessageSquare size={18} className="text-[#22D3EE]" />
+            </div>
+            <div>
+              <h3 className="font-display font-bold text-xl text-white">Send a Direct Message</h3>
+              <p className="font-mono text-[10px] uppercase tracking-wider text-[#475569]">Encrypted & Delivered Instantly</p>
+            </div>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Name */}
             <div>
-              <label className="block font-mono text-[11px] uppercase tracking-wider text-[#94A3B8] mb-2">
+              <label className={`block font-mono text-[11px] uppercase tracking-wider mb-2 transition-colors ${focusedField === 'name' ? 'text-[#C9A84C]' : 'text-[#475569]'}`}>
                 Your Full Name
               </label>
               <input
@@ -164,13 +173,16 @@ export default function Contact({
                 required
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
+                onFocus={() => setFocusedField('name')}
+                onBlur={() => setFocusedField(null)}
                 placeholder="e.g. Sarah Connor"
-                className="w-full bg-[#05070A]/80 border border-white/10 rounded-xl px-4 py-3 font-mono text-xs text-white placeholder-[#64748B] outline-none focus:border-[#D4AF6A] focus:ring-1 focus:ring-[#D4AF6A]/50 transition-all"
+                className="premium-input w-full font-mono text-sm text-white placeholder-[#475569] rounded-xl px-4 py-3.5"
               />
             </div>
 
+            {/* Email */}
             <div>
-              <label className="block font-mono text-[11px] uppercase tracking-wider text-[#94A3B8] mb-2">
+              <label className={`block font-mono text-[11px] uppercase tracking-wider mb-2 transition-colors ${focusedField === 'email' ? 'text-[#C9A84C]' : 'text-[#475569]'}`}>
                 Your Email Address
               </label>
               <input
@@ -178,13 +190,16 @@ export default function Contact({
                 required
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
+                onFocus={() => setFocusedField('email')}
+                onBlur={() => setFocusedField(null)}
                 placeholder="e.g. sarah@company.com"
-                className="w-full bg-[#05070A]/80 border border-white/10 rounded-xl px-4 py-3 font-mono text-xs text-white placeholder-[#64748B] outline-none focus:border-[#D4AF6A] focus:ring-1 focus:ring-[#D4AF6A]/50 transition-all"
+                className="premium-input w-full font-mono text-sm text-white placeholder-[#475569] rounded-xl px-4 py-3.5"
               />
             </div>
 
+            {/* Message */}
             <div>
-              <label className="block font-mono text-[11px] uppercase tracking-wider text-[#94A3B8] mb-2">
+              <label className={`block font-mono text-[11px] uppercase tracking-wider mb-2 transition-colors ${focusedField === 'message' ? 'text-[#C9A84C]' : 'text-[#475569]'}`}>
                 Message &amp; Project Scope
               </label>
               <textarea
@@ -192,25 +207,28 @@ export default function Contact({
                 rows={5}
                 value={form.message}
                 onChange={(e) => setForm({ ...form, message: e.target.value })}
+                onFocus={() => setFocusedField('message')}
+                onBlur={() => setFocusedField(null)}
                 placeholder="Hello Dhiraj, I would love to connect regarding an engineering role or technical collaboration..."
-                className="w-full bg-[#05070A]/80 border border-white/10 rounded-xl px-4 py-3 font-mono text-xs text-white placeholder-[#64748B] outline-none focus:border-[#D4AF6A] focus:ring-1 focus:ring-[#D4AF6A]/50 transition-all resize-none"
+                className="premium-input w-full font-mono text-sm text-white placeholder-[#475569] rounded-xl px-4 py-3.5 resize-none"
               />
             </div>
 
             <button
               type="submit"
               disabled={sendingMsg}
-              className="btn-gold w-full font-mono text-xs uppercase tracking-widest py-3.5 rounded-xl flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+              className="btn-gold w-full font-mono text-xs uppercase tracking-widest py-4 rounded-xl flex items-center justify-center gap-2.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {sendingMsg ? (
                 <>
-                  <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                  <div className="w-4 h-4 border-2 border-[#030508] border-t-transparent rounded-full animate-spin" />
                   <span>Transmitting Message...</span>
                 </>
               ) : (
                 <>
+                  <Sparkles size={14} />
                   <span>Send Message</span>
-                  <Send size={14} />
+                  <Send size={13} />
                 </>
               )}
             </button>

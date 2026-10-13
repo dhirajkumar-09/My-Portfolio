@@ -100,16 +100,17 @@ export default function InteractiveTerminal() {
   };
 
   return (
-    <div className="w-full rounded-2xl overflow-hidden border border-white/10 bg-[#090D14]/90 backdrop-blur-xl shadow-2xl font-mono text-xs sm:text-[13px] text-left">
+    <div className="w-full rounded-2xl overflow-hidden bg-[#06090F]/95 backdrop-blur-2xl shadow-[0_30px_80px_rgba(0,0,0,0.7),0_0_0_1px_rgba(200,160,70,0.1)] font-mono text-xs sm:text-[13px] text-left" style={{ border: '1px solid rgba(200,160,70,0.15)' }}>
       {/* Top Window Bar */}
-      <div className="flex items-center justify-between px-4 py-3 bg-[#0D121D] border-b border-white/10 select-none">
+      <div className="flex items-center justify-between px-4 py-3.5 bg-[#0A0E19] select-none" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-[#EF4444]/90 hover:opacity-80 transition-opacity" />
-          <div className="w-3 h-3 rounded-full bg-[#F59E0B]/90 hover:opacity-80 transition-opacity" />
-          <div className="w-3 h-3 rounded-full bg-[#10B981]/90 hover:opacity-80 transition-opacity" />
-          <span className="ml-2 text-[#64748B] text-[11px] font-mono hidden sm:inline">
-            dhiraj@workstation:~
+          <div className="w-3 h-3 rounded-full bg-[#FF5F57] hover:brightness-110 transition-all cursor-pointer shadow-[0_0_8px_rgba(255,95,87,0.4)]" />
+          <div className="w-3 h-3 rounded-full bg-[#FFBD2E] hover:brightness-110 transition-all cursor-pointer shadow-[0_0_8px_rgba(255,189,46,0.4)]" />
+          <div className="w-3 h-3 rounded-full bg-[#28CA41] hover:brightness-110 transition-all cursor-pointer shadow-[0_0_8px_rgba(40,202,65,0.4)]" />
+          <span className="ml-3 text-[#475569] text-[11px] font-mono hidden sm:inline tracking-wider">
+            dhiraj@workstation  ~
           </span>
+          <span className="text-[#C9A84C]/40 text-[10px] hidden sm:inline">⚡</span>
         </div>
 
         <div className="flex items-center gap-1.5">
@@ -131,7 +132,7 @@ export default function InteractiveTerminal() {
       </div>
 
       {/* Terminal Content Body */}
-      <div className="p-5 md:p-6 space-y-3.5 text-[#E2E8F0] leading-relaxed max-h-[460px] overflow-y-auto">
+      <div className="p-5 md:p-6 space-y-3.5 text-[#CBD5E1] leading-relaxed max-h-[460px] overflow-y-auto" style={{ background: 'rgba(4, 7, 12, 0.95)' }}>
         {/* CMD 1 */}
         <div>
           <div className="flex items-center gap-2">

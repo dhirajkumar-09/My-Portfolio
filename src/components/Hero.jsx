@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { ArrowUpRight, Mail } from "lucide-react";
 import InteractiveTerminal from "./InteractiveTerminal";
 import { Editable } from "./Editable";
@@ -16,21 +16,66 @@ const LinkedinIcon = ({ size = 18 }) => (
 );
 
 export default function Hero({ profile, setProfile, editMode, onNavigate }) {
-  return (
-    <section id="top" className="min-h-[92vh] pt-32 pb-16 flex flex-col justify-center relative">
-      {/* Background ambient center blur */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70vw] h-[70vw] max-w-[700px] max-h-[700px] bg-gradient-to-tr from-[#D4AF6A]/10 via-[#38BDF8]/5 to-transparent blur-[120px] rounded-full pointer-events-none" />
+  const terminalRef = useRef(null);
 
-      <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-14 items-center relative z-10">
-        {/* Left Column: Bio & Call to Actions */}
+  // Subtle 3D tilt on the terminal panel following mouse — CSS vars, no heavy computation
+  useEffect(() => {
+    const el = terminalRef.current;
+    if (!el) return;
+
+    const handleMove = (e) => {
+      const rect = el.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const dx = (e.clientX - cx) / rect.width;
+      const dy = (e.clientY - cy) / rect.height;
+      const rx = -dy * 8;   // Max ±8 deg tilt
+      const ry =  dx * 8;
+
+      el.style.transform = `perspective(1000px) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(4px)`;
+    };
+
+    const handleLeave = () => {
+      el.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0px)`;
+    };
+
+    // Attach to parent section
+    const section = el.closest('section');
+    section?.addEventListener('mousemove', handleMove, { passive: true });
+    section?.addEventListener('mouseleave', handleLeave);
+    return () => {
+      section?.removeEventListener('mousemove', handleMove);
+      section?.removeEventListener('mouseleave', handleLeave);
+    };
+  }, []);
+
+  return (
+    <section id="top" className="min-h-[92vh] pt-32 pb-16 flex flex-col justify-center relative overflow-hidden">
+      {/* Hero background — layered depth */}
+      <div className="absolute inset-0 pointer-events-none">
+        {/* Deep center glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] h-[60vw] max-w-[900px] max-h-[600px] bg-gradient-to-br from-[#C9A84C]/08 via-[#22D3EE]/04 to-transparent rounded-full blur-[100px]" />
+        {/* Top-right accent */}
+        <div className="absolute top-0 right-0 w-[40vw] h-[40vh] bg-gradient-to-bl from-[#8B5CF6]/05 to-transparent rounded-full blur-[80px]" />
+
+        {/* Floating CSS-only particles in hero */}
+        <div className="particles-container">
+          <div className="particle particle-gold p1" style={{ bottom: '10%' }} />
+          <div className="particle particle-cyan  p2" style={{ bottom: '20%' }} />
+          <div className="particle particle-gold p3" style={{ bottom: '5%'  }} />
+          <div className="particle particle-gold p4" style={{ bottom: '15%' }} />
+          <div className="particle particle-cyan  p5" style={{ bottom: '8%'  }} />
+        </div>
+      </div>
+
+      <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center relative z-10">
+        {/* ── Left Column: Bio & CTAs ── */}
         <div className="lg:col-span-7 flex flex-col items-start text-left">
-          {/* Status Badge */}
-          <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full border border-white/10 bg-white/[0.03] backdrop-blur-md mb-6">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#10B981] opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#10B981]" />
-            </span>
-            <span className="font-mono text-xs text-[#E2E8F0] tracking-wide">
+
+          {/* Status Badge — premium glass */}
+          <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-white/10 bg-white/[0.04] backdrop-blur-xl mb-7 animate-fade-in-up shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+            <span className="status-dot" />
+            <span className="font-mono text-xs text-[#CBD5E1] tracking-wide">
               <Editable
                 value={profile.status || "Available for Opportunities"}
                 onChange={(v) => setProfile((p) => ({ ...p, status: v }))}
@@ -39,9 +84,9 @@ export default function Hero({ profile, setProfile, editMode, onNavigate }) {
             </span>
           </div>
 
-          {/* Role Eyebrow */}
-          <div className="font-mono text-xs uppercase tracking-[0.25em] text-[#F3D082] mb-4 flex items-center gap-3">
-            <span className="w-6 h-[1px] bg-[#F3D082]" />
+          {/* Role Eyebrow — with animated line */}
+          <div className="section-eyebrow font-mono text-xs uppercase tracking-[0.3em] text-[#C9A84C] mb-5 animate-fade-in-up delay-100">
+            <span className="section-eyebrow-line" />
             <Editable
               value={profile.role}
               onChange={(v) => setProfile((p) => ({ ...p, role: v }))}
@@ -49,15 +94,15 @@ export default function Hero({ profile, setProfile, editMode, onNavigate }) {
             />
           </div>
 
-          {/* Main Headline */}
-          <h1 className="font-display font-extrabold text-4xl sm:text-5xl md:text-6xl lg:text-[68px] leading-[1.08] tracking-tight text-white mb-6">
+          {/* Main Headline — 3D entrance */}
+          <h1 className="hero-title-3d font-display font-extrabold text-4xl sm:text-5xl md:text-6xl lg:text-[70px] leading-[1.05] tracking-tight text-white mb-6">
             <Editable
               value={profile.headline}
               onChange={(v) => setProfile((p) => ({ ...p, headline: v }))}
               editMode={editMode}
               className="block"
             />
-            <span className="text-shimmer block">
+            <span className="text-shimmer block mt-1">
               <Editable
                 value={profile.headlineAccent}
                 onChange={(v) => setProfile((p) => ({ ...p, headlineAccent: v }))}
@@ -66,8 +111,8 @@ export default function Hero({ profile, setProfile, editMode, onNavigate }) {
             </span>
           </h1>
 
-          {/* Subtext Paragraph */}
-          <p className="text-base sm:text-lg text-[#94A3B8] leading-relaxed max-w-xl font-normal mb-10">
+          {/* Subtext */}
+          <p className="text-base sm:text-lg text-[#94A3B8] leading-relaxed max-w-xl font-normal mb-10 animate-fade-in-up delay-300">
             <Editable
               value={profile.intro}
               onChange={(v) => setProfile((p) => ({ ...p, intro: v }))}
@@ -77,10 +122,10 @@ export default function Hero({ profile, setProfile, editMode, onNavigate }) {
           </p>
 
           {/* Action CTAs */}
-          <div className="flex flex-wrap items-center gap-4 w-full sm:w-auto">
+          <div className="flex flex-wrap items-center gap-4 w-full sm:w-auto animate-fade-in-up delay-400">
             <button
               onClick={() => onNavigate("work")}
-              className="btn-gold font-mono text-xs uppercase tracking-widest px-7 py-3.5 rounded-full flex items-center justify-center gap-2.5 cursor-pointer w-full sm:w-auto"
+              className="btn-gold btn-glow-pulse font-mono text-xs uppercase tracking-widest px-7 py-3.5 rounded-full flex items-center justify-center gap-2.5 cursor-pointer w-full sm:w-auto"
             >
               <span>Explore Work</span>
               <ArrowUpRight size={15} />
@@ -94,14 +139,14 @@ export default function Hero({ profile, setProfile, editMode, onNavigate }) {
               <Mail size={15} />
             </button>
 
-            {/* Social Icons Quick Access */}
+            {/* Social Icons */}
             <div className="flex items-center gap-2.5 ml-0 sm:ml-2 pt-2 sm:pt-0">
               <a
                 href={profile.github}
                 target="_blank"
                 rel="noopener noreferrer"
                 title="GitHub"
-                className="w-10 h-10 rounded-full border border-white/10 bg-white/5 flex items-center justify-center text-[#94A3B8] hover:text-[#F3D082] hover:border-[#D4AF6A]/50 transition-all"
+                className="w-11 h-11 rounded-full border border-white/10 bg-white/[0.04] flex items-center justify-center text-[#94A3B8] hover:text-[#F0C96E] hover:border-[#C9A84C]/50 hover:bg-[#C9A84C]/08 hover:shadow-[0_0_20px_rgba(200,160,70,0.2)] transition-all duration-300"
               >
                 <GithubIcon size={18} />
               </a>
@@ -111,7 +156,7 @@ export default function Hero({ profile, setProfile, editMode, onNavigate }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 title="LinkedIn"
-                className="w-10 h-10 rounded-full border border-white/10 bg-white/5 flex items-center justify-center text-[#94A3B8] hover:text-[#F3D082] hover:border-[#D4AF6A]/50 transition-all"
+                className="w-11 h-11 rounded-full border border-white/10 bg-white/[0.04] flex items-center justify-center text-[#94A3B8] hover:text-[#F0C96E] hover:border-[#C9A84C]/50 hover:bg-[#C9A84C]/08 hover:shadow-[0_0_20px_rgba(200,160,70,0.2)] transition-all duration-300"
               >
                 <LinkedinIcon size={17} />
               </a>
@@ -119,45 +164,59 @@ export default function Hero({ profile, setProfile, editMode, onNavigate }) {
           </div>
         </div>
 
-        {/* Right Column: Terminal Dashboard */}
-        <div className="lg:col-span-5 w-full">
-          <InteractiveTerminal />
+        {/* ── Right Column: Terminal with 3D tilt ── */}
+        <div className="lg:col-span-5 w-full animate-fade-in-up delay-500">
+          <div className="terminal-wrapper">
+            <div
+              ref={terminalRef}
+              className="terminal-3d"
+              style={{ transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)', willChange: 'transform' }}
+            >
+              <InteractiveTerminal />
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Stats Counter Bar */}
-      <div className="mt-20 pt-10 border-t border-white/10 grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 z-10">
-        {profile.stats.map((s, idx) => (
-          <div
-            key={idx}
-            className="flex flex-col p-4 sm:p-5 rounded-2xl bg-white/[0.02] border border-white/[0.05] hover:border-[#D4AF6A]/30 transition-all group"
-          >
-            <div className="font-display font-bold text-3xl sm:text-4xl text-[#F3D082] group-hover:scale-105 transition-transform duration-300">
-              <Editable
-                value={s.v}
-                onChange={(v) =>
-                  setProfile((p) => ({
-                    ...p,
-                    stats: p.stats.map((item, i) => (i === idx ? { ...item, v } : item)),
-                  }))
-                }
-                editMode={editMode}
-              />
+      {/* Stats Bar — 3D hover cards */}
+      <div className="mt-20 pt-10 relative z-10">
+        <div className="section-line mb-10" />
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+          {profile.stats.map((s, idx) => (
+            <div
+              key={idx}
+              className="stat-card spotlight-card group p-5 sm:p-6 rounded-2xl skill-card-3d cursor-default"
+              style={{ animationDelay: `${idx * 100}ms` }}
+            >
+              <div className="font-display font-black text-3xl sm:text-4xl text-[#F0C96E] mb-1 group-hover:scale-110 transition-transform duration-300 origin-left">
+                <Editable
+                  value={s.v}
+                  onChange={(v) =>
+                    setProfile((p) => ({
+                      ...p,
+                      stats: p.stats.map((item, i) => (i === idx ? { ...item, v } : item)),
+                    }))
+                  }
+                  editMode={editMode}
+                />
+              </div>
+              <div className="font-mono text-[11px] sm:text-xs uppercase tracking-widest text-[#475569] group-hover:text-[#94A3B8] transition-colors">
+                <Editable
+                  value={s.k}
+                  onChange={(v) =>
+                    setProfile((p) => ({
+                      ...p,
+                      stats: p.stats.map((item, i) => (i === idx ? { ...item, k: v } : item)),
+                    }))
+                  }
+                  editMode={editMode}
+                />
+              </div>
+              {/* Bottom accent line */}
+              <div className="mt-4 h-px bg-gradient-to-r from-[#C9A84C]/0 via-[#C9A84C]/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             </div>
-            <div className="font-mono text-[11px] sm:text-xs uppercase tracking-wider text-[#94A3B8] mt-1.5">
-              <Editable
-                value={s.k}
-                onChange={(v) =>
-                  setProfile((p) => ({
-                    ...p,
-                    stats: p.stats.map((item, i) => (i === idx ? { ...item, k: v } : item)),
-                  }))
-                }
-                editMode={editMode}
-              />
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </section>
   );
