@@ -1,3 +1,213 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --bg: #05070A;
+  --surface: #090E17;
+  --card: #0D131F;
+  --card-hover: #121A2B;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-soft: rgba(255, 255, 255, 0.04);
+  --border-gold: rgba(212, 175, 106, 0.35);
+  --gold: #D4AF6A;
+  --gold-bright: #F3D082;
+  --gold-glow: rgba(212, 175, 106, 0.12);
+  --text: #F0F6FC;
+  --text-dim: #94A3B8;
+  --text-faint: #64748B;
+  --emerald: #10B981;
+  --cyan: #38BDF8;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+}
+::-webkit-scrollbar-track {
+  background: #05070A;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(212, 175, 106, 0.4);
+}
+
+/* Base Body Adjustments */
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+/* Smooth Scrolling & Section Anchor Offsets */
+section[id] {
+  scroll-margin-top: 100px;
+}
+
+/* Ambient Background Glow */
+.glow-field {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: 
+    radial-gradient(900px circle at 80% 12%, rgba(212, 175, 106, 0.07), transparent 60%),
+    radial-gradient(1100px circle at 15% 85%, rgba(56, 189, 248, 0.04), transparent 55%),
+    radial-gradient(700px circle at 50% 45%, rgba(212, 175, 106, 0.03), transparent 65%);
+  filter: blur(50px);
+  z-index: 0;
+  animation: ambient-shift 20s ease-in-out infinite alternate;
+}
+
+@keyframes ambient-shift {
+  0% { transform: scale(1) translate(0, 0); }
+  50% { transform: scale(1.06) translate(-1.5%, 1.5%); }
+  100% { transform: scale(1.02) translate(1.5%, -1%); }
+}
+
+/* Subtle Film Grain */
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.25'/%3E%3C/svg%3E");
+  opacity: 0.12;
+  mix-blend-mode: overlay;
+  z-index: 1;
+}
+
+/* Spotlight Card 3D Tilt & Glow */
+.spotlight-card {
+  position: relative;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 1.25rem;
+  overflow: hidden;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+              border-color 0.3s ease, 
+              box-shadow 0.3s ease, 
+              background-color 0.3s ease;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.spotlight-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  background: radial-gradient(
+    800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(255, 255, 255, 0.06),
+    transparent 40%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.spotlight-card:hover {
+  background: var(--card-hover);
+  border-color: var(--border-gold);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6), 0 0 35px var(--gold-glow);
+}
+
+.spotlight-card:hover::before {
+  opacity: 1;
+}
+
+.spotlight-content {
+  position: relative;
+  z-index: 2;
+}
+
+/* Gradient Text Shimmer */
+.text-shimmer {
+  background: linear-gradient(135deg, #FFF 0%, var(--gold-bright) 50%, var(--gold) 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 6s linear infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+/* Premium Buttons */
+.btn-gold {
+  background: linear-gradient(135deg, #F3D082 0%, #D4AF6A 100%);
+  color: #05070A;
+  font-weight: 600;
+  box-shadow: 0 4px 20px rgba(212, 175, 106, 0.25);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-gold::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  transition: left 0.6s ease;
+}
+
+.btn-gold:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(212, 175, 106, 0.4);
+  filter: brightness(1.05);
+}
+
+.btn-gold:hover::before {
+  left: 100%;
+}
+
+.btn-ghost {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  color: var(--text);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(212, 175, 106, 0.4);
+  color: var(--gold-bright);
+  transform: translateY(-2px);
+}
+
+/* Glass Badge & Pill */
+.glass-pill {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-soft);
+  backdrop-filter: blur(12px);
+  transition: all 0.25s ease;
+}
+
+.glass-pill:hover {
+  border-color: rgba(212, 175, 106, 0.4);
+  background: rgba(212, 175, 106, 0.06);
+  color: var(--gold-bright);
+}
+
+/* Section Reveal Animations */
+.reveal-init {
+  opacity: 0;
+  transform: translateY(35px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-init.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
