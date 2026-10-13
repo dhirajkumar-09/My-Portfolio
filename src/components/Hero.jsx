@@ -1,6 +1,6 @@
 import React from "react";
-import { ArrowUpRight, Mail, Terminal as TerminalIcon } from "lucide-react";
-import InteractiveTerminal from "./InteractiveTerminal";
+import { ArrowUpRight, Mail, Terminal, Layers } from "lucide-react";
+import HolographicCard from "./HolographicCard";
 import { Editable } from "./Editable";
 
 const GithubIcon = ({ size = 18 }) => (
@@ -76,7 +76,7 @@ export default function Hero({ profile, setProfile, editMode, onNavigate }) {
               onClick={() => onNavigate("work")}
               className="btn-primary-tech font-mono text-xs uppercase tracking-wider px-6 py-3.5 flex items-center justify-center gap-2 cursor-pointer w-full sm:w-auto"
             >
-              <span>Explore Projects</span>
+              <span>Explore Bento Work</span>
               <ArrowUpRight size={15} />
             </button>
 
@@ -113,13 +113,13 @@ export default function Hero({ profile, setProfile, editMode, onNavigate }) {
           </div>
         </div>
 
-        {/* Right Column: Console / Engineering Hub */}
-        <div className="lg:col-span-5 w-full">
-          <InteractiveTerminal />
+        {/* Right Column: Dramatic 3D Holographic Centerpiece */}
+        <div className="lg:col-span-5 w-full flex justify-center">
+          <HolographicCard profile={profile} />
         </div>
       </div>
 
-      {/* Stats Counter Bar */}
+      {/* Bento Stats Counter Bar */}
       <div className="mt-16 pt-8 border-t border-white/[0.08] grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 z-10">
         {profile.stats.map((s, idx) => (
           <div

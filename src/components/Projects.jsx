@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ExternalLink, Trash2, Plus, Image as ImageIcon, Layers, CheckCircle2 } from "lucide-react";
+import { ExternalLink, Trash2, Plus, Image as ImageIcon, Layers, CheckCircle2, ArrowUpRight, Sparkles } from "lucide-react";
 import { Editable, TagEditor } from "./Editable";
 import { emptyProject } from "../data/portfolioData";
 
@@ -38,7 +38,7 @@ export default function Projects({ projects, setProjects, editMode, onImageUploa
             <span>Featured Engineering</span>
           </div>
           <h2 className="font-display font-extrabold text-3xl sm:text-4xl md:text-5xl text-white tracking-tight">
-            Selected <span className="text-cyan-gold">Projects</span>
+            Selected <span className="text-cyan-gold">Bento Works</span>
           </h2>
         </div>
 
@@ -60,211 +60,171 @@ export default function Projects({ projects, setProjects, editMode, onImageUploa
         </div>
       </div>
 
-      {/* Projects List */}
-      <div className="grid grid-cols-1 gap-10 md:gap-12">
+      {/* Modern Bento-Grid Showcase */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredProjects.map((p, originalIndex) => {
           const realIndex = projects.findIndex((item) => item.title === p.title);
           const i = realIndex !== -1 ? realIndex : originalIndex;
 
+          // Asymmetrical Bento Layout: 1st and 4th items are wide (span 2 cols on lg)
+          const isWide = originalIndex % 3 === 0;
+
           return (
             <div
               key={i}
-              className="tech-card-3d p-6 sm:p-8 md:p-10 relative overflow-hidden"
+              className={`tech-card-3d p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden group ${
+                isWide ? "lg:col-span-2" : "lg:col-span-1"
+              }`}
             >
-              {/* Watermark project index */}
-              <div className="absolute top-4 right-6 font-display font-black text-7xl sm:text-8xl text-white/[0.03] select-none pointer-events-none">
+              {/* Corner Watermark Number */}
+              <div className="absolute top-4 right-5 font-display font-black text-6xl text-white/[0.03] select-none pointer-events-none">
                 {String(originalIndex + 1).padStart(2, "0")}
               </div>
 
               {/* Admin Delete Action */}
               {editMode && (
-                <div className="absolute top-6 right-6 z-30">
+                <div className="absolute top-4 right-4 z-30">
                   <button
                     onClick={() => setProjects((prev) => prev.filter((_, idx) => idx !== i))}
-                    className="w-9 h-9 rounded-full bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/20 hover:text-red-300 flex items-center justify-center transition-all cursor-pointer"
+                    className="w-8 h-8 rounded-full bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/20 hover:text-red-300 flex items-center justify-center transition-all cursor-pointer"
                     title="Delete project"
                   >
-                    <Trash2 size={16} />
+                    <Trash2 size={14} />
                   </button>
                 </div>
               )}
 
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center relative z-10">
-                {/* Left Col: Details */}
-                <div className="lg:col-span-7 flex flex-col justify-center">
-                  <div className="flex items-center gap-3 mb-3">
-                    <span className="font-mono text-sm tracking-widest text-[#00F2FE] font-bold">
-                      {String(originalIndex + 1).padStart(2, "0")}
-                    </span>
-                    <span className="w-6 h-[1px] bg-white/20" />
-                    <span className="font-mono text-[10px] uppercase tracking-wider text-[#94A3B8] px-2.5 py-0.5 rounded-full bg-white/[0.04] border border-white/5">
-                      <Editable
-                        value={p.category || "Full-Stack"}
-                        onChange={(v) => updateProject(i, { category: v })}
-                        editMode={editMode}
-                      />
-                    </span>
-                  </div>
-
-                  <h3 className="font-display font-bold text-2xl sm:text-3xl text-white hover:text-[#00F2FE] transition-colors mb-2">
+              {/* Card Content Top */}
+              <div>
+                <div className="flex items-center gap-2.5 mb-3">
+                  <span className="font-mono text-xs tracking-widest text-[#00F2FE] font-bold">
+                    {String(originalIndex + 1).padStart(2, "0")}
+                  </span>
+                  <span className="w-4 h-[1px] bg-white/20" />
+                  <span className="font-mono text-[10px] uppercase tracking-wider text-[#94A3B8] px-2.5 py-0.5 rounded-full bg-white/[0.04] border border-white/5">
                     <Editable
-                      value={p.title}
-                      onChange={(v) => updateProject(i, { title: v })}
+                      value={p.category || "Full-Stack"}
+                      onChange={(v) => updateProject(i, { category: v })}
                       editMode={editMode}
                     />
-                  </h3>
-
-                  <div className="font-mono text-xs uppercase tracking-wider text-[#EAB308] mb-4">
-                    <Editable
-                      value={p.subtitle}
-                      onChange={(v) => updateProject(i, { subtitle: v })}
-                      editMode={editMode}
-                    />
-                  </div>
-
-                  <p className="text-sm sm:text-base text-[#94A3B8] leading-relaxed mb-5 font-normal">
-                    <Editable
-                      value={p.desc}
-                      onChange={(v) => updateProject(i, { desc: v })}
-                      editMode={editMode}
-                      tag="span"
-                      placeholder="Project description..."
-                    />
-                  </p>
-
-                  {/* Highlights Bullet List */}
-                  {p.highlights && p.highlights.length > 0 && (
-                    <div className="space-y-2 mb-6 p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.04]">
-                      {p.highlights.map((h, hIdx) => (
-                        <div key={hIdx} className="flex items-center gap-2.5 text-xs text-[#E2E8F0]">
-                          <CheckCircle2 size={13} className="text-[#10B981] shrink-0" />
-                          <span>{h}</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Tech Stack Pills */}
-                  <div className="mb-7">
-                    <TagEditor
-                      items={p.stack || []}
-                      onChange={(items) => updateProject(i, { stack: items })}
-                      editMode={editMode}
-                    />
-                  </div>
-
-                  {/* Links / Action Bar */}
-                  <div className="flex flex-wrap items-center gap-3.5 mt-auto">
-                    {editMode ? (
-                      <div className="flex flex-col gap-2 w-full">
-                        <input
-                          type="text"
-                          value={p.live || ""}
-                          onChange={(e) => updateProject(i, { live: e.target.value })}
-                          placeholder="Live URL (e.g. https://...)"
-                          className="font-mono text-xs bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white outline-none focus:border-[#00F2FE]"
-                        />
-                        <input
-                          type="text"
-                          value={p.source || ""}
-                          onChange={(e) => updateProject(i, { source: e.target.value })}
-                          placeholder="Source GitHub URL"
-                          className="font-mono text-xs bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white outline-none focus:border-[#00F2FE]"
-                        />
-                      </div>
-                    ) : (
-                      <>
-                        {p.live && p.live !== "#" && (
-                          <a
-                            href={p.live}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="btn-primary-tech font-mono text-xs uppercase tracking-wider px-5 py-2.5 flex items-center gap-2"
-                          >
-                            <span>Live Demo</span>
-                            <ExternalLink size={13} />
-                          </a>
-                        )}
-
-                        {p.source && p.source !== "#" && (
-                          <a
-                            href={p.source}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="btn-ghost-tech font-mono text-xs uppercase tracking-wider px-5 py-2.5 flex items-center gap-2"
-                          >
-                            <GithubIcon size={14} />
-                            <span>Source Code</span>
-                          </a>
-                        )}
-                      </>
-                    )}
-                  </div>
+                  </span>
                 </div>
 
-                {/* Right Col: Image / Architecture Preview */}
-                <div className="lg:col-span-5 relative aspect-[16/10] sm:aspect-[16/9] lg:aspect-auto lg:h-[340px] rounded-2xl overflow-hidden border border-white/10 bg-[#070A14] flex items-center justify-center p-3 shadow-2xl">
-                  {p.image ? (
-                    <img
-                      src={p.image}
-                      alt={p.title}
-                      className="w-full h-full object-cover rounded-xl opacity-90 hover:opacity-100 transition-opacity duration-300"
-                    />
+                <h3 className="font-display font-bold text-xl sm:text-2xl text-white group-hover:text-[#00F2FE] transition-colors mb-1.5">
+                  <Editable
+                    value={p.title}
+                    onChange={(v) => updateProject(i, { title: v })}
+                    editMode={editMode}
+                  />
+                </h3>
+
+                <div className="font-mono text-xs uppercase tracking-wider text-[#EAB308] mb-3">
+                  <Editable
+                    value={p.subtitle}
+                    onChange={(v) => updateProject(i, { subtitle: v })}
+                    editMode={editMode}
+                  />
+                </div>
+
+                <p className="text-xs sm:text-sm text-[#94A3B8] leading-relaxed mb-5 font-normal">
+                  <Editable
+                    value={p.desc}
+                    onChange={(v) => updateProject(i, { desc: v })}
+                    editMode={editMode}
+                    tag="span"
+                    placeholder="Project description..."
+                  />
+                </p>
+
+                {/* Highlights List if wide card */}
+                {isWide && p.highlights && p.highlights.length > 0 && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-5 p-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+                    {p.highlights.map((h, hIdx) => (
+                      <div key={hIdx} className="flex items-center gap-2 text-xs text-[#E2E8F0]">
+                        <CheckCircle2 size={12} className="text-[#10B981] shrink-0" />
+                        <span className="truncate">{h}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Bottom Area: Image & Stack */}
+              <div>
+                {/* Optional Project Visual */}
+                {p.image ? (
+                  <div className="mb-5 rounded-xl overflow-hidden border border-white/10 h-40 bg-[#070A14]">
+                    <img src={p.image} alt={p.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  </div>
+                ) : (
+                  <div className="mb-5 p-4 rounded-xl bg-gradient-to-br from-white/[0.03] to-transparent border border-white/5 flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-lg bg-[#00F2FE]/10 flex items-center justify-center text-[#00F2FE]">
+                        <Layers size={16} />
+                      </div>
+                      <div className="text-left">
+                        <span className="text-[11px] font-mono text-white block font-medium">Architecture Verified</span>
+                        <span className="text-[9px] font-mono text-[#64748B]">CI/CD Pipeline Ready</span>
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-mono text-[#10B981]">● Production</span>
+                  </div>
+                )}
+
+                {/* Tech Stack Pills */}
+                <div className="mb-5">
+                  <TagEditor
+                    items={p.stack || []}
+                    onChange={(items) => updateProject(i, { stack: items })}
+                    editMode={editMode}
+                  />
+                </div>
+
+                {/* Links / Action Bar */}
+                <div className="flex flex-wrap items-center gap-3 pt-3 border-t border-white/[0.06]">
+                  {editMode ? (
+                    <div className="flex flex-col gap-2 w-full">
+                      <input
+                        type="text"
+                        value={p.live || ""}
+                        onChange={(e) => updateProject(i, { live: e.target.value })}
+                        placeholder="Live URL"
+                        className="font-mono text-xs bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-white outline-none focus:border-[#00F2FE]"
+                      />
+                      <input
+                        type="text"
+                        value={p.source || ""}
+                        onChange={(e) => updateProject(i, { source: e.target.value })}
+                        placeholder="Source Code URL"
+                        className="font-mono text-xs bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-white outline-none focus:border-[#00F2FE]"
+                      />
+                    </div>
                   ) : (
-                    <div className="w-full h-full rounded-xl bg-gradient-to-br from-white/[0.03] to-transparent border border-white/5 p-6 flex flex-col justify-between select-none">
-                      <div className="flex items-center justify-between border-b border-white/5 pb-3">
-                        <div className="flex items-center gap-1.5">
-                          <span className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
-                          <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
-                          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
-                        </div>
-                        <span className="font-mono text-[10px] text-[#00F2FE] uppercase tracking-wider">
-                          {p.category || "Architecture"}
-                        </span>
-                      </div>
-
-                      <div className="my-auto text-center space-y-2">
-                        <div className="w-12 h-12 mx-auto rounded-xl bg-[#00F2FE]/10 border border-[#00F2FE]/20 flex items-center justify-center text-[#00F2FE]">
-                          <Layers size={22} />
-                        </div>
-                        <h4 className="font-display font-semibold text-lg text-white">
-                          {p.title}
-                        </h4>
-                        <p className="font-mono text-xs text-[#94A3B8]">
-                          {p.stack?.[0]} • {p.stack?.[1]}
-                        </p>
-                      </div>
-
-                      <div className="flex justify-between items-center text-[10px] font-mono text-[#64748B] pt-2 border-t border-white/5">
-                        <span>Architecture Verified</span>
-                        <span className="text-[#10B981] font-semibold">● Production Ready</span>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Image Upload Overlay for Edit Mode */}
-                  {editMode && (
-                    <div className="absolute inset-0 bg-black/85 backdrop-blur-sm flex flex-col items-center justify-center gap-3 p-6 z-20">
-                      <label className="btn-ghost-tech px-5 py-2.5 flex items-center gap-2 cursor-pointer text-xs font-mono uppercase tracking-wider">
-                        <ImageIcon size={15} />
-                        <span>Upload Visual</span>
-                        <input
-                          type="file"
-                          accept="image/*"
-                          className="hidden"
-                          onChange={(e) => onImageUpload(i, e)}
-                        />
-                      </label>
-                      {p.image && (
-                        <button
-                          type="button"
-                          onClick={() => updateProject(i, { image: null })}
-                          className="text-xs text-red-400 hover:text-red-300 font-mono"
+                    <>
+                      {p.live && p.live !== "#" && (
+                        <a
+                          href={p.live}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn-primary-tech font-mono text-xs uppercase tracking-wider px-4 py-2 flex items-center gap-1.5"
                         >
-                          Remove Image
-                        </button>
+                          <span>Live Demo</span>
+                          <ExternalLink size={12} />
+                        </a>
                       )}
-                    </div>
+
+                      {p.source && p.source !== "#" && (
+                        <a
+                          href={p.source}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn-ghost-tech font-mono text-xs uppercase tracking-wider px-4 py-2 flex items-center gap-1.5"
+                        >
+                          <GithubIcon size={13} />
+                          <span>Source</span>
+                        </a>
+                      )}
+                    </>
                   )}
                 </div>
               </div>
@@ -276,11 +236,9 @@ export default function Projects({ projects, setProjects, editMode, onImageUploa
         {editMode && (
           <button
             onClick={() => setProjects((prev) => [...prev, emptyProject()])}
-            className="w-full py-12 rounded-2xl border-2 border-dashed border-white/10 hover:border-[#00F2FE]/40 bg-white/[0.02] flex flex-col items-center justify-center gap-3 text-[#94A3B8] hover:text-[#00F2FE] transition-all cursor-pointer"
+            className="w-full py-12 rounded-2xl border-2 border-dashed border-white/10 hover:border-[#00F2FE]/40 bg-white/[0.02] flex flex-col items-center justify-center gap-2 text-[#94A3B8] hover:text-[#00F2FE] transition-all cursor-pointer lg:col-span-3"
           >
-            <div className="w-12 h-12 rounded-full border border-current flex items-center justify-center">
-              <Plus size={20} />
-            </div>
+            <Plus size={20} />
             <span className="font-mono text-xs uppercase tracking-widest font-semibold">
               Add New Project
             </span>
