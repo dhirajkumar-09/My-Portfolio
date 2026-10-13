@@ -8,6 +8,7 @@ import {
 } from "./data/portfolioData";
 
 import CustomCursor from "./components/CustomCursor";
+import IntroScreen from "./components/IntroScreen";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import Projects from "./components/Projects";
@@ -97,6 +98,13 @@ export default function App() {
 
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showIntro, setShowIntro] = useState(() => {
+    try {
+      return !sessionStorage.getItem("portfolio_intro_seen");
+    } catch {
+      return true;
+    }
+  });
   const [toastMessage, setToastMessage] = useState("");
   const [sendingMsg, setSendingMsg] = useState(false);
 
@@ -332,6 +340,9 @@ export default function App() {
         className="scroll-tracker"
         style={{ width: `${scrollProgress}%` }}
       />
+
+      {/* Luxury Cinematic Greeting Intro (Namaste, Hello, Bonjour, Dhiraj Kumar) */}
+      {showIntro && <IntroScreen onComplete={() => setShowIntro(false)} />}
 
       {/* Floating Toast Notification */}
       <div
